@@ -25,7 +25,7 @@ on:
 
 env:
   CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.EntryPoint.csproj'
-  SOLUTION_FILE_PATH: 'source/hello-world/HelloWorld.sln'
+  SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
   DOTNET_VERSION: '5.0'
 
 jobs:
