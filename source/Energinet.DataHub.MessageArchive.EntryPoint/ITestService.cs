@@ -11,19 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-using Xunit;
 
-namespace HelloWorld.Tests
+namespace Energinet.DataHub.MessageArchive.EntryPoint
 {
-    public class SomeTests
+    public interface ITestService
     {
-        [Fact]
-        public void DummySuccessfulTest()
-        {
-            // Write clever tests (not this one) to include in the template
-            var sut = nameof(DummySuccessfulTest);
-
-            Assert.Equal("DummySuccessfulTest", sut);
-        }
+        void DoSomething();
     }
 }
