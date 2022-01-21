@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-name: HelloWorld CD
+name: MessageArchive CI
 
 on:
   push:
@@ -24,7 +24,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.csproj'
+  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.EntryPoint.csproj'
   SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
   DOTNET_VERSION: '3.1'
   ORGANISATION_NAME: 'endk'
