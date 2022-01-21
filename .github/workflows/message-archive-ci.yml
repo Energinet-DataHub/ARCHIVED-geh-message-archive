@@ -18,13 +18,13 @@ on:
     branches:
       - main
     paths:
-      - source/hello-world/**
-      - .github/workflows/hello-world-ci.yml
+      - source/**
+      - .github/workflows/message-archive-ci.yml
       - .github/actions/dotnet-build-and-test/**
   workflow_dispatch: {}
 
 env:
-  CSPROJ_FILE_PATH: 'source/hello-world/source/HelloWorld.HelloWorldFunction/HelloWorld.HelloWorldFunction.csproj'
+  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.csproj'
   SOLUTION_FILE_PATH: 'source/hello-world/HelloWorld.sln'
   DOTNET_VERSION: '3.1'
 
@@ -45,7 +45,7 @@ jobs:
         uses: ./.github/actions/dotnet-build-and-test
         with:
           CSPROJ_FILE_PATH: ${{ env.CSPROJ_FILE_PATH }}
-          SOLUTION_FILE_PATH: ${{ env.SOLUTION_FILE_PATH }}
+          SOLUTION_FILE_PATH: ${{ env.SOLUTION_FILE_PATH }}
           OUTPUT_PATH: '${{ github.workspace }}/output'
 
       - name: Publish artifact
