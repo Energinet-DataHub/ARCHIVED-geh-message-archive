@@ -26,7 +26,7 @@ on:
 env:
   CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.EntryPoint.csproj'
   SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
-  DOTNET_VERSION: '3.1'
+  DOTNET_VERSION: '5.0'
   ORGANISATION_NAME: 'endk'
   AZURE_FUNCTIONAPP_NAME: 'message-archive'
   PROJECT_NAME: TEMPLATE_REPLACE__YOUR_DOMAIN_NAME_LOWERCASE_NO_SYMBOLS
