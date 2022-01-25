@@ -30,15 +30,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             var xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(blobItemData.Content);
 
-            var mridValue = ReadValueOrEmptyString(xmlDocument, "/cim:mRID");
-            var typeValue = ReadValueOrEmptyString(xmlDocument, "/cim:type");
-            var processTypeValue = ReadValueOrEmptyString(xmlDocument, "/cim:process.processType");
-            var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, "/cim:businessSector.type");
-            var senderGlnValue = ReadValueOrEmptyString(xmlDocument, "/cim:sender_MarketParticipant.mRID");
-            var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, "/cim:sender_MarketParticipant.marketRole.type");
-            var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, "/cim:receiver_MarketParticipant.mRID");
-            var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, "/cim:receiver_MarketParticipant.marketRole.type");
-            var createdDataValue = ReadValueOrEmptyString(xmlDocument, "/cim:createdDateTime");
+            var mridValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.MRid}");
+            var typeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.Type}");
+            var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.ProcessProcessType}");
+            var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.BusinessSectorType}");
+            var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.SenderMarketParticipantmRid}");
+            var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.SenderMarketParticipantmarketRoletype}");
+            var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.ReceiverMarketParticipantmRid}");
+            var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.ReceiverMarketParticipantmarketRoletype}");
+            var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.CreatedDateTime}");
 
             var parsedModel = new BaseParsedModel
             {
