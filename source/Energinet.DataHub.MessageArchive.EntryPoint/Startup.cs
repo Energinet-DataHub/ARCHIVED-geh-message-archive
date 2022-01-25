@@ -15,6 +15,7 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
+using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             Container.RegisterSingleton(() => config!);
 
             Container.Register<ITestService, TestService>(Lifestyle.Transient);
-            Container.Register<TriggerFunction>(Lifestyle.Scoped);
+            Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
+            Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
         }
 
         private static void SwitchToSimpleInjector(IServiceCollection services)

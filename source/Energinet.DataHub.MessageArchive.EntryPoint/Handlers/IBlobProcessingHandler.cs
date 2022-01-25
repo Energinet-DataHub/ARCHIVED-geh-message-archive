@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint
+using System.Threading.Tasks;
+
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
 {
     /// <summary>
-    /// ITestService
+    /// Blob processing flow handler
     /// </summary>
-    public interface ITestService
+    public interface IBlobProcessingHandler
     {
         /// <summary>
-        /// DoSomething
+        /// Handler method
         /// </summary>
-        void DoSomething();
+        Task HandleAsync();
     }
 }

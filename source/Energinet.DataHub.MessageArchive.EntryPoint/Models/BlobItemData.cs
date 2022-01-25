@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint
+using System;
+using System.Collections.Generic;
+using Azure.Storage.Blobs.Models;
+
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
-    /// <summary>
-    /// ITestService
-    /// </summary>
-    public interface ITestService
+#pragma warning disable SA1313
+    public record BlobItemData(IDictionary<string, string> MetaData, IDictionary<string, string> IndexTags,
+        string Content, BlobItemProperties Properties, Uri Uri)
     {
-        /// <summary>
-        /// DoSomething
-        /// </summary>
-        void DoSomething();
     }
+#pragma warning restore SA1313
 }

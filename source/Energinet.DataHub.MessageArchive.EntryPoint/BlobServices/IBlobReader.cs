@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+
+namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 {
     /// <summary>
-    /// ITestService
+    /// blob reader interface
     /// </summary>
-    public interface ITestService
+    public interface IBlobReader
     {
         /// <summary>
-        /// DoSomething
+        /// Returns blobs ready to process
         /// </summary>
-        void DoSomething();
+        /// <returns>downloaded blob data</returns>
+        Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync();
     }
 }
