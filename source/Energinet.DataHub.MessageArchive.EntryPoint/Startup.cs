@@ -78,7 +78,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
 
         private static void RegisterCosmosStorageWriter(Container container)
         {
-            container.Register<IStorageWriter<BaseParsedModel>>(() =>
+            container.Register<IStorageWriter<CosmosRequestResponseLog>>(() =>
             {
                 var connectionString = string.Empty;
                 var databaseId = string.Empty;

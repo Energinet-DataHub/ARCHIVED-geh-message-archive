@@ -24,8 +24,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? BusinessSectorType { get; set; }
 
-        public string? BusinessReasonCode { get; set; }
-
         public string? CreatedDate { get; set; }
 
         public string? LogCreatedDate { get; set; }

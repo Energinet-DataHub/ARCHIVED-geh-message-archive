@@ -16,11 +16,13 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Storage
 {
-    public class CosmosWriter : IStorageWriter<BaseParsedModel>,  IDisposable
+    public class CosmosWriter : IStorageWriter<CosmosRequestResponseLog>,  IDisposable
     {
         private readonly string _databaseId;
         private readonly string _containerName;
@@ -30,15 +32,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Storage
         {
             _databaseId = databaseId;
             _containerName = containerName;
-            _cosmosClient = new CosmosClient(connectionString);
+            _cosmosClient = new CosmosClientBuilder(connectionString)
+                .WithSerializerOptions(new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
+                .Build();
         }
 
-        public async Task WriteAsync(BaseParsedModel objectToSave)
+        public async Task WriteAsync(CosmosRequestResponseLog objectToSave)
         {
-            var container = _cosmosClient.GetContainer(_databaseId, _containerName);
-            var response = await container.CreateItemAsync(objectToSave).ConfigureAwait(false);
+            Guard.ThrowIfNull(objectToSave, nameof(objectToSave));
 
-            if (response.StatusCode is not HttpStatusCode.OK)
+            objectToSave.Id = Guid.NewGuid().ToString(); // $"{objectToSave.InvocationId}_{objectToSave.MessageId}";
+            objectToSave.PartitionKey = !string.IsNullOrWhiteSpace(objectToSave.ReceiverGln) ? objectToSave.ReceiverGln : "nopartitionkey";
+            var container = _cosmosClient.GetContainer(_databaseId, _containerName);
+            var response = await container.CreateItemAsync(objectToSave, new PartitionKey(objectToSave.PartitionKey)).ConfigureAwait(false);
+
+            if (response.StatusCode is not HttpStatusCode.Created)
             {
                 throw new InvalidOperationException($"CosmosWriter error {response.StatusCode.ToString()}");
             }

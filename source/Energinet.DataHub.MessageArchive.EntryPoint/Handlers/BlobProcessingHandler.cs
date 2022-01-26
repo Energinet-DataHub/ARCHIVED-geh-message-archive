@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
@@ -25,12 +25,12 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
     public class BlobProcessingHandler : IBlobProcessingHandler
     {
         private readonly IBlobReader _blobReader;
-        private readonly IStorageWriter<BaseParsedModel> _storageWriter;
+        private readonly IStorageWriter<CosmosRequestResponseLog> _storageWriter;
         private readonly ILogger<BlobProcessingHandler> _logger;
 
         public BlobProcessingHandler(
             IBlobReader blobReader,
-            IStorageWriter<BaseParsedModel> storageWriter,
+            IStorageWriter<CosmosRequestResponseLog> storageWriter,
             ILogger<BlobProcessingHandler> logger)
         {
             _blobReader = blobReader;
@@ -41,7 +41,13 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
         public async Task HandleAsync()
         {
             var blobDataToProcess = await _blobReader.GetBlobsReadyForProcessingAsync().ConfigureAwait(false);
+            var orderedEnumerable = blobDataToProcess.OrderBy(e =>
+                e.MetaData.TryGetValue("httpdatatype", out var httpdata) && httpdata.Equals("request"));
 
+            // Take requests first .
+            // find responess where invacation id can be found in requests.
+            // Handle Error XML, JSON and so on
+            // Move or mark blob
             foreach (var blobItemData in blobDataToProcess)
             {
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
@@ -50,7 +56,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                 if (parser is { })
                 {
                     var parsedModel = parser.Parse(blobItemData);
-                    await _storageWriter.WriteAsync(parsedModel).ConfigureAwait(false);
+                    var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
+                    await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
                 }
                 else
                 {
