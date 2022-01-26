@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using Azure.Storage.Blobs.Models;
+using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Storage
 {
-#pragma warning disable SA1313
-    public record BlobItemData(string Name, IDictionary<string, string> MetaData, IDictionary<string, string> IndexTags,
-        string Content, BlobItemProperties Properties, Uri Uri)
+    /// <summary>
+    /// Storage interface
+    /// </summary>
+    /// <typeparam name="T">type to save</typeparam>
+    public interface IStorageWriter<in T>
     {
+        /// <summary>
+        /// Write object to storage
+        /// </summary>
+        /// <param name="objectToSave"></param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        Task WriteAsync(T objectToSave);
     }
-#pragma warning restore SA1313
 }

@@ -28,9 +28,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
     {
         private BlobContainerClient _blobContainerClient;
 
-        public BlobReader()
+        public BlobReader(
+            string connectionString,
+            string containerName)
         {
-            _blobContainerClient = new BlobContainerClient(string.Empty, string.Empty);
+            _blobContainerClient = new BlobContainerClient(connectionString, containerName);
         }
 
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
@@ -58,13 +60,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
             var metaData = blobItemToDownload.Metadata;
             var indexTags = blobItemToDownload.Tags;
             var properties = blobItemToDownload.Properties;
+            var name = blobItemToDownload.Name;
 
             var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
             var response = await blobClient.DownloadAsync().ConfigureAwait(false);
             using var streamReader = new StreamReader(response.Value.Content);
             var content = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
-            return new BlobItemData(metaData, indexTags, content, properties, blobClient.Uri);
+            return new BlobItemData(name, metaData, indexTags, content, properties, blobClient.Uri);
         }
     }
 }

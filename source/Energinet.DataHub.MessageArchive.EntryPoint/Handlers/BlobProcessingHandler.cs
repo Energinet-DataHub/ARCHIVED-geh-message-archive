@@ -14,20 +14,28 @@
 
 using System;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
-using Energinet.DataHub.MessageArchive.Utilities;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
 {
     public class BlobProcessingHandler : IBlobProcessingHandler
     {
         private readonly IBlobReader _blobReader;
+        private readonly IStorageWriter<BaseParsedModel> _storageWriter;
+        private readonly ILogger<BlobProcessingHandler> _logger;
 
-        public BlobProcessingHandler(IBlobReader blobReader)
+        public BlobProcessingHandler(
+            IBlobReader blobReader,
+            IStorageWriter<BaseParsedModel> storageWriter,
+            ILogger<BlobProcessingHandler> logger)
         {
             _blobReader = blobReader;
+            _storageWriter = storageWriter;
+            _logger = logger;
         }
 
         public async Task HandleAsync()
@@ -42,10 +50,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                 if (parser is { })
                 {
                     var parsedModel = parser.Parse(blobItemData);
+                    await _storageWriter.WriteAsync(parsedModel).ConfigureAwait(false);
                 }
                 else
                 {
-                    // ON ERROR
+                    _logger.LogInformation("Could not find parsed for log: {name}", blobItemData.Name);
                 }
             }
         }

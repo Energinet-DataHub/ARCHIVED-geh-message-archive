@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Utilities;
 
@@ -22,12 +23,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
         public static ILogParser? FindParser(string contentType, string content)
         {
             Guard.ThrowIfNull(contentType, nameof(contentType));
+            Guard.ThrowIfNull(contentType, nameof(contentType));
 
             if (contentType.Contains("xml"))
             {
                 return new LogParserXml();
             }
-            else if (content.StartsWith("<?xml version"))
+
+            if (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<?xml version", StringComparison.InvariantCulture))
             {
                 return new LogParserXml();
             }

@@ -14,9 +14,12 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
+using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,9 +58,37 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
             Container.RegisterSingleton(() => config!);
 
+            RegisterBlobReader(Container);
+            RegisterCosmosStorageWriter(Container);
+
             Container.Register<ITestService, TestService>(Lifestyle.Transient);
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
             Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
+        }
+
+        private static void RegisterBlobReader(Container container)
+        {
+            container.Register<IBlobReader>(() =>
+            {
+                var connectionString = string.Empty;
+                var containerName = string.Empty;
+                return new BlobReader(connectionString, containerName);
+            });
+        }
+
+        private static void RegisterCosmosStorageWriter(Container container)
+        {
+            container.Register<IStorageWriter<BaseParsedModel>>(() =>
+            {
+                var connectionString = string.Empty;
+                var databaseId = string.Empty;
+                var containerName = string.Empty;
+
+                return new CosmosWriter(
+                    connectionString,
+                    databaseId,
+                    containerName);
+            });
         }
 
         private static void SwitchToSimpleInjector(IServiceCollection services)
