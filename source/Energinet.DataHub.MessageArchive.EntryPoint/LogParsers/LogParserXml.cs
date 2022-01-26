@@ -13,8 +13,10 @@
 // limitations under the License.
 
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
@@ -27,10 +29,13 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(blobItemData.Content);
+            var xmlDocument = XElement.Parse(blobItemData.Content);
+            XNamespace ns = xmlDocument.Name.Namespace;
 
-            var mridValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.MRid}");
+            var tt = xmlDocument.Elements(ns + ElementNames.MRid);
+
+            var mridValueRaw = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
+            var mridValue = ReadValueOrEmptyString(xmlDocument, $"cim:{ElementNames.MRid}");
             var typeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.Type}");
             var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.ProcessProcessType}");
             var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"/cim:{ElementNames.BusinessSectorType}");
@@ -63,9 +68,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             return parsedModel;
         }
 
-        private static string ReadValueOrEmptyString(XmlDocument xmlDocument, string xpath)
+        private static string ReadValueOrEmptyString(XElement xmlDocument, string xpath)
         {
-            var node = xmlDocument.SelectSingleNode(xpath);
+            var node = xmlDocument.Elements(xpath).FirstOrDefault();
             var value = node?.Value ?? string.Empty;
             return value;
         }

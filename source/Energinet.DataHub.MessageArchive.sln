@@ -14,6 +14,10 @@
 # limitations under the License.
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.EntryPoint", "Energinet.DataHub.MessageArchive.EntryPoint\Energinet.DataHub.MessageArchive.EntryPoint.csproj", "{3369FFA9-7C92-40B8-86C1-5D93CCAED059}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E6FA9CEC-E10B-4B09-B6A6-0E44F3DD0BCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.Datahub.MessageArchive.Tests", "Energinet.Datahub.MessageArchive.Tests\Energinet.Datahub.MessageArchive.Tests.csproj", "{BEFA944D-20BB-4F76-8438-B19CFA37FD22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,5 +31,12 @@ Global
 		{3369FFA9-7C92-40B8-86C1-5D93CCAED059}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3369FFA9-7C92-40B8-86C1-5D93CCAED059}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3369FFA9-7C92-40B8-86C1-5D93CCAED059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEFA944D-20BB-4F76-8438-B19CFA37FD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEFA944D-20BB-4F76-8438-B19CFA37FD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEFA944D-20BB-4F76-8438-B19CFA37FD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEFA944D-20BB-4F76-8438-B19CFA37FD22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BEFA944D-20BB-4F76-8438-B19CFA37FD22} = {E6FA9CEC-E10B-4B09-B6A6-0E44F3DD0BCA}
 	EndGlobalSection
 EndGlobal

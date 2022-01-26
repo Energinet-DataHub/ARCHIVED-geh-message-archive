@@ -37,7 +37,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
-            var blobsToProcess = _blobContainerClient.GetBlobsAsync().ConfigureAwait(false);
+            var blobsToProcess = _blobContainerClient.GetBlobsAsync(BlobTraits.All).ConfigureAwait(false);
             var tasks = new List<Task<BlobItemData>>();
 
             await foreach (var blobItem in blobsToProcess)
