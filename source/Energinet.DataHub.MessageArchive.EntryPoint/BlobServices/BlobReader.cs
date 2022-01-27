@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -26,6 +27,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 {
     public class BlobReader : IBlobReader
     {
+        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         private BlobContainerClient _blobContainerClient;
 
         public BlobReader(
@@ -37,8 +39,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
-            // TODO CHANGE
-            var blobsToProcess = _blobContainerClient.GetBlobsAsync(BlobTraits.All, prefix: "2022-01-19/ChargeLinksIngestion_nojwtgln_bfb21c6").ConfigureAwait(false);
+            var blobsToProcess = _blobContainerClient.GetBlobsAsync(BlobTraits.All).ConfigureAwait(false);
             var tasks = new List<Task<BlobItemData>>();
 
             await foreach (var blobItem in blobsToProcess)
@@ -65,10 +66,26 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 
             var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
             var response = await blobClient.DownloadAsync().ConfigureAwait(false);
-            using var streamReader = new StreamReader(response.Value.Content);
-            var content = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            using var streamReader = new StreamReader(response.Value.Content, Encoding.UTF8);
+            var downloadedContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
-            return new BlobItemData(name, metaData, indexTags, content, properties, blobClient.Uri);
+            var cleanContent = CleanStringForUtf8Preamble(downloadedContent);
+            return new BlobItemData(name, metaData, indexTags, cleanContent, properties, blobClient.Uri);
+        }
+
+        private string CleanStringForUtf8Preamble(string content)
+        {
+            if (content.StartsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
+            {
+                content = content.Remove(0, _byteOrderMarkUtf8.Length);
+            }
+
+            if (content.EndsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
+            {
+                content = content.Remove(content.Length - _byteOrderMarkUtf8.Length, _byteOrderMarkUtf8.Length);
+            }
+
+            return content;
         }
     }
 }
