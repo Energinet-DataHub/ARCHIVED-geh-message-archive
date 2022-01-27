@@ -44,6 +44,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
             var orderedEnumerable = blobDataToProcess.OrderBy(e =>
                 e.MetaData.TryGetValue("httpdatatype", out var httpdata) && httpdata.Equals("request"));
 
+            // TODO
+            // some kind of parsing for peek, dequeue, json response,
+            // Mark blob as processed
+            // Clean up
+
             // Take requests first .
             // find responess where invacation id can be found in requests.
             // Handle Error XML, JSON and so on

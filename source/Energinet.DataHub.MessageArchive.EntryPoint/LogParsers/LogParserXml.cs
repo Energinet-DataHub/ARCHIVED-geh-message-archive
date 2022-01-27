@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Dynamic;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
@@ -53,7 +51,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 ReceiverGln = receiverGlnValue,
                 ReceiverGlnMarketRoleType = receiverMarketRoleValue,
                 CreatedDate = createdDataValue,
-                LogCreatedDate = blobItemData.Properties.CreatedOn.ToString(),
+                LogCreatedDate = blobItemData.Properties.CreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
                 BlobContentUri = blobItemData.Uri.AbsoluteUri,
                 HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
                 InvocationId = blobItemData.MetaData.TryGetValue("invocationid", out var invocationid) ? invocationid : string.Empty,
@@ -62,14 +60,28 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
             };
 
+            var errors = ParseErrors(xmlDocument);
+            parsedModel.Errors = errors.Any() ? errors : null;
+
             return parsedModel;
         }
 
-        private static string ReadValueOrEmptyString(XElement xmlDocument, string xpath)
+        private static string ReadValueOrEmptyString(XElement xmlDocument, string name)
         {
-            var node = xmlDocument.Elements(xpath).FirstOrDefault();
+            var node = xmlDocument.Elements(name).FirstOrDefault();
             var value = node?.Value ?? string.Empty;
             return value;
+        }
+
+        private static List<ParsedErrorModel> ParseErrors(XElement xmlDocument)
+        {
+            var errors = xmlDocument.DescendantsAndSelf("Error");
+            return errors
+                .Select(e => new ParsedErrorModel()
+                {
+                    Code = e.DescendantsAndSelf("Code").FirstOrDefault()?.Value ?? "unknown",
+                    Message = e.DescendantsAndSelf("Message").FirstOrDefault()?.Value ?? "unknown",
+                }).ToList();
         }
     }
 }

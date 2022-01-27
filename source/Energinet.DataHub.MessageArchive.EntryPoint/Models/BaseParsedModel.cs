@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
+
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
     public class BaseParsedModel
@@ -47,5 +49,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? TraceId { get; set; }
 
         public string? TraceParent { get; set; }
+
+        public IEnumerable<ParsedErrorModel>? Errors { get; set; }
     }
 }
