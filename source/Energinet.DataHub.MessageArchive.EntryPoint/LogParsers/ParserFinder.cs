@@ -26,16 +26,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             Guard.ThrowIfNull(contentType, nameof(contentType));
 
             if (contentType.Contains("xml")
-             || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<?xml version", StringComparison.InvariantCulture))
-             || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<cim:", StringComparison.InvariantCulture)))
+                || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<?xml version", StringComparison.InvariantCulture))
+                || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<cim:", StringComparison.InvariantCulture)))
             {
                 return new LogParserXml();
             }
 
             if (content.Contains("json")
-            || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("{", StringComparison.InvariantCulture)))
+                || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("{", StringComparison.InvariantCulture)))
             {
                 return new LogParserJson();
+            }
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return new LogParserNoContent();
             }
 
             return null;

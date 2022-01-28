@@ -50,6 +50,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? TraceParent { get; set; }
 
+        public string? ResponseStatus { get; set; }
+
+        public IDictionary<string, string>? Data { get; set; }
+
         public IEnumerable<ParsedErrorModel>? Errors { get; set; }
     }
 }

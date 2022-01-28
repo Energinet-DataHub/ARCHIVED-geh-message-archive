@@ -27,7 +27,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
 
+            toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;
+            toobj.Data = fromobj.Data;
 
             return toobj;
         }

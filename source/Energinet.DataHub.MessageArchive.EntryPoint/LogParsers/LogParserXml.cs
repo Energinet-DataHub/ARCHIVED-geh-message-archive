@@ -58,7 +58,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 FunctionName = blobItemData.MetaData.TryGetValue("functionname", out var functionname) ? functionname : string.Empty,
                 TraceId = blobItemData.MetaData.TryGetValue("traceid", out var traceid) ? traceid : string.Empty,
                 TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
+                ResponseStatus = blobItemData.MetaData.TryGetValue("statuscode", out var statuscode) ? statuscode : string.Empty,
             };
+
+            parsedModel.Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null;
 
             var errors = ParseErrors(xmlDocument);
             parsedModel.Errors = errors.Any() ? errors : null;

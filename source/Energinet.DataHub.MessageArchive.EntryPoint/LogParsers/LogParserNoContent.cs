@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.Json;
+using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserJson : ILogParser
+    public class LogParserNoContent : ILogParser
     {
         public BaseParsedModel Parse(BlobItemData blobItemData)
         {
@@ -60,29 +59,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 
             parsedModel.Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null;
 
-            parsedModel.Errors = ParseErrors(blobItemData.Content);
-
             return parsedModel;
-        }
-
-        private static IEnumerable<ParsedErrorModel>? ParseErrors(string jsonString)
-        {
-            try
-            {
-                var jsonDocument = JsonDocument.Parse(jsonString);
-                var errorPropParsed = jsonDocument.RootElement.TryGetProperty("error", out JsonElement errorProp);
-                var code = errorProp.GetProperty("code").GetString();
-                var message = errorProp.GetProperty("message").GetString();
-                if (errorPropParsed)
-                {
-                    return new List<ParsedErrorModel>() { new () { Code = code ?? string.Empty, Message = message ?? string.Empty } };
-                }
-            }
-            catch
-            {
-            }
-
-            return null;
         }
     }
 }
