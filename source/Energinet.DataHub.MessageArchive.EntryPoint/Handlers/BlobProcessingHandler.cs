@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
@@ -45,14 +46,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                 e.MetaData.TryGetValue("httpdatatype", out var httpdata) && httpdata.Equals("request"));
 
             // TODO
-            // some kind of parsing for peek, dequeue, json response,
-            // Mark blob as processed
+            // ?Take requests first .
+            // ?find responess where invocation id can be found in requests.
+            // Handle Error XML, JSON and so on, move or mark ?
+            // Move or mark blob as processed
             // Clean up
-
-            // Take requests first .
-            // find responess where invacation id can be found in requests.
-            // Handle Error XML, JSON and so on
-            // Move or mark blob
             foreach (var blobItemData in blobDataToProcess)
             {
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
@@ -60,9 +58,17 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                 var parser = ParserFinder.FindParser(contentType, blobItemData.Content);
                 if (parser is { })
                 {
-                    var parsedModel = parser.Parse(blobItemData);
-                    var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
-                    await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
+                    try
+                    {
+                        var parsedModel = parser.Parse(blobItemData);
+                        var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
+                        await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError("ParseError: {name}", blobItemData.Name);
+                        Console.WriteLine(e);
+                    }
                 }
                 else
                 {

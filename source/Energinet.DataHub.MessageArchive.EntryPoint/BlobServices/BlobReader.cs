@@ -59,8 +59,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
         {
             Guard.ThrowIfNull(blobItemToDownload, nameof(blobItemToDownload));
 
-            var metaData = blobItemToDownload.Metadata;
-            var indexTags = blobItemToDownload.Tags;
+            var metaData = blobItemToDownload.Metadata ?? new Dictionary<string, string>();
+            var indexTags = blobItemToDownload.Tags ?? new Dictionary<string, string>();
             var properties = blobItemToDownload.Properties;
             var name = blobItemToDownload.Name;
 

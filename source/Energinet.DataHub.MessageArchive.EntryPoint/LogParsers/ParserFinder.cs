@@ -25,7 +25,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             Guard.ThrowIfNull(contentType, nameof(contentType));
             Guard.ThrowIfNull(contentType, nameof(contentType));
 
-            if (contentType.Contains("xml")
+            if ((contentType.Contains("xml") && !string.IsNullOrWhiteSpace(content))
                 || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<?xml version", StringComparison.InvariantCulture))
                 || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("<cim:", StringComparison.InvariantCulture)))
             {

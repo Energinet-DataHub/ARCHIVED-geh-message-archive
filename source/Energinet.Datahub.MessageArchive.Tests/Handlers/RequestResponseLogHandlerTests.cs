@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -29,10 +32,13 @@ namespace Energinet.Datahub.MessageArchive.Tests.Handlers
         [Fact]
         public async Task BlobProcessingHandler_Ok()
         {
-            var blobConnectionString = "DefaultEndpointsProtocol=https;AccountName=blobxkamalogs;AccountKey=pbqcmJwuFgP8avLqBBKuqCw0SoSviq+if7M1tHukzU8IakpN6Ia8G9cTmKmFKsGMJIx81waFB4ZSIOFraMpZdA==;EndpointSuffix=core.windows.net";
+            var conStringTEST = string.Empty;
+            var conStringXKAMA = string.Empty;
+
+            var blobConnectionString = conStringTEST;
             var blobContainerName = "marketoplogs";
 
-            var cosmosConnectionString = "AccountEndpoint=https://cosmos-xkama.documents.azure.com:443/;AccountKey=vdPtmAaEpbm1xLg4wJckH1jJuK05V8Qmx92TRMryt29W0996txL1V79al7WHyu8lWJwF6Pf7duMMVEx6FZ3A8g==;";
+            var cosmosConnectionString = string.Empty;
             var cosmosDatabaseId = "Search";
             var cosmosContainerName = "Logs";
 
