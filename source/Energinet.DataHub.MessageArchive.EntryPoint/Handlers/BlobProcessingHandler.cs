@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
@@ -26,15 +25,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
     public class BlobProcessingHandler : IBlobProcessingHandler
     {
         private readonly IBlobReader _blobReader;
+        private readonly IBlobArchive _blobArchive;
+        private readonly IBlobErrorArchive _blobErrorArchive;
         private readonly IStorageWriter<CosmosRequestResponseLog> _storageWriter;
         private readonly ILogger<BlobProcessingHandler> _logger;
 
         public BlobProcessingHandler(
             IBlobReader blobReader,
+            IBlobArchive blobArchive,
+            IBlobErrorArchive blobErrorArchive,
             IStorageWriter<CosmosRequestResponseLog> storageWriter,
             ILogger<BlobProcessingHandler> logger)
         {
             _blobReader = blobReader;
+            _blobArchive = blobArchive;
+            _blobErrorArchive = blobErrorArchive;
             _storageWriter = storageWriter;
             _logger = logger;
         }
@@ -42,15 +47,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
         public async Task HandleAsync()
         {
             var blobDataToProcess = await _blobReader.GetBlobsReadyForProcessingAsync().ConfigureAwait(false);
-            var orderedEnumerable = blobDataToProcess.OrderBy(e =>
-                e.MetaData.TryGetValue("httpdatatype", out var httpdata) && httpdata.Equals("request"));
 
-            // TODO
-            // ?Take requests first .
-            // ?find responess where invocation id can be found in requests.
-            // Handle Error XML, JSON and so on, move or mark ?
-            // Move or mark blob as processed
-            // Clean up
             foreach (var blobItemData in blobDataToProcess)
             {
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
@@ -62,17 +59,23 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                     {
                         var parsedModel = parser.Parse(blobItemData);
                         var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
+
+                        var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
+                        cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
+
                         await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError("ParseError: {name}", blobItemData.Name);
-                        Console.WriteLine(e);
+                        _logger.LogCritical(e, "Error in item processing");
+                        _logger.LogError("Error: {name}", blobItemData.Name);
+                        await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    _logger.LogInformation("Could not find parsed for log: {name}", blobItemData.Name);
+                    _logger.LogInformation("Could not find parser for log: {name}", blobItemData.Name);
+                    await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                 }
             }
         }

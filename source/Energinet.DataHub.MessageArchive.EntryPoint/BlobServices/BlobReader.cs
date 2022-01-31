@@ -39,6 +39,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
+            // can be paged
             var blobsToProcess = _blobContainerClient.GetBlobsAsync(BlobTraits.All).ConfigureAwait(false);
             var tasks = new List<Task<BlobItemData>>();
 

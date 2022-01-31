@@ -35,10 +35,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             [TimerTrigger("* */1 * * * *")]
             FunctionContext context)
         {
-            // Get blobs from storage
-            // Read metadata, tags and content.
-            // Define log type, CIM, JSON, REQUEST, RESPONSE, Peek, Post, Get
-            // Build data object for saving to cosmos
             var logger = context.GetLogger<RequestResponseLogTriggerFunction>();
             var stopWatch = Stopwatch.StartNew();
             logger.LogInformation("RequestResponseLogTriggerFunction starting");

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
@@ -32,10 +31,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 return new LogParserXml();
             }
 
-            if (content.Contains("json")
+            if (contentType.Contains("json")
                 || (!string.IsNullOrWhiteSpace(content) && content.Trim().StartsWith("{", StringComparison.InvariantCulture)))
             {
                 return new LogParserJson();
+            }
+
+            if (contentType.Contains("text/plain"))
+            {
+                return new LogParserNoContent();
             }
 
             if (string.IsNullOrWhiteSpace(content))
