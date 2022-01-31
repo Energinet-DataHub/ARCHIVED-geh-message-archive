@@ -6,6 +6,8 @@
       <IsPackable>false</IsPackable>
       <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
       <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+      <AssemblyName>Energinet.DataHub.MessageArchive.Tests</AssemblyName>
+      <RootNamespace>Energinet.DataHub.MessageArchive.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
