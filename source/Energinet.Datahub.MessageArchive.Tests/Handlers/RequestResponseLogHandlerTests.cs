@@ -46,37 +46,39 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             reader
                 .Setup(e => e.GetBlobsReadyForProcessingAsync())
-                .ReturnsAsync(RandomBlobItemData(4));
+                .ReturnsAsync(
+                    new List<BlobItemData>()
+                    {
+                        BlobItemData("xml", "<ok></ok>"),
+                        BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
+                        BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                        BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                        BlobItemData("text/plain", string.Empty),
+                        BlobItemData("nocontent", string.Empty),
+                    });
 
             archive
                 .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
-                .ReturnsAsync(RandomBlobItemData(1).First().Uri);
+                .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
 
             // Act
             var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
 
-            await handler.HandleAsync().ConfigureAwait(false);
-
             // Assert
+            await handler.HandleAsync().ConfigureAwait(false);
         }
 
-        private static List<BlobItemData> RandomBlobItemData(int number)
+        private static BlobItemData BlobItemData(string contentType, string content)
         {
-            var items = new List<BlobItemData>();
-            for (var i = 0; i < number; i++)
-            {
-                var uri = new Uri("https://localhost/TestBlob");
+            var uri = new Uri("https://localhost/TestBlob");
 
-                items.Add(new BlobItemData(
-                    It.IsAny<string>(),
-                    new Dictionary<string, string>(),
-                    new Dictionary<string, string>(),
-                    It.IsAny<string>(),
-                    DateTimeOffset.Now,
-                    uri));
-            }
-
-            return items;
+            return new BlobItemData(
+                It.IsAny<string>(),
+                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>(),
+                content,
+                DateTimeOffset.Now,
+                uri);
         }
     }
 }
