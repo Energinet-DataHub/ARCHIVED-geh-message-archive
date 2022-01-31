@@ -12,44 +12,71 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.Datahub.MessageArchive.Tests.Handlers
+namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 {
     [UnitTest]
     public class RequestResponseLogHandlerTests
     {
         [Fact]
-        public async Task BlobProcessingHandler_Ok()
+        public async Task Handler_TestCompleteFlow_Ok()
         {
-            var conStringTEST = string.Empty;
-            var conStringXKAMA = string.Empty;
+            // Arrange
+            var reader = new Mock<IBlobReader>();
+            var archive = new Mock<IBlobArchive>();
+            var errorArchive = new Mock<IBlobErrorArchive>();
 
-            var blobConnectionString = conStringTEST;
-            var blobContainerName = "marketoplogs";
-
-            var cosmosConnectionString = string.Empty;
-            var cosmosDatabaseId = "Search";
-            var cosmosContainerName = "Logs";
-
-            var reader = new BlobReader(blobConnectionString, blobContainerName);
-            using var writer = new CosmosWriter(cosmosConnectionString, cosmosDatabaseId, cosmosContainerName);
-
+            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
 
-            var handler = new BlobProcessingHandler(reader, writer, logger);
+            reader
+                .Setup(e => e.GetBlobsReadyForProcessingAsync())
+                .ReturnsAsync(RandomBlobItemData(4));
+
+            archive
+                .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
+                .ReturnsAsync(RandomBlobItemData(1).First().Uri);
+
+            // Act
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
 
             await handler.HandleAsync().ConfigureAwait(false);
+
+            // Assert
+        }
+
+        private static List<BlobItemData> RandomBlobItemData(int number)
+        {
+            var items = new List<BlobItemData>();
+            for (var i = 0; i < number; i++)
+            {
+                var uri = new Uri("https://localhost/TestBlob");
+
+                items.Add(new BlobItemData(
+                    It.IsAny<string>(),
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>(),
+                    It.IsAny<string>(),
+                    DateTimeOffset.Now,
+                    uri));
+            }
+
+            return items;
         }
     }
 }

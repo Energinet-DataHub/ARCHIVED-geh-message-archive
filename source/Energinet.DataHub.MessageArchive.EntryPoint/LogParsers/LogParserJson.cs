@@ -48,7 +48,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 ReceiverGln = receiverGlnValue,
                 ReceiverGlnMarketRoleType = receiverMarketRoleValue,
                 CreatedDate = createdDataValue,
-                LogCreatedDate = blobItemData.Properties.CreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
+                LogCreatedDate = blobItemData.BlobCreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
                 BlobContentUri = blobItemData.Uri.AbsoluteUri,
                 HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
                 InvocationId = blobItemData.MetaData.TryGetValue("invocationid", out var invocationid) ? invocationid : string.Empty,

@@ -18,10 +18,34 @@ using Azure.Storage.Blobs.Models;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
-#pragma warning disable SA1313
-    public record BlobItemData(string Name, IDictionary<string, string> MetaData, IDictionary<string, string> IndexTags,
-        string Content, BlobItemProperties Properties, Uri Uri)
+    public class BlobItemData
     {
+        public BlobItemData(
+            string name,
+            IDictionary<string, string> metaData,
+            IDictionary<string, string> indexTags,
+            string content,
+            DateTimeOffset? blobCreatedOn,
+            Uri uri)
+        {
+            Name = name;
+            MetaData = metaData;
+            IndexTags = indexTags;
+            Content = content;
+            Uri = uri;
+            BlobCreatedOn = blobCreatedOn;
+        }
+
+        public string Name { get; }
+
+        public IDictionary<string, string> MetaData { get; }
+
+        public IDictionary<string, string> IndexTags { get; }
+
+        public string Content { get; }
+
+        public DateTimeOffset? BlobCreatedOn { get; }
+
+        public Uri Uri { get; }
     }
-#pragma warning restore SA1313
 }
