@@ -12,23 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
+using System;
+using System.Text.Json;
+using System.Xml.Linq;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserJson : LogParserBlobProperties
+    public static class LogParserContentValidate
     {
-        public override BaseParsedModel Parse(BlobItemData blobItemData)
+        public static bool ValidXml(string content)
         {
-            Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+            try
+            {
+                XElement.Parse(content);
+                return true;
+            }
+            catch
+            {
+            }
 
-            var parsedModel = base.Parse(blobItemData);
+            return false;
+        }
 
-            parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
+        public static bool ValidJson(string content)
+        {
+            try
+            {
+                JsonDocument.Parse(content);
+                return true;
+            }
+            catch
+            {
+            }
 
-            return parsedModel;
+            return false;
         }
     }
 }

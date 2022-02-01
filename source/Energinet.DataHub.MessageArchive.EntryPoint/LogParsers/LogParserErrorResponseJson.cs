@@ -18,16 +18,14 @@ using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserJson : LogParserBlobProperties
+    public class LogParserErrorResponseJson : LogParserBlobProperties
     {
         public override BaseParsedModel Parse(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
             var parsedModel = base.Parse(blobItemData);
-
             parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
-
             return parsedModel;
         }
     }

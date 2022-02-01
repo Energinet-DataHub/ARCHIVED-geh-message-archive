@@ -51,8 +51,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
             foreach (var blobItemData in blobDataToProcess)
             {
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
+                var httpstatuscode = blobItemData.MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
 
-                var parser = ParserFinder.FindParser(contentType, blobItemData.Content);
+                var parser = ParserFinder.FindParser(contentType, httpstatuscode, blobItemData.Content);
                 if (parser is { })
                 {
                     try
@@ -60,22 +61,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                         var parsedModel = parser.Parse(blobItemData);
                         var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
 
-                        var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
-                        cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
-
+                        // var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
+                        // cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
                         await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
                         _logger.LogCritical(e, "Error in item processing");
                         _logger.LogError("Error: {name}", blobItemData.Name);
-                        await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
+                        //await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     _logger.LogInformation("Could not find parser for log: {name}", blobItemData.Name);
-                    await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
+                    //await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                 }
             }
         }

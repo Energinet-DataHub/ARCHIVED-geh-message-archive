@@ -16,16 +16,20 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers;
+using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserXml : ILogParser
+    public class LogParserXml : LogParserBlobProperties
     {
-        public BaseParsedModel Parse(BlobItemData blobItemData)
+        public override BaseParsedModel Parse(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+
+            var parsedModel = base.Parse(blobItemData);
 
             var xmlDocument = XElement.Parse(blobItemData.Content);
             XNamespace ns = xmlDocument.Name.Namespace;
@@ -40,30 +44,17 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
             var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
-            var parsedModel = new BaseParsedModel
-            {
-                MessageId = mridValue,
-                MessageType = typeValue,
-                ProcessType = processTypeValue,
-                BusinessSectorType = businessSectorTypeValue,
-                SenderGln = senderGlnValue,
-                SenderGlnMarketRoleType = senderMarketRoleValue,
-                ReceiverGln = receiverGlnValue,
-                ReceiverGlnMarketRoleType = receiverMarketRoleValue,
-                CreatedDate = createdDataValue,
-                LogCreatedDate = blobItemData.BlobCreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
-                BlobContentUri = blobItemData.Uri.AbsoluteUri,
-                HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
-                InvocationId = blobItemData.MetaData.TryGetValue("invocationid", out var invocationid) ? invocationid : string.Empty,
-                FunctionName = blobItemData.MetaData.TryGetValue("functionname", out var functionname) ? functionname : string.Empty,
-                TraceId = blobItemData.MetaData.TryGetValue("traceid", out var traceid) ? traceid : string.Empty,
-                TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
-                ResponseStatus = blobItemData.MetaData.TryGetValue("statuscode", out var statuscode) ? statuscode : string.Empty,
-            };
+            parsedModel.MessageId = mridValue;
+            parsedModel.MessageType = typeValue;
+            parsedModel.ProcessType = processTypeValue;
+            parsedModel.BusinessSectorType = businessSectorTypeValue;
+            parsedModel.SenderGln = senderGlnValue;
+            parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
+            parsedModel.ReceiverGln = receiverGlnValue;
+            parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
+            parsedModel.CreatedDate = createdDataValue;
 
-            parsedModel.Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null;
-
-            var errors = ParseErrors(xmlDocument);
+            var errors = XmlErrorParser.ParseErrors(xmlDocument);
             parsedModel.Errors = errors.Any() ? errors : null;
 
             return parsedModel;
@@ -74,17 +65,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             var node = xmlDocument.Elements(name).FirstOrDefault();
             var value = node?.Value ?? string.Empty;
             return value;
-        }
-
-        private static List<ParsedErrorModel> ParseErrors(XElement xmlDocument)
-        {
-            var errors = xmlDocument.DescendantsAndSelf("Error");
-            return errors
-                .Select(e => new ParsedErrorModel()
-                {
-                    Code = e.DescendantsAndSelf("Code").FirstOrDefault()?.Value ?? "unknown",
-                    Message = e.DescendantsAndSelf("Message").FirstOrDefault()?.Value ?? "unknown",
-                }).ToList();
         }
     }
 }

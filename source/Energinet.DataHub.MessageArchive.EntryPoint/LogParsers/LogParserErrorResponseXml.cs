@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserJson : LogParserBlobProperties
+    public class LogParserErrorResponseXml : LogParserBlobProperties
     {
         public override BaseParsedModel Parse(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var parsedModel = base.Parse(blobItemData);
+            var nocontentParse = base.Parse(blobItemData);
 
-            parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
-
-            return parsedModel;
+            var xmlDocument = XElement.Parse(blobItemData.Content);
+            XNamespace ns = xmlDocument.Name.Namespace;
+            nocontentParse.Errors = XmlErrorParser.ParseErrors(xmlDocument);
+            return nocontentParse;
         }
     }
 }

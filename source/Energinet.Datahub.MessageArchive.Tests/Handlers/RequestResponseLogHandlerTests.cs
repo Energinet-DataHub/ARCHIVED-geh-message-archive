@@ -14,15 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
+using System.Net;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -50,9 +47,11 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
                     new List<BlobItemData>()
                     {
                         BlobItemData("xml", "<ok></ok>"),
+                        BlobItemData("xml", "<notok><//notok>"),
                         BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
                         BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
                         BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                        BlobItemData("json", "{}"),
                         BlobItemData("text/plain", string.Empty),
                         BlobItemData("nocontent", string.Empty),
                     });
@@ -66,6 +65,74 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             // Assert
             await handler.HandleAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task Test_ErrorParsing()
+        {
+            // Arrange
+            var reader = new Mock<IBlobReader>();
+            var archive = new Mock<IBlobArchive>();
+            var errorArchive = new Mock<IBlobErrorArchive>();
+
+            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
+            var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+
+            var blobItemErrorResponseXml = BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
+            blobItemErrorResponseXml.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
+            var blobItemErrorResponseJson = BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}");
+            blobItemErrorResponseJson.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
+
+            reader
+                .Setup(e => e.GetBlobsReadyForProcessingAsync())
+                .ReturnsAsync(
+                    new List<BlobItemData>()
+                    {
+                        blobItemErrorResponseXml,
+                        blobItemErrorResponseJson,
+                    });
+
+            archive
+                .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
+                .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
+
+            // Act
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
+            await handler.HandleAsync().ConfigureAwait(false);
+
+            // Assert
+        }
+
+        [Fact]
+        public async Task Test_NoParserFound()
+        {
+            // Arrange
+            var reader = new Mock<IBlobReader>();
+            var archive = new Mock<IBlobArchive>();
+            var errorArchive = new Mock<IBlobErrorArchive>();
+
+            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
+            var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+
+            var blobItemErrorResponseXml = BlobItemData("noparserfound", "no parser");
+
+            reader
+                .Setup(e => e.GetBlobsReadyForProcessingAsync())
+                .ReturnsAsync(
+                    new List<BlobItemData>()
+                    {
+                        blobItemErrorResponseXml,
+                    });
+
+            archive
+                .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
+                .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
+
+            // Act
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
+            await handler.HandleAsync().ConfigureAwait(false);
+
+            // Assert
         }
 
         private static BlobItemData BlobItemData(string contentType, string content)

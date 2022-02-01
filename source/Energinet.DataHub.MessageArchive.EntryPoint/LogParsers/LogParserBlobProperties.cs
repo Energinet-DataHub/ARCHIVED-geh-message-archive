@@ -14,39 +14,33 @@
 
 using System.Globalization;
 using System.Linq;
-using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
-    public class LogParserNoContent : ILogParser
+    public class LogParserBlobProperties : ILogParser
     {
-        public BaseParsedModel Parse(BlobItemData blobItemData)
+        /// <summary>
+        /// Parses known and important properties from blob data. Including index tags.
+        /// </summary>
+        /// <param name="blobItemData"></param>
+        /// <returns>Parsed blob data</returns>
+        public virtual BaseParsedModel Parse(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var mridValue = string.Empty;
-            var typeValue = string.Empty;
-            var processTypeValue = string.Empty;
-            var businessSectorTypeValue = string.Empty;
-            var senderGlnValue = string.Empty;
-            var senderMarketRoleValue = string.Empty;
-            var receiverGlnValue = string.Empty;
-            var receiverMarketRoleValue = string.Empty;
-            var createdDataValue = string.Empty;
-
             var parsedModel = new BaseParsedModel
             {
-                MessageId = mridValue,
-                MessageType = typeValue,
-                ProcessType = processTypeValue,
-                BusinessSectorType = businessSectorTypeValue,
-                SenderGln = senderGlnValue,
-                SenderGlnMarketRoleType = senderMarketRoleValue,
-                ReceiverGln = receiverGlnValue,
-                ReceiverGlnMarketRoleType = receiverMarketRoleValue,
-                CreatedDate = createdDataValue,
+                MessageId = string.Empty,
+                MessageType = string.Empty,
+                ProcessType = string.Empty,
+                BusinessSectorType = string.Empty,
+                SenderGln = string.Empty,
+                SenderGlnMarketRoleType = string.Empty,
+                ReceiverGln = string.Empty,
+                ReceiverGlnMarketRoleType = string.Empty,
+                CreatedDate = string.Empty,
                 LogCreatedDate = blobItemData.BlobCreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
                 BlobContentUri = blobItemData.Uri.AbsoluteUri,
                 HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
@@ -55,9 +49,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 TraceId = blobItemData.MetaData.TryGetValue("traceid", out var traceid) ? traceid : string.Empty,
                 TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
                 ResponseStatus = blobItemData.MetaData.TryGetValue("statuscode", out var statuscode) ? statuscode : string.Empty,
+                Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null,
             };
-
-            parsedModel.Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null;
 
             return parsedModel;
         }
