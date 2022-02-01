@@ -14,12 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -38,33 +38,36 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var archive = new Mock<IBlobArchive>();
             var errorArchive = new Mock<IBlobErrorArchive>();
 
-            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
+            var storage = new MockedStorageWriter();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+
+            var logsToParse = new List<BlobItemData>()
+            {
+                BlobItemData("xml", "<ok></ok>"),
+                BlobItemData("xml", "<notok><//notok>"),
+                BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
+                BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                BlobItemData("json", "{}"),
+                BlobItemData("text/plain", string.Empty),
+                BlobItemData("nocontent", string.Empty),
+            };
 
             reader
                 .Setup(e => e.GetBlobsReadyForProcessingAsync())
-                .ReturnsAsync(
-                    new List<BlobItemData>()
-                    {
-                        BlobItemData("xml", "<ok></ok>"),
-                        BlobItemData("xml", "<notok><//notok>"),
-                        BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
-                        BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
-                        BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
-                        BlobItemData("json", "{}"),
-                        BlobItemData("text/plain", string.Empty),
-                        BlobItemData("nocontent", string.Empty),
-                    });
+                .ReturnsAsync(logsToParse);
 
             archive
                 .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
                 .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
 
             // Act
-            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, storage, logger);
+            await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            await handler.HandleAsync().ConfigureAwait(false);
+            var storageList = storage.GetStorage().ToList();
+            Assert.Equal(logsToParse.Count, storageList.Count);
         }
 
         [Fact]
@@ -75,7 +78,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var archive = new Mock<IBlobArchive>();
             var errorArchive = new Mock<IBlobErrorArchive>();
 
-            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
+            var storage = new MockedStorageWriter();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
 
             var blobItemErrorResponseXml = BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
@@ -97,10 +100,14 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
                 .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
 
             // Act
-            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, storage, logger);
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
+            var storageList = storage.GetStorage().ToList();
+            Assert.NotNull(storageList.FirstOrDefault(
+                e => e.Errors != null
+                     && e.Errors.Any(f => f.Code.Equals("1") && f.Message.Equals("test"))));
         }
 
         [Fact]
@@ -111,7 +118,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var archive = new Mock<IBlobArchive>();
             var errorArchive = new Mock<IBlobErrorArchive>();
 
-            var writer = new Mock<IStorageWriter<CosmosRequestResponseLog>>();
+            var storage = new MockedStorageWriter();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
 
             var blobItemErrorResponseXml = BlobItemData("noparserfound", "no parser");
@@ -129,10 +136,12 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
                 .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
 
             // Act
-            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, writer.Object, logger);
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, errorArchive.Object, storage, logger);
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
+            var storageList = storage.GetStorage().ToList();
+            Assert.Empty(storageList);
         }
 
         private static BlobItemData BlobItemData(string contentType, string content)
