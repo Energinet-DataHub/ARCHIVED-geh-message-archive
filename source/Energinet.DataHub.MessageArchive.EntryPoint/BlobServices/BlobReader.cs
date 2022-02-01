@@ -41,7 +41,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
         {
             // can be paged
             var blobsToProcess = _blobContainerClient
-                .GetBlobsAsync(BlobTraits.All, prefix: "2022-01-31").ConfigureAwait(false);
+                .GetBlobsAsync(BlobTraits.All).ConfigureAwait(false);
+
             var tasks = new List<Task<BlobItemData>>();
 
             await foreach (var blobItem in blobsToProcess)
