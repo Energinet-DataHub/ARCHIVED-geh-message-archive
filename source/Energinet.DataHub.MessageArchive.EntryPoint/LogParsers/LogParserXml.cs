@@ -54,9 +54,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
             parsedModel.CreatedDate = createdDataValue;
 
-            var errors = XmlErrorParser.ParseErrors(xmlDocument);
-            parsedModel.Errors = errors.Any() ? errors : null;
-
             return parsedModel;
         }
 
