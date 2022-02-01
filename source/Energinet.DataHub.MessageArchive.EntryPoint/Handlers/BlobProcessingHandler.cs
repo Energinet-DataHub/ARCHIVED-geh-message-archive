@@ -61,21 +61,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                         var parsedModel = parser.Parse(blobItemData);
                         var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
 
-                        // var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
-                        // cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
+                        var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
+                        cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
                         await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
                         _logger.LogCritical(e, "Error in item processing");
                         _logger.LogError("Error: {name}", blobItemData.Name);
-                        //await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
+                        await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     _logger.LogInformation("Could not find parser for log: {name}", blobItemData.Name);
-                    //await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
+                    await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
                 }
             }
         }
