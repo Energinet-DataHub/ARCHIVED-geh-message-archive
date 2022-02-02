@@ -71,8 +71,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
         {
             container.Register<IBlobReader>(() =>
             {
-                var connectionString = string.Empty;
-                var containerName = string.Empty;
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
                 return new BlobReader(connectionString, containerName);
             });
         }
@@ -81,9 +83,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
         {
             container.Register<IBlobArchive>(() =>
             {
-                var connectionString = string.Empty;
-                var fromContainerName = string.Empty;
-                var toContainerName = string.Empty;
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var fromContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
+                var toContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME");
 
                 return new BlobArchive(connectionString, fromContainerName, toContainerName);
             });
@@ -93,9 +97,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
         {
             container.Register<IStorageWriter<CosmosRequestResponseLog>>(() =>
             {
-                var connectionString = string.Empty;
-                var databaseId = string.Empty;
-                var containerName = string.Empty;
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var databaseId = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_DATABASE_ID");
+                var containerName = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONTAINER_NAME");
 
                 return new CosmosWriter(
                     connectionString,

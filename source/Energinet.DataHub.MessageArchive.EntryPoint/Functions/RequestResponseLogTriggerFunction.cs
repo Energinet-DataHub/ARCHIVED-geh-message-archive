@@ -24,25 +24,26 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
     {
         private const string FunctionName = nameof(RequestResponseLogTriggerFunction);
         private readonly IBlobProcessingHandler _blobProcessingHandler;
+        private readonly ILogger<RequestResponseLogTriggerFunction> _logger;
 
-        public RequestResponseLogTriggerFunction(IBlobProcessingHandler blobProcessingHandler)
+        public RequestResponseLogTriggerFunction(
+            IBlobProcessingHandler blobProcessingHandler,
+            ILogger<RequestResponseLogTriggerFunction> logger)
         {
             _blobProcessingHandler = blobProcessingHandler;
+            _logger = logger;
         }
 
         [Function(FunctionName)]
-        public async Task RunAsync(
-            [TimerTrigger("* */1 * * * *")]
-            FunctionContext context)
+        public async Task RunAsync([TimerTrigger("* */1 * * * *")] FunctionContext context)
         {
-            var logger = context.GetLogger<RequestResponseLogTriggerFunction>();
+            _logger.LogInformation("RequestResponseLogTriggerFunction starting");
             var stopWatch = Stopwatch.StartNew();
-            logger.LogInformation("RequestResponseLogTriggerFunction starting");
 
             await _blobProcessingHandler.HandleAsync().ConfigureAwait(false);
 
             stopWatch.Stop();
-            logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {time}", stopWatch.ElapsedMilliseconds);
+            _logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {time}", stopWatch.ElapsedMilliseconds);
         }
     }
 }
