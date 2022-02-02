@@ -14,22 +14,21 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
 
 namespace Energinet.DataHub.MessageArchive.Tests
 {
-    public class MockedStorageWriter : IStorageWriter<CosmosRequestResponseLog>
+    public class MockedStorageWriter<T> : IStorageWriter<T>
     {
-        private List<CosmosRequestResponseLog> _storage = new ();
+        private List<T> _storage = new ();
 
-        public Task WriteAsync(CosmosRequestResponseLog objectToSave)
+        public Task WriteAsync(T objectToSave)
         {
             _storage.Add(objectToSave);
             return Task.CompletedTask;
         }
 
-        public IEnumerable<CosmosRequestResponseLog> GetStorage()
+        public IEnumerable<T> GetStorage()
         {
             return _storage;
         }

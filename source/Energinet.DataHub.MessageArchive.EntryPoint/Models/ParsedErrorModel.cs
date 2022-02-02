@@ -14,10 +14,16 @@
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
-    public class ParsedErrorModel
+    public sealed record ParsedErrorModel
     {
-        public string Code { get; set; }
+        public ParsedErrorModel(string code, string message)
+        {
+            Code = code;
+            Message = message;
+        }
 
-        public string Message { get; set; }
+        public string Code { get; }
+
+        public string Message { get; }
     }
 }

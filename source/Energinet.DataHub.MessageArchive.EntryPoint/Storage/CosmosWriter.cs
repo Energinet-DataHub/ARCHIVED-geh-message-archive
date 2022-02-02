@@ -41,8 +41,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Storage
         {
             Guard.ThrowIfNull(objectToSave, nameof(objectToSave));
 
-            objectToSave.Id = Guid.NewGuid().ToString(); // $"{objectToSave.InvocationId}_{objectToSave.MessageId}";
-            objectToSave.PartitionKey = !string.IsNullOrWhiteSpace(objectToSave.ReceiverGln) ? objectToSave.ReceiverGln : "nopartitionkey";
+            objectToSave.Id = Guid.NewGuid().ToString();
+            objectToSave.PartitionKey = Guid.NewGuid().ToString();
             var container = _cosmosClient.GetContainer(_databaseId, _containerName);
             var response = await container.CreateItemAsync(objectToSave, new PartitionKey(objectToSave.PartitionKey)).ConfigureAwait(false);
 

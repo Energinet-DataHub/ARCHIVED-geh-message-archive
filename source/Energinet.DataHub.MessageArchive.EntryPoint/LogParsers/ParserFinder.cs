@@ -24,34 +24,22 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
     public static class ParserFinder
     {
-        public static ILogParser? FindParser(string contentType, string httpStatusCode, string content)
+        public static ILogParser FindParser(string contentType, string httpStatusCode, string content)
         {
             Guard.ThrowIfNull(contentType, nameof(contentType));
 
             if (IsErrorServerResponse(httpStatusCode))
             {
-                if (LogParserContentValidate.ValidXml(content)
-                    && IsErrorXmlWithContent(contentType, content))
+                if (IsErrorXmlWithContent(contentType, content))
                 {
                     return new LogParserErrorResponseXml();
                 }
 
-                if (LogParserContentValidate.ValidJson(content)
-                    && IsJsonContent(contentType, content))
+                if (IsErrorJsonWithContent(contentType, content))
                 {
                     return new LogParserErrorResponseJson();
                 }
 
-                return new LogParserBlobProperties();
-            }
-
-            if (IsXmlWithContent(contentType, content) && !LogParserContentValidate.ValidXml(content))
-            {
-                return new LogParserBlobProperties();
-            }
-
-            if (IsJsonContent(contentType, content) && !LogParserContentValidate.ValidJson(content))
-            {
                 return new LogParserBlobProperties();
             }
 
@@ -65,23 +53,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 return new LogParserJson();
             }
 
-            if (contentType.Contains("text/plain"))
-            {
-                return new LogParserBlobProperties();
-            }
-
-            if (string.IsNullOrWhiteSpace(content))
-            {
-                return new LogParserBlobProperties();
-            }
-
-            if (Enum.TryParse<HttpStatusCode>(httpStatusCode, out var parsedHttpStatus)
-                && parsedHttpStatus is HttpStatusCode.OK or HttpStatusCode.Accepted)
-            {
-                return new LogParserBlobProperties();
-            }
-
-            return null;
+            return new LogParserBlobProperties();
         }
 
         private static bool IsXmlWithContent(string contentType, string content)
@@ -95,8 +67,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 
         private static bool IsErrorXmlWithContent(string contentType, string content)
         {
-            return IsXmlWithContent(contentType, content) ||
-                   content.Trim().StartsWith("<Error", StringComparison.InvariantCultureIgnoreCase);
+            return contentType.Contains("xml")
+                   && !string.IsNullOrWhiteSpace(content)
+                   && content.Trim().Contains("<Error>", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static bool IsJsonContent(string contentType, string content)
@@ -104,6 +77,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             return contentType.Contains("json")
                    || (!string.IsNullOrWhiteSpace(content) &&
                        content.Trim().StartsWith("{", StringComparison.InvariantCulture));
+        }
+
+        private static bool IsErrorJsonWithContent(string contentType, string content)
+        {
+            return contentType.Contains("json")
+                   || (!string.IsNullOrWhiteSpace(content)
+                       && content.Contains("error", StringComparison.InvariantCultureIgnoreCase)
+                       && content.Contains("code", StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static bool IsErrorServerResponse(string httpStatusCodeStr)

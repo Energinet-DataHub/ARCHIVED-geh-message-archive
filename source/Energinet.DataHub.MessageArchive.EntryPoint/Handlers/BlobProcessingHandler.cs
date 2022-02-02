@@ -26,20 +26,17 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
     {
         private readonly IBlobReader _blobReader;
         private readonly IBlobArchive _blobArchive;
-        private readonly IBlobErrorArchive _blobErrorArchive;
         private readonly IStorageWriter<CosmosRequestResponseLog> _storageWriter;
         private readonly ILogger<BlobProcessingHandler> _logger;
 
         public BlobProcessingHandler(
             IBlobReader blobReader,
             IBlobArchive blobArchive,
-            IBlobErrorArchive blobErrorArchive,
             IStorageWriter<CosmosRequestResponseLog> storageWriter,
             ILogger<BlobProcessingHandler> logger)
         {
             _blobReader = blobReader;
             _blobArchive = blobArchive;
-            _blobErrorArchive = blobErrorArchive;
             _storageWriter = storageWriter;
             _logger = logger;
         }
@@ -54,30 +51,27 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
                 var httpStatusCode = blobItemData.MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
 
                 var parser = ParserFinder.FindParser(contentType, httpStatusCode, blobItemData.Content);
-                if (parser is { })
-                {
-                    try
-                    {
-                        var parsedModel = parser.Parse(blobItemData);
-                        var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
 
-                        var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
-                        cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
-                        await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogCritical(e, "Error in item processing");
-                        _logger.LogError("Error: {name}", blobItemData.Name);
-                        await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
-                    }
-                }
-                else
+                try
                 {
-                    _logger.LogInformation("Could not find parser for log: {name}", blobItemData.Name);
-                    await _blobErrorArchive.MoveToErrorArchiveAsync(blobItemData).ConfigureAwait(false);
+                    await ParseAndSaveAsync(parser, blobItemData).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Error in processing item: {name}", blobItemData.Name);
+                    await ParseAndSaveAsync(new LogParserBlobProperties(), blobItemData).ConfigureAwait(false);
                 }
             }
+        }
+
+        private async Task ParseAndSaveAsync(ILogParser parser, BlobItemData blobItemData)
+        {
+            var parsedModel = parser.Parse(blobItemData);
+            var cosmosModel = Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
+
+            var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
+            cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
+            await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
         }
     }
 }

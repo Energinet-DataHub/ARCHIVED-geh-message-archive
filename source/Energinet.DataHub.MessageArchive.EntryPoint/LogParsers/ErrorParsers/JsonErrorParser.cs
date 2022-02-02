@@ -30,11 +30,12 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers
                 var message = errorProp.GetProperty("message").GetString();
                 if (errorPropParsed)
                 {
-                    return new List<ParsedErrorModel>() { new () { Code = code ?? string.Empty, Message = message ?? string.Empty } };
+                    return new List<ParsedErrorModel>() { new (code ?? string.Empty, message ?? string.Empty) };
                 }
             }
             catch
             {
+                // ignored
             }
 
             return null;

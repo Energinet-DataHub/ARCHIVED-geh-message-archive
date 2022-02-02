@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -31,28 +32,34 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 
             var parsedModel = base.Parse(blobItemData);
 
-            var xmlDocument = XElement.Parse(blobItemData.Content);
-            XNamespace ns = xmlDocument.Name.Namespace;
+            try
+            {
+                var xmlDocument = XElement.Parse(blobItemData.Content);
+                XNamespace ns = xmlDocument.Name.Namespace;
 
-            var mridValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
-            var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
-            var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
-            var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
-            var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
-            var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
-            var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
-            var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
-            var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
+                var mridValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
+                var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
+                var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
+                var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
+                var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
+                var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
+                var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
+                var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
+                var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
-            parsedModel.MessageId = mridValue;
-            parsedModel.MessageType = typeValue;
-            parsedModel.ProcessType = processTypeValue;
-            parsedModel.BusinessSectorType = businessSectorTypeValue;
-            parsedModel.SenderGln = senderGlnValue;
-            parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
-            parsedModel.ReceiverGln = receiverGlnValue;
-            parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
-            parsedModel.CreatedDate = createdDataValue;
+                parsedModel.MessageId = mridValue;
+                parsedModel.MessageType = typeValue;
+                parsedModel.ProcessType = processTypeValue;
+                parsedModel.BusinessSectorType = businessSectorTypeValue;
+                parsedModel.SenderGln = senderGlnValue;
+                parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
+                parsedModel.ReceiverGln = receiverGlnValue;
+                parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
+                parsedModel.CreatedDate = createdDataValue;
+            }
+            catch
+            {
+            }
 
             return parsedModel;
         }

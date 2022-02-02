@@ -28,11 +28,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers
 
             var errors = xmlDocument.DescendantsAndSelf("Error");
             return errors
-                .Select(e => new ParsedErrorModel()
-                {
-                    Code = e.DescendantsAndSelf("Code").FirstOrDefault()?.Value ?? "unknown",
-                    Message = e.DescendantsAndSelf("Message").FirstOrDefault()?.Value ?? "unknown",
-                }).ToList();
+                .Select(e => new ParsedErrorModel(
+                    e.DescendantsAndSelf("Code").FirstOrDefault()?.Value ?? "unknown",
+                    e.DescendantsAndSelf("Message").FirstOrDefault()?.Value ?? "unknown"))
+                .ToList();
         }
     }
 }

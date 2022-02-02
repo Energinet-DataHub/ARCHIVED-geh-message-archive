@@ -23,12 +23,12 @@ using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 {
-    public abstract class BlobArchive : IBlobArchive
+    public class BlobArchive : IBlobArchive
     {
         private readonly BlobContainerClient _fromContainerClient;
         private readonly BlobContainerClient _toContainerClient;
 
-        protected BlobArchive(string connectionString, string fromContainerName, string toContainerName)
+        public BlobArchive(string connectionString, string fromContainerName, string toContainerName)
         {
             _fromContainerClient = new BlobContainerClient(connectionString, fromContainerName);
             _toContainerClient = new BlobContainerClient(connectionString, toContainerName);
