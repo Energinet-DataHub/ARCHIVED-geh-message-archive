@@ -51,9 +51,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
             foreach (var blobItemData in blobDataToProcess)
             {
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
-                var httpstatuscode = blobItemData.MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
+                var httpStatusCode = blobItemData.MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
 
-                var parser = ParserFinder.FindParser(contentType, httpstatuscode, blobItemData.Content);
+                var parser = ParserFinder.FindParser(contentType, httpStatusCode, blobItemData.Content);
                 if (parser is { })
                 {
                     try
