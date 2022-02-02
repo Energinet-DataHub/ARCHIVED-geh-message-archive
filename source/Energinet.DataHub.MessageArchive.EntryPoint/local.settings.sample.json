@@ -9,7 +9,7 @@
     "COSMOS_MESSAGE_ARCHIVE_CONTAINER_NAME": "<Setting-Value>",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": ""
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
     "MESSAGE_ARCHIVE_DB_CONNECTION_STRING": "",
     "MESSAGE_ARCHIVE_DB_NAME": ""
   }

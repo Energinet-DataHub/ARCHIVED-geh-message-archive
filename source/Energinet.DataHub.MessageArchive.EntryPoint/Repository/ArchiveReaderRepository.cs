@@ -66,7 +66,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             foreach (var cosmosSearchResult in cosmosDocuments)
             {
                 searchResults.Results.Add(new SearchResult(
-                    cosmosSearchResult.Id,
+                    cosmosSearchResult.MessageId,
                     cosmosSearchResult.MessageType,
                     cosmosSearchResult.ProcessId,
                     cosmosSearchResult.DateTimeReceived,

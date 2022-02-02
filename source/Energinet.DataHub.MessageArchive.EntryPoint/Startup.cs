@@ -68,10 +68,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             RegisterCosmosStorageWriter(Container);
 
             Container.Register<ITestService, TestService>(Lifestyle.Transient);
-            Container.RegisterSingleton<IArchiveCosmosClient>(() => GetCosmosClient(Container));
-            Container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
-            Container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
+            Container.Register<ArchiveSearchRequestListener>(Lifestyle.Scoped);
             Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
         }
 
@@ -116,16 +114,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
                     databaseId,
                     containerName);
             });
-            Container.Register<TriggerFunction>(Lifestyle.Scoped);
-            Container.RegisterSingleton<IArchiveCosmosClient>(() => GetCosmosClient(Container));
-            Container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
-            Container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
+            container.RegisterSingleton(() => GetCosmosClient(container));
+            container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
+            container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
         }
 
         private static IArchiveCosmosClient GetCosmosClient(Container container)
         {
             var configuration = container.GetService<IConfiguration>();
-            var connectionString = configuration.GetValue<string>("MESSAGE_ARCHIVE_DB_CONNECTION_STRING");
+            var connectionString = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING");
 
             if (string.IsNullOrEmpty(connectionString))
             {
