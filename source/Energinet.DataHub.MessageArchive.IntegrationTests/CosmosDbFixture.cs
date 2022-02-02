@@ -18,6 +18,7 @@ using Xunit;
 
 namespace Energinet.DataHub.MessageArchive.IntegrationTests
 {
+    // random text
     internal sealed class CosmosDbFixture : IAsyncLifetime
     {
         public async Task InitializeAsync()
