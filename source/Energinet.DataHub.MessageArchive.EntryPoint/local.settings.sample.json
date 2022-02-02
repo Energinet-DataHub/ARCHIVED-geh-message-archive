@@ -1,6 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "SomeSetting": "Setting-value"
+    "MESSAGE_ARCHIVE_DB_CONNECTION_STRING": "",
+    "MESSAGE_ARCHIVE_DB_NAME": ""
   }
 }

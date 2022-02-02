@@ -12,6 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageArchive.IntegrationTests")]
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
+{
+    /// <summary>
+    /// Entity to access data from search criteria
+    /// </summary>
+    public interface IArchiveReaderRepository
+    {
+        /// <summary>
+        /// Gets search results
+        /// </summary>
+        /// <param name="criteria">The criteria to perform the search on</param>
+        /// <returns>A list of search results</returns>
+        Task<SearchResults> GetSearchResultsAsync(SearchCriteria criteria);
+    }
+}
