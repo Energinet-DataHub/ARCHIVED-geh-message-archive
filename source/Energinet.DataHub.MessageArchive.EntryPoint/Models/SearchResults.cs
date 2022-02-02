@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageArchive.IntegrationTests")]
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+{
+    public sealed record SearchResults
+    {
+        public SearchResults()
+        {
+            Results = new List<SearchResult>();
+        }
+
+        public IList<SearchResult> Results { get; }
+    }
+}

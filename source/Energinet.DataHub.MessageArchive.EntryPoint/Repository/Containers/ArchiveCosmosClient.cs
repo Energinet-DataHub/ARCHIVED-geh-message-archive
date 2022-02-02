@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Runtime.CompilerServices;
+using Microsoft.Azure.Cosmos;
 
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageArchive.IntegrationTests")]
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers
+{
+    public class ArchiveCosmosClient : IArchiveCosmosClient
+    {
+        public ArchiveCosmosClient(CosmosClient client)
+        {
+            Client = client;
+        }
+
+        public CosmosClient Client { get; }
+    }
+}

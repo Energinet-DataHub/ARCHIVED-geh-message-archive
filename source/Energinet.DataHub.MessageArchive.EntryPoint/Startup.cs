@@ -18,13 +18,18 @@ using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
+using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
 using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleInjector;
+using Container = SimpleInjector.Container;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint
 {
@@ -63,6 +68,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             RegisterCosmosStorageWriter(Container);
 
             Container.Register<ITestService, TestService>(Lifestyle.Transient);
+            Container.RegisterSingleton<IArchiveCosmosClient>(() => GetCosmosClient(Container));
+            Container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
+            Container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
             Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
         }
@@ -108,6 +116,31 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
                     databaseId,
                     containerName);
             });
+            Container.Register<TriggerFunction>(Lifestyle.Scoped);
+            Container.RegisterSingleton<IArchiveCosmosClient>(() => GetCosmosClient(Container));
+            Container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
+            Container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
+        }
+
+        private static IArchiveCosmosClient GetCosmosClient(Container container)
+        {
+            var configuration = container.GetService<IConfiguration>();
+            var connectionString = configuration.GetValue<string>("MESSAGE_ARCHIVE_DB_CONNECTION_STRING");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Please specify a valid CosmosDBConnection in the appSettings.json file or your Azure Functions Settings.");
+            }
+
+            var cosmosClient = new CosmosClientBuilder(connectionString)
+                .WithSerializerOptions(new CosmosSerializationOptions
+                {
+                    PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+                })
+                .Build();
+
+            return new ArchiveCosmosClient(cosmosClient);
         }
 
         private static void SwitchToSimpleInjector(IServiceCollection services)

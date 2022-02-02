@@ -15,12 +15,12 @@
 namespace Energinet.DataHub.MessageArchive.EntryPoint
 {
     /// <summary>
-    /// ITestService
+    /// Test service
     /// </summary>
     public interface ITestService
     {
         /// <summary>
-        /// DoSomething
+        /// test
         /// </summary>
         void DoSomething();
     }
