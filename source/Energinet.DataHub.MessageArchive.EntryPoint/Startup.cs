@@ -59,6 +59,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             Container.RegisterSingleton(() => config!);
 
             RegisterBlobReader(Container);
+            RegisterBlobArchive(Container);
             RegisterCosmosStorageWriter(Container);
 
             Container.Register<ITestService, TestService>(Lifestyle.Transient);
@@ -73,6 +74,18 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
                 var connectionString = string.Empty;
                 var containerName = string.Empty;
                 return new BlobReader(connectionString, containerName);
+            });
+        }
+
+        private static void RegisterBlobArchive(Container container)
+        {
+            container.Register<IBlobArchive>(() =>
+            {
+                var connectionString = string.Empty;
+                var fromContainerName = string.Empty;
+                var toContainerName = string.Empty;
+
+                return new BlobArchive(connectionString, fromContainerName, toContainerName);
             });
         }
 
