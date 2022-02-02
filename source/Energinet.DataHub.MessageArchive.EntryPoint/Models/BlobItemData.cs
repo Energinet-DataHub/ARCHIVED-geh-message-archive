@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using Azure.Storage.Blobs.Models;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {

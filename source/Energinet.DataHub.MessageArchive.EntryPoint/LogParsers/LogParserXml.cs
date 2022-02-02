@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.ErrorParsers;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
