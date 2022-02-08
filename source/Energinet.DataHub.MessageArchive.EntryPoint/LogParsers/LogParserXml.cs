@@ -37,21 +37,26 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
                 var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
                 var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
+                var reasonCodeTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReasonCode}");
                 var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
                 var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
                 var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
                 var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
                 var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
+                var originalTransactionIdReferenceId = ReadOriginalTransactionIdReferenceId(xmlDocument, ns);
+
                 parsedModel.MessageId = mridValue;
                 parsedModel.MessageType = typeValue;
                 parsedModel.ProcessType = processTypeValue;
                 parsedModel.BusinessSectorType = businessSectorTypeValue;
+                parsedModel.ReasonCode = reasonCodeTypeValue;
                 parsedModel.SenderGln = senderGlnValue;
                 parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
                 parsedModel.ReceiverGln = receiverGlnValue;
                 parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
                 parsedModel.CreatedDate = createdDataValue;
+                parsedModel.OriginalTransactionIDReferenceId = originalTransactionIdReferenceId;
             }
             catch
             {
@@ -65,6 +70,28 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             var node = xmlDocument.Elements(name).FirstOrDefault();
             var value = node?.Value ?? string.Empty;
             return value;
+        }
+
+        private static string ReadOriginalTransactionIdReferenceId(XElement xmlDocument, XNamespace ns)
+        {
+            var mktActivityRecord = xmlDocument.Elements($"{ns + "MktActivityRecord"}").FirstOrDefault();
+            var seriesRecord = xmlDocument.Elements($"{ns + "Series"}").FirstOrDefault();
+
+            if (mktActivityRecord is not null)
+            {
+                return ReadValueOrEmptyString(
+                    mktActivityRecord,
+                    $"{ns + ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}");
+            }
+
+            if (seriesRecord is not null)
+            {
+                return ReadValueOrEmptyString(
+                    seriesRecord,
+                    $"{ns + ElementNames.OriginalTransactionIdReferenceSeriesmRid}");
+            }
+
+            return string.Empty;
         }
     }
 }

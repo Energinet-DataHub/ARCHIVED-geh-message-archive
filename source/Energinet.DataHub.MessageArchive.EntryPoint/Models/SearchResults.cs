@@ -20,9 +20,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
     {
         public SearchResults()
         {
-            Results = new List<SearchResult>();
+            Result = new List<BaseParsedModel>();
         }
 
-        public IList<SearchResult> Results { get; }
+        public IList<BaseParsedModel> Result { get; }
     }
 }

@@ -26,6 +26,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? BusinessSectorType { get; set; }
 
+        public string? ReasonCode { get; set; }
+
         public string? CreatedDate { get; set; }
 
         public string? LogCreatedDate { get; set; }
@@ -51,6 +53,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? TraceParent { get; set; }
 
         public string? ResponseStatus { get; set; }
+
+        public string? OriginalTransactionIDReferenceId { get; set; }
 
         public IDictionary<string, string>? Data { get; set; }
 

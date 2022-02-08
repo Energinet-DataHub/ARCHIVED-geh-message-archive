@@ -15,7 +15,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Documents;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.Utilities;
@@ -36,18 +35,23 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
         {
             Guard.ThrowIfNull(criteria, nameof(criteria));
 
-            var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosSearchResult>();
+            var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
                       (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
-                      (criteria.ProcessId == null || criteria.ProcessId == searchResult.ProcessId) &&
-                      (criteria.SenderId == null || criteria.SenderId == searchResult.SenderId) &&
-                      (criteria.BusinessReasonCode == null || criteria.BusinessReasonCode == searchResult.BusinessReasonCode) &&
-                      (criteria.DateTimeFrom == null || criteria.DateTimeFrom <= searchResult.DateTimeReceived) &&
-                      (criteria.DateTimeTo == null || criteria.DateTimeTo >= searchResult.DateTimeReceived)
+                    (criteria.ProcessType == null || criteria.ProcessType == searchResult.ProcessType) &&
+                    (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
+                    //(criteria.DateTimeFrom == null || criteria.DateTimeFrom <= searchResult.LogCreatedDate) &&
+                    //(criteria.DateTimeTo == null || criteria.DateTimeTo >= searchResult.LogCreatedDate) &&
+                    (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
+                    (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
+                    (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
+                    (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
+                    (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode)
                 select searchResult;
 
-            List<CosmosSearchResult> cosmosDocuments = new ();
+            //TODO ReferenceId
+            List<CosmosRequestResponseLog> cosmosDocuments = new ();
 
             using var iterator = query.ToFeedIterator();
 
@@ -59,19 +63,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             return Map(cosmosDocuments);
         }
 
-        private static SearchResults Map(IEnumerable<CosmosSearchResult> cosmosDocuments)
+        private static SearchResults Map(IEnumerable<CosmosRequestResponseLog> cosmosDocuments)
         {
             SearchResults searchResults = new ();
 
             foreach (var cosmosSearchResult in cosmosDocuments)
             {
-                searchResults.Results.Add(new SearchResult(
-                    cosmosSearchResult.MessageId,
-                    cosmosSearchResult.MessageType,
-                    cosmosSearchResult.ProcessId,
-                    cosmosSearchResult.DateTimeReceived,
-                    cosmosSearchResult.SenderId,
-                    cosmosSearchResult.BusinessReasonCode));
+                var searchResult =
+                    Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(cosmosSearchResult);
+                searchResults.Result.Add(searchResult);
             }
 
             return searchResults;

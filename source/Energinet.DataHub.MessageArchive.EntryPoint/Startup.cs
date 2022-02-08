@@ -67,7 +67,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             RegisterBlobArchive(Container);
             RegisterCosmosStorageWriter(Container);
 
-            Container.Register<ITestService, TestService>(Lifestyle.Transient);
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
             Container.Register<ArchiveSearchRequestListener>(Lifestyle.Scoped);
             Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);

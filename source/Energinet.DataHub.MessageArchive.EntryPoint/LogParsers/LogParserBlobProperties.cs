@@ -36,6 +36,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 MessageType = string.Empty,
                 ProcessType = string.Empty,
                 BusinessSectorType = string.Empty,
+                ReasonCode = string.Empty,
                 SenderGln = string.Empty,
                 SenderGlnMarketRoleType = string.Empty,
                 ReceiverGln = string.Empty,

@@ -21,12 +21,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities
         public const string Type = "type";
         public const string ProcessProcessType = "process.processType";
         public const string BusinessSectorType = "businessSector.type";
+        public const string ReasonCode = "reason.code";
         public const string SenderMarketParticipantmRid = "sender_MarketParticipant.mRID";
         public const string SenderMarketParticipantmarketRoletype = "sender_MarketParticipant.marketRole.type";
         public const string ReceiverMarketParticipantmRid = "receiver_MarketParticipant.mRID";
         public const string ReceiverMarketParticipantmarketRoletype = "receiver_MarketParticipant.marketRole.type";
         public const string CreatedDateTime = "createdDateTime";
         public const string OriginalTransactionIdReferenceSeriesmRid = "originalTransactionIDReference_Series.mRID";
+        public const string OriginalTransactionIdReferenceMktActivityRecordmRid = "originalTransactionIDReference_MktActivityRecord.mRID";
         public const string RegistrationDateAndOrTimedateTime = "registration_DateAndOrTime.dateTime";
         public const string InDomainmRid = "in_Domain.mRID";
         public const string OutDomainmRid = "out_Domain.mRID";
