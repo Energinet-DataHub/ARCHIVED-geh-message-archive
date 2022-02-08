@@ -63,6 +63,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
             Container.RegisterSingleton(() => config!);
 
+            // Add Application insights telemetry
+            services.SetupApplicationInsightTelemetry(config);
+
             RegisterBlobReader(Container);
             RegisterBlobArchive(Container);
             RegisterCosmosStorageWriter(Container);
