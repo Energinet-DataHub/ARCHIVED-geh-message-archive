@@ -21,7 +21,6 @@ using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
-using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Worker;
@@ -103,19 +102,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
 
         private static void RegisterCosmosStorageWriter(Container container)
         {
-            container.Register<IStorageWriter<CosmosRequestResponseLog>>(() =>
-            {
-                var configuration = container.GetService<IConfiguration>();
-
-                var connectionString = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING");
-                var databaseId = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_DATABASE_ID");
-                var containerName = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONTAINER_NAME");
-
-                return new CosmosWriter(
-                    connectionString,
-                    databaseId,
-                    containerName);
-            });
+            container.Register<IStorageWriter<CosmosRequestResponseLog>, ArchiveWriterRepository>();
             container.RegisterSingleton(() => GetCosmosClient(container));
             container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
             container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);

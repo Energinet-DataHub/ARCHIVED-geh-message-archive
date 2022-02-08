@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
+using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 
 namespace Energinet.DataHub.MessageArchive.Tests
 {

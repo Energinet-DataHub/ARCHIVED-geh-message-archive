@@ -14,7 +14,7 @@
 
 using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Storage
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 {
     /// <summary>
     /// Storage interface

@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.EntryPoint.Storage;
+using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
