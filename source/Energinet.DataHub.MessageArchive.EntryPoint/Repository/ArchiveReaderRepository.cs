@@ -47,18 +47,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
                     (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
                     (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
-                    (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode)
+                    (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
+                    (criteria.ReferenceId == null || criteria.ReferenceId == searchResult.OriginalTransactionIDReferenceId)
                 select searchResult;
 
-            //TODO ReferenceId
-            List<CosmosRequestResponseLog> cosmosDocuments = new ();
-
-            using var iterator = query.ToFeedIterator();
-
-            while (iterator.HasMoreResults)
-            {
-                cosmosDocuments.AddRange(await iterator.ReadNextAsync().ConfigureAwait(false));
-            }
+            var cosmosDocuments = await ExecuteQueryAsync(query).ConfigureAwait(false);
 
             return Map(cosmosDocuments);
         }
@@ -75,6 +68,20 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             }
 
             return searchResults;
+        }
+
+        private static async Task<List<CosmosRequestResponseLog>> ExecuteQueryAsync(IQueryable<CosmosRequestResponseLog> query)
+        {
+            List<CosmosRequestResponseLog> cosmosDocuments = new ();
+
+            using var iterator = query.ToFeedIterator();
+
+            while (iterator.HasMoreResults)
+            {
+                cosmosDocuments.AddRange(await iterator.ReadNextAsync().ConfigureAwait(false));
+            }
+
+            return cosmosDocuments;
         }
     }
 }
