@@ -11,14 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-name: 'Azure CLI Install and Login'
-description: 'Installs Azure CLI and logs into Azure Account'
+name: 'Publish release content'
+inputs:
+  RELEASE_FOLDER_PATH:
+    required: true
+  REPO_FOLDER_PATH:
+    required: true
+
 runs:
-  using: "composite"
-  steps: 
-    - run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  using: composite
+  steps:
+    - name: Publish Infrastructure to release folder
       shell: bash
-    - run: |
-        az login --service-principal --username ${{ env.ARM_CLIENT_ID }} --password ${{ env.ARM_CLIENT_SECRET }} --tenant ${{ env.ARM_TENANT_ID}}
-        az account set --subscription ${{ env.ARM_SUBSCRIPTION_ID }}
-      shell: bash
+      run: |
+        mkdir ${{ inputs.RELEASE_FOLDER_PATH }}
+        cp -fR ${{ inputs.REPO_FOLDER_PATH }}/build/infrastructure ${{ inputs.RELEASE_FOLDER_PATH }} 2>/dev/null || :
+
+    - name: Publish Entry point to release folder
+      uses: actions/download-artifact@v2
+      with:
+        name: entrypoint
+        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/entrypoint
