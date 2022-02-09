@@ -63,7 +63,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             foreach (var cosmosSearchResult in cosmosDocuments)
             {
                 var searchResult =
-                    Mappers.CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(cosmosSearchResult);
+                    Mappers.CosmosRequestResponseLogMapper.ToBaseParsedModels(cosmosSearchResult);
                 searchResults.Result.Add(searchResult);
             }
 

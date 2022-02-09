@@ -41,6 +41,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             toobj.FunctionName = fromobj.FunctionName;
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
+            toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
 
             toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;
@@ -49,11 +50,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             return toobj;
         }
 
-        public static BaseParsedModel ToCosmosRequestResponseLog(CosmosRequestResponseLog fromobj)
+        public static BaseParsedModel ToBaseParsedModels(CosmosRequestResponseLog fromobj)
         {
             Guard.ThrowIfNull(fromobj, nameof(fromobj));
 
-            var toobj = new CosmosRequestResponseLog();
+            var toobj = new BaseParsedModel();
             toobj.MessageId = fromobj.MessageId;
             toobj.MessageType = fromobj.MessageType;
             toobj.ProcessType = fromobj.ProcessType;
@@ -71,6 +72,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             toobj.FunctionName = fromobj.FunctionName;
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
+            toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
 
             toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;

@@ -73,7 +73,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
             var downloadedContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
             var cleanContent = CleanStringForUtf8Preamble(downloadedContent);
-            return new BlobItemData(name, metaData, indexTags, cleanContent, properties.CreatedOn, blobClient.Uri);
+            var createdOnUtc = properties.CreatedOn.GetValueOrDefault().ToUniversalTime();
+            return new BlobItemData(name, metaData, indexTags, cleanContent, createdOnUtc, blobClient.Uri);
         }
 
         private string CleanStringForUtf8Preamble(string content)
