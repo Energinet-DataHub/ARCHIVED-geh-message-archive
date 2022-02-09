@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
@@ -55,8 +56,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
                 parsedModel.ReceiverGln = receiverGlnValue;
                 parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
-                parsedModel.CreatedDate = createdDataValue;
                 parsedModel.OriginalTransactionIDReferenceId = originalTransactionIdReferenceId;
+
+                var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
+                parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : null;
             }
             catch
             {

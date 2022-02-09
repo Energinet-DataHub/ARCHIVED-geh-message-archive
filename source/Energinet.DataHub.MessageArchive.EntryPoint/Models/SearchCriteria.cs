@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
     public sealed record SearchCriteria
@@ -24,8 +26,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
             string? messageId,
             string? messageType,
             string? processType,
-            long? dateTimeFrom,
-            long? dateTimeTo,
+            string? dateTimeFrom,
+            string? dateTimeTo,
             string? senderId,
             string? businessSectorType,
             string? reasonCode,
@@ -51,8 +53,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? MessageId { get; set; }
         public string? MessageType { get; set; }
         public string? ProcessType { get; set; }
-        public long? DateTimeFrom { get; set; }
-        public long? DateTimeTo { get; set; }
+        public string? DateTimeFrom { get; set; }
+        public string? DateTimeTo { get; set; }
         public string? SenderId { get; set; }
         public string? BusinessSectorType { get; set; }
         public string? ReasonCode { get; set; }
@@ -60,5 +62,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? FunctionName { get; set; }
         public string? TraceId { get; set; }
         public string? ReferenceId { get; set; }
+        public DateTimeOffset? DateTimeFromParsed { get; set; }
+        public DateTimeOffset? DateTimeToParsed { get; set; }
     }
 }

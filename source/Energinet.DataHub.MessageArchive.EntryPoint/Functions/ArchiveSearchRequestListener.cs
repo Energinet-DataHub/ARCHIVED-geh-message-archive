@@ -19,6 +19,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
+using Energinet.DataHub.MessageArchive.EntryPoint.Validation;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -46,6 +47,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             if (searchCriteria is null)
             {
                 throw new InvalidOperationException(nameof(searchCriteria));
+            }
+
+            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            if (!valid)
+            {
+                var validationErrorResponse = request.CreateResponse(HttpStatusCode.BadRequest);
+                await validationErrorResponse.WriteStringAsync(errorMessage).ConfigureAwait(false);
+                return validationErrorResponse;
             }
 
             var searchResults = await _archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);

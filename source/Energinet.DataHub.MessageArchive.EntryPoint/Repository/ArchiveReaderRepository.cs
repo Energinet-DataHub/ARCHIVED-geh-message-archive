@@ -41,8 +41,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
                       (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
                     (criteria.ProcessType == null || criteria.ProcessType == searchResult.ProcessType) &&
                     (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
-                    //(criteria.DateTimeFrom == null || criteria.DateTimeFrom <= searchResult.LogCreatedDate) &&
-                    //(criteria.DateTimeTo == null || criteria.DateTimeTo >= searchResult.LogCreatedDate) &&
+                    (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.LogCreatedDate) &&
+                    (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.LogCreatedDate) &&
                     (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
                     (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&

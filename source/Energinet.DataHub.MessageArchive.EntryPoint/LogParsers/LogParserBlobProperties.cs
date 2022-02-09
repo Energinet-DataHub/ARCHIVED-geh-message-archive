@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Globalization;
 using System.Linq;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
@@ -41,8 +40,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 SenderGlnMarketRoleType = string.Empty,
                 ReceiverGln = string.Empty,
                 ReceiverGlnMarketRoleType = string.Empty,
-                CreatedDate = string.Empty,
-                LogCreatedDate = blobItemData.BlobCreatedOn.GetValueOrDefault().DateTime.ToString("u", CultureInfo.InvariantCulture),
+                CreatedDate = null,
+                LogCreatedDate = blobItemData.BlobCreatedOn,
                 BlobContentUri = blobItemData.Uri.AbsoluteUri,
                 HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
                 InvocationId = blobItemData.MetaData.TryGetValue("invocationid", out var invocationid) ? invocationid : string.Empty,
