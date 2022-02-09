@@ -27,20 +27,8 @@ runs:
         mkdir ${{ inputs.RELEASE_FOLDER_PATH }}
         cp -fR ${{ inputs.REPO_FOLDER_PATH }}/build/infrastructure ${{ inputs.RELEASE_FOLDER_PATH }} 2>/dev/null || :
 
-    - name: Publish Market operator to release folder
+    - name: Publish Entry point to release folder
       uses: actions/download-artifact@v2
       with:
-        name: marketoperator
-        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/marketoperator
-
-    - name: Publish Sub domain to release folder
-      uses: actions/download-artifact@v2
-      with:
-        name: subdomain
-        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/subdomain
-
-    - name: Publish Operations to release folder
-      uses: actions/download-artifact@v2
-      with:
-        name: operations
-        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/operations
+        name: entrypoint
+        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/entrypoint
