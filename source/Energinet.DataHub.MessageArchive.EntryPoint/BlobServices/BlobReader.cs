@@ -39,16 +39,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
-            //TODO can be paged
-            var blobsToProcess = _blobContainerClient
-                .GetBlobsAsync(BlobTraits.All).ConfigureAwait(false);
+            var blobPagesToProcess = _blobContainerClient
+                .GetBlobsAsync(BlobTraits.All, prefix: "2022-02-05")
+                .AsPages(default, 500);
 
             var tasks = new List<Task<BlobItemData>>();
 
-            await foreach (var blobItem in blobsToProcess)
+            await foreach (Azure.Page<BlobItem> blobPage in blobPagesToProcess)
             {
-                var blobDataTask = DownloadBlobDataAsync(blobItem);
-                tasks.Add(blobDataTask);
+                foreach (var blobItem in blobPage.Values)
+                {
+                    var blobDataTask = DownloadBlobDataAsync(blobItem);
+                    tasks.Add(blobDataTask);
+                }
+
+                break;
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);

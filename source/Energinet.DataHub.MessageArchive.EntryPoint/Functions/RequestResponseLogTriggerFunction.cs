@@ -35,7 +35,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
         }
 
         [Function(FunctionName)]
-        public async Task RunAsync([TimerTrigger("* */1 * * * *")] FunctionContext context)
+        public async Task RunAsync([TimerTrigger("*/5 */1 * * * *")] FunctionContext context)
         {
             _logger.LogInformation("RequestResponseLogTriggerFunction starting");
             var stopWatch = Stopwatch.StartNew();
