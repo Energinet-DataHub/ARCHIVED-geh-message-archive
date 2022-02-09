@@ -43,14 +43,14 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             var logsToParse = new List<BlobItemData>()
             {
-                BlobItemData("xml", "<ok></ok>"),
-                BlobItemData("xml", "<notok><//notok>"),
-                BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
-                BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
-                BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
-                BlobItemData("json", "{}"),
-                BlobItemData("text/plain", string.Empty),
-                BlobItemData("nocontent", string.Empty),
+                MockedTypes.BlobItemData("xml", "<ok></ok>"),
+                MockedTypes.BlobItemData("xml", "<notok><//notok>"),
+                MockedTypes.BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>"),
+                MockedTypes.BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                MockedTypes.BlobItemData("json", "{\'bad\":{\"code\":\"1\",\"message\":\"test\"}}"),
+                MockedTypes.BlobItemData("json", "{}"),
+                MockedTypes.BlobItemData("text/plain", string.Empty),
+                MockedTypes.BlobItemData("nocontent", string.Empty),
             };
 
             reader
@@ -59,7 +59,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             archive
                 .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
-                .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
+                .ReturnsAsync(MockedTypes.BlobItemData("txt", string.Empty).Uri);
 
             // Act
             var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger);
@@ -80,9 +80,9 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var storage = new MockedStorageWriter<CosmosRequestResponseLog>();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
 
-            var blobItemErrorResponseXml = BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
+            var blobItemErrorResponseXml = MockedTypes.BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
             blobItemErrorResponseXml.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
-            var blobItemErrorResponseJson = BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}");
+            var blobItemErrorResponseJson = MockedTypes.BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}");
             blobItemErrorResponseJson.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
 
             reader
@@ -96,7 +96,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             archive
                 .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
-                .ReturnsAsync(BlobItemData("txt", string.Empty).Uri);
+                .ReturnsAsync(MockedTypes.BlobItemData("txt", string.Empty).Uri);
 
             // Act
             var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger);
@@ -126,19 +126,6 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var parser = ParserFinder.FindParser(contentType, httpStatusCodeStr, content);
 
             Assert.IsType(expectedParser, parser);
-        }
-
-        private static BlobItemData BlobItemData(string contentType, string content)
-        {
-            var uri = new Uri("https://localhost/TestBlob");
-
-            return new BlobItemData(
-                It.IsAny<string>(),
-                new Dictionary<string, string>() { { "contenttype", contentType } },
-                new Dictionary<string, string>(),
-                content,
-                DateTimeOffset.Now,
-                uri);
         }
     }
 }
