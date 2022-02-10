@@ -25,6 +25,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers
             _archiveArchiveCosmosClient = archiveArchiveCosmosClient;
         }
 
-        public Container Container => _archiveArchiveCosmosClient.Client.GetContainer("Search", "Logs");
+        public Container Container => _archiveArchiveCosmosClient.Client.GetContainer("message-archive", "logs");
     }
 }

@@ -31,7 +31,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
             var testDatabase = databaseResponse.Database;
 
             await testDatabase
-                .CreateContainerIfNotExistsAsync("Logs", "/partitionKey")
+                .CreateContainerIfNotExistsAsync("logs", "/partitionKey")
                 .ConfigureAwait(false);
         }
 
