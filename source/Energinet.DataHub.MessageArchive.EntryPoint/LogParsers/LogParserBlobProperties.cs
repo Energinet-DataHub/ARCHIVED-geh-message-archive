@@ -50,6 +50,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
                 ResponseStatus = blobItemData.MetaData.TryGetValue("statuscode", out var statuscode) ? statuscode : string.Empty,
                 Data = blobItemData.IndexTags.Any() ? blobItemData.IndexTags : null,
+                OriginalTransactionIDReferenceId = string.Empty,
             };
 
             return parsedModel;

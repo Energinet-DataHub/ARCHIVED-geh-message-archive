@@ -122,9 +122,13 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
         public void Test_FindParser(string contentType, HttpStatusCode? httpStatusCode, string content, Type expectedParser)
         {
+            // Arrange
             var httpStatusCodeStr = httpStatusCode?.ToString() ?? string.Empty;
+
+            // Act
             var parser = ParserFinder.FindParser(contentType, httpStatusCodeStr, content);
 
+            // Assert
             Assert.IsType(expectedParser, parser);
         }
     }

@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
     public class BlobReader : IBlobReader
     {
         private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
-        private BlobContainerClient _blobContainerClient;
+        private readonly BlobContainerClient _blobContainerClient;
 
         public BlobReader(
             string connectionString,

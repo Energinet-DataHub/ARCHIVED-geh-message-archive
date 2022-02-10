@@ -19,7 +19,6 @@ using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 {

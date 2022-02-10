@@ -30,7 +30,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             try
             {
                 var xmlDocument = XElement.Parse(blobItemData.Content);
-                XNamespace ns = xmlDocument.Name.Namespace;
                 nocontentParse.Errors = XmlErrorParser.ParseErrors(xmlDocument);
             }
             catch
