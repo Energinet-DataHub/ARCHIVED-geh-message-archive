@@ -12,10 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
     public class CosmosRequestResponseLog : BaseParsedModel
     {
+        public CosmosRequestResponseLog()
+        {
+            Id = Guid.NewGuid().ToString();
+            PartitionKey = Guid.NewGuid().ToString();
+        }
+
         public string Id { get; set; }
 
         public string PartitionKey { get; set; }

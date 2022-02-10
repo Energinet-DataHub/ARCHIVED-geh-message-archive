@@ -110,7 +110,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             return data;
         }
 
-        private static CosmosRequestResponseLog CreateCosmosRequestResponseLog(string messageId, string messageType, string processType, string senderGln, string reasonCode)
+        private static CosmosRequestResponseLog CreateCosmosRequestResponseLog(
+            string messageId,
+            string messageType,
+            string processType,
+            string senderGln,
+            string reasonCode)
         {
             var model = new CosmosRequestResponseLog();
             model.Id = messageId;

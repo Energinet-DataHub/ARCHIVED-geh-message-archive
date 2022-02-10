@@ -40,7 +40,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
             var blobPagesToProcess = _blobContainerClient
-                .GetBlobsAsync(BlobTraits.All, prefix: "2022-02-05")
+                .GetBlobsAsync(BlobTraits.All)
                 .AsPages(default, 500);
 
             var tasks = new List<Task<BlobItemData>>();
