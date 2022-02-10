@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 {
-    public sealed record SearchResults
+    /// <summary>
+    /// Storage interface
+    /// </summary>
+    /// <typeparam name="T">type to save</typeparam>
+    public interface IStorageWriter<in T>
     {
-        public SearchResults()
-        {
-            Result = new List<BaseParsedModel>();
-        }
-
-        public IList<BaseParsedModel> Result { get; }
+        /// <summary>
+        /// Write object to storage
+        /// </summary>
+        /// <param name="objectToSave"></param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        Task WriteAsync(T objectToSave);
     }
 }

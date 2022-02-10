@@ -20,3 +20,18 @@ data "azurerm_key_vault_secret" "appi_instrumentation_key" {
   name         = "appi-shared-instrumentation-key"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
+
+data "azurerm_key_vault_secret" "st_market_operator_logs_primary_connection_string" {
+  name         = "st-marketoplogs-primary-connection-string"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "st_market_operator_logs_container_name" {
+  name         = "st-marketoplogs-container-name"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "st_market_operator_logs_archive_container_name" {
+  name         = "st-marketoplogs-archive-container-name"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}

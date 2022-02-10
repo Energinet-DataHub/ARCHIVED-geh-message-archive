@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Handlers
 {
-    public sealed record SearchResults
+    /// <summary>
+    /// Blob processing flow handler
+    /// </summary>
+    public interface IBlobProcessingHandler
     {
-        public SearchResults()
-        {
-            Result = new List<BaseParsedModel>();
-        }
-
-        public IList<BaseParsedModel> Result { get; }
+        /// <summary>
+        /// Handler method
+        /// </summary>
+        Task HandleAsync();
     }
 }
