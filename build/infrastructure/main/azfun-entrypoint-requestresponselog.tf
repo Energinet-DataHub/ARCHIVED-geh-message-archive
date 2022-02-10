@@ -33,7 +33,7 @@ module "func_entrypoint_requestresponselog" {
     STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
     STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
     STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = data.azurerm_key_vault_secret.st_market_operator_logs_archive_container_name.value
-    COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = locals.cosmos_db_connection_string
+    COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }
   
   tags                                      = azurerm_resource_group.this.tags
