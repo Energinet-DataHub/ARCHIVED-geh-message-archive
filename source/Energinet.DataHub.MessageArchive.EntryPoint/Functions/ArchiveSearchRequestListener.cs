@@ -13,12 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.IO;
+using System.ComponentModel;
+using System.Globalization;
 using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
+using Energinet.DataHub.MessageArchive.EntryPoint.Validation;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -36,19 +37,24 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
 
         [Function("ArchiveSearchRequestListener")]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post")]
+            [HttpTrigger(AuthorizationLevel.Function, "get")]
             HttpRequestData request)
         {
             Guard.ThrowIfNull(request, nameof(request));
 
-            using StreamReader streamReader = new (request.Body);
+            var searchCriteria = GetFromQueryString<SearchCriteria>(request.Url);
 
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            var searchCriteria = JsonSerializer.Deserialize<SearchCriteria>(requestBody);
             if (searchCriteria is null)
             {
                 throw new InvalidOperationException(nameof(searchCriteria));
+            }
+
+            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            if (!valid)
+            {
+                var validationErrorResponse = request.CreateResponse(HttpStatusCode.BadRequest);
+                await validationErrorResponse.WriteStringAsync(errorMessage).ConfigureAwait(false);
+                return validationErrorResponse;
             }
 
             var searchResults = await _archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
@@ -56,7 +62,38 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             var response = request.CreateResponse(HttpStatusCode.OK);
             await response.WriteAsJsonAsync(searchResults).ConfigureAwait(false);
 
-            return searchResults.Results.Count > 0 ? response : request.CreateResponse(HttpStatusCode.NoContent);
+            return searchResults.Result.Count > 0 ? response : request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        private static T GetFromQueryString<T>(Uri uri)
+            where T : new()
+        {
+            var parsedQueryString = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+            var obj = new T();
+            var properties = typeof(T).GetProperties();
+
+            foreach (var property in properties)
+            {
+                var valueAsString = parsedQueryString.Get(property.Name);
+                var value = Parse(valueAsString, property.PropertyType);
+
+                if (string.IsNullOrWhiteSpace(valueAsString))
+                {
+                    continue;
+                }
+
+                property.SetValue(obj, value, null);
+            }
+
+            return obj;
+        }
+
+        private static object Parse(string valueToConvert, Type dataType)
+        {
+            TypeConverter obj = TypeDescriptor.GetConverter(dataType);
+            object value = obj.ConvertFromString(null, CultureInfo.InvariantCulture,  valueToConvert);
+            return value;
         }
     }
 }

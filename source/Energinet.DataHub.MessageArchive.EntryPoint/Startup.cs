@@ -14,7 +14,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
+using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
@@ -59,17 +62,56 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
             Container.RegisterSingleton(() => config!);
 
-            Container.Register<ITestService, TestService>(Lifestyle.Transient);
-            Container.Register<TriggerFunction>(Lifestyle.Scoped);
-            Container.RegisterSingleton<IArchiveCosmosClient>(() => GetCosmosClient(Container));
-            Container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
-            Container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
+            // Add Application insights telemetry
+            services.SetupApplicationInsightTelemetry(config);
+
+            RegisterBlobReader(Container);
+            RegisterBlobArchive(Container);
+            RegisterCosmosStorageWriter(Container);
+
+            Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
+            Container.Register<ArchiveSearchRequestListener>(Lifestyle.Scoped);
+            Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
+        }
+
+        private static void RegisterBlobReader(Container container)
+        {
+            container.Register<IBlobReader>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
+                return new BlobReader(connectionString, containerName);
+            });
+        }
+
+        private static void RegisterBlobArchive(Container container)
+        {
+            container.Register<IBlobArchive>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var fromContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
+                var toContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME");
+
+                return new BlobArchive(connectionString, fromContainerName, toContainerName);
+            });
+        }
+
+        private static void RegisterCosmosStorageWriter(Container container)
+        {
+            container.Register<IStorageWriter<CosmosRequestResponseLog>, ArchiveWriterRepository>();
+            container.RegisterSingleton(() => GetCosmosClient(container));
+            container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
+            container.Register<IArchiveReaderRepository, ArchiveReaderRepository>(Lifestyle.Scoped);
         }
 
         private static IArchiveCosmosClient GetCosmosClient(Container container)
         {
             var configuration = container.GetService<IConfiguration>();
-            var connectionString = configuration.GetValue<string>("MESSAGE_ARCHIVE_DB_CONNECTION_STRING");
+            var connectionString = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING");
 
             if (string.IsNullOrEmpty(connectionString))
             {

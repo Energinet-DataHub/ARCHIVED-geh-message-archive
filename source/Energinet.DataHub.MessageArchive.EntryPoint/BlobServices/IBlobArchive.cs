@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint
+using System;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+
+namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
 {
     /// <summary>
-    /// Test service
+    /// Blob archive abstraction
     /// </summary>
-    public interface ITestService
+    public interface IBlobArchive
     {
         /// <summary>
-        /// test
+        /// Method for moving blob
         /// </summary>
-        void DoSomething();
+        /// <param name="itemToMove"></param>
+        /// <returns>Uri to new blob</returns>
+        Task<Uri> MoveToArchiveAsync(BlobItemData itemToMove);
     }
 }

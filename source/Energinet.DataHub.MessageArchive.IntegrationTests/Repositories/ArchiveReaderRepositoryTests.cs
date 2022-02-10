@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint;
-using Energinet.DataHub.MessageArchive.EntryPoint.Documents;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
@@ -55,8 +55,13 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 null,
                 null,
-                20200101,
-                20200404,
+                "2020-01-01",
+                "2020-04-04",
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null);
 
@@ -64,46 +69,36 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
-            Assert.Equal(expected[0].MessageId, result.Results[0].MessageId);
-            Assert.Equal(expected[0].MessageType, result.Results[0].MessageType);
-            Assert.Equal(expected[0].ProcessId, result.Results[0].ProcessId);
-            Assert.Equal(expected[0].DateTimeReceived, result.Results[0].DateTimeReceived);
-            Assert.Equal(expected[0].SenderId, result.Results[0].SenderId);
-            Assert.Equal(expected[0].BusinessReasonCode, result.Results[0].BusinessReasonCode);
+            Assert.Equal(expected[0].MessageId, result.Result[0].MessageId);
+            Assert.Equal(expected[0].MessageType, result.Result[0].MessageType);
+            Assert.Equal(expected[0].ProcessType, result.Result[0].ProcessType);
+            Assert.Equal(expected[0].SenderGln, result.Result[0].SenderGln);
+            Assert.Equal(expected[0].ReasonCode, result.Result[0].ReasonCode);
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }
 
-        private static async Task<List<CosmosSearchResult>> AddDataToDb(IArchiveContainer container)
+        private static async Task<List<CosmosRequestResponseLog>> AddDataToDb(IArchiveContainer container)
         {
-            var data = new List<CosmosSearchResult>();
-            data.Add(new CosmosSearchResult(
+            var data = new List<CosmosRequestResponseLog>();
+            data.Add(CreateCosmosRequestResponseLog(
                 "1",
                 "message",
                 "1",
                 "fake_value",
-                "fake_value",
-                20200101,
-                "fake_value",
                 "fake_value"));
 
-            data.Add(new CosmosSearchResult(
+            data.Add(CreateCosmosRequestResponseLog(
                 "2",
                 "message",
                 "2",
                 "fake_value",
-                "fake_value",
-                20200101,
-                "fake_value",
                 "fake_value"));
 
-            data.Add(new CosmosSearchResult(
+            data.Add(CreateCosmosRequestResponseLog(
                 "3",
                 "message",
                 "3",
-                "fake_value",
-                "fake_value",
-                20200505,
                 "fake_value",
                 "fake_value"));
 
@@ -113,6 +108,24 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             }
 
             return data;
+        }
+
+        private static CosmosRequestResponseLog CreateCosmosRequestResponseLog(
+            string messageId,
+            string messageType,
+            string processType,
+            string senderGln,
+            string reasonCode)
+        {
+            var model = new CosmosRequestResponseLog();
+            model.Id = messageId;
+            model.PartitionKey = Guid.NewGuid().ToString();
+            model.MessageId = messageId;
+            model.MessageType = messageType;
+            model.ProcessType = processType;
+            model.SenderGln = senderGln;
+            model.ReasonCode = reasonCode;
+            return model;
         }
     }
 }

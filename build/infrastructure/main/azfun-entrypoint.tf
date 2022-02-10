@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-module "func_entrypoint" {
+module "func_entrypoint_messagearchive" {
   source                                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/function-app?ref=5.4.0"
 
   name                                      = "entrypoint"
@@ -30,6 +30,10 @@ module "func_entrypoint" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE       = true
     FUNCTIONS_WORKER_RUNTIME                  = "dotnet-isolated"
     # Endregion
+    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
+    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
+    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = data.azurerm_key_vault_secret.st_market_operator_logs_archive_container_name.value
+    COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }
   
   tags                                      = azurerm_resource_group.this.tags

@@ -13,16 +13,24 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.Tests
 {
-    public sealed record SearchResults
+    public class MockedStorageWriter<T> : IStorageWriter<T>
     {
-        public SearchResults()
+        private List<T> _storage = new ();
+
+        public Task WriteAsync(T objectToSave)
         {
-            Result = new List<BaseParsedModel>();
+            _storage.Add(objectToSave);
+            return Task.CompletedTask;
         }
 
-        public IList<BaseParsedModel> Result { get; }
+        public IEnumerable<T> GetStorage()
+        {
+            return _storage;
+        }
     }
 }

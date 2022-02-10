@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
-    public sealed record SearchResults
+    public sealed record ParsedErrorModel
     {
-        public SearchResults()
+        public ParsedErrorModel(string code, string message)
         {
-            Result = new List<BaseParsedModel>();
+            Code = code;
+            Message = message;
         }
 
-        public IList<BaseParsedModel> Result { get; }
+        public string Code { get; }
+
+        public string Message { get; }
     }
 }

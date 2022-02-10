@@ -12,17 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Moq;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.Tests
 {
-    public sealed record SearchResults
+    public static class MockedTypes
     {
-        public SearchResults()
+        public static BlobItemData BlobItemData(string contentType, string content)
         {
-            Result = new List<BaseParsedModel>();
-        }
+            var uri = new Uri("https://localhost/TestBlob");
 
-        public IList<BaseParsedModel> Result { get; }
+            return new BlobItemData(
+                It.IsAny<string>(),
+                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>(),
+                content,
+                DateTimeOffset.Now,
+                uri);
+        }
     }
 }

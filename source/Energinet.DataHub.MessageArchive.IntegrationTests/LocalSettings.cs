@@ -48,8 +48,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
                 // ignore
             }
 
-            Environment.SetEnvironmentVariable("MESSAGE_ARCHIVE_DB_CONNECTION_STRING", ConnectionString);
-            Environment.SetEnvironmentVariable("MESSAGE_ARCHIVE_DB_NAME", DatabaseName);
+            Environment.SetEnvironmentVariable("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING", ConnectionString);
         }
 
         internal static string ConnectionString { get; } = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
