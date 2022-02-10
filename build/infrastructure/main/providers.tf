@@ -11,11 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-module "appi" {
-  source              = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//application-insights?ref=1.0.0"
+terraform {
+  required_version = "1.1.5"
 
-  name                = "appi-${var.project}-${var.organisation}-${var.environment}"
-  resource_group_name = data.azurerm_resource_group.main.name
-  location            = data.azurerm_resource_group.main.location
-  tags                = data.azurerm_resource_group.main.tags
+  required_providers {
+    # It is recommended to pin to a given version of the Azure provider
+    azurerm = "=2.91.0"
+	  null = "~> 2.1"
+  }
+}
+
+provider "azurerm" {
+  # It is recommended to pin to a given version of the Provider
+  features {
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
