@@ -25,16 +25,16 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         [Fact]
         public void Parse_XML_MktActivityRecord_LinkedMessage()
         {
+            // Arrange
             var xml = $"<message><MktActivityRecord><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
-
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-
             var xmlParser = new LogParserXml();
 
+            // Act
             var parsed = xmlParser.Parse(blobItem);
-
             var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
 
+            // Assert
             Assert.NotNull(originalTransactionIdReference);
             Assert.NotEmpty(originalTransactionIdReference);
         }
@@ -42,16 +42,16 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         [Fact]
         public void Parse_XML_Series_LinkedMessage()
         {
+            // Arrange
             var xml = $"<message><Series><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
-
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-
             var xmlParser = new LogParserXml();
 
+            // Act
             var parsed = xmlParser.Parse(blobItem);
-
             var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
 
+            // Assert
             Assert.NotNull(originalTransactionIdReference);
             Assert.NotEmpty(originalTransactionIdReference);
         }
