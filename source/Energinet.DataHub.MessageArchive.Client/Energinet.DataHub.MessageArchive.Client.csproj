@@ -42,11 +42,11 @@ limitations under the License.
       and in Visual Studio package manager view.
     -->
     <PackageDescription>
-      [Release Notes](https://github.com/Energinet-DataHub/geh-metering-point/blob/main/docs/metering-point-client/release-notes/release-notes.md)
-      [Documentation](https://github.com/Energinet-DataHub/geh-metering-point/blob/main/docs/metering-point-client/documentation.md)
+      [Release Notes](https://github.com/Energinet-DataHub/geh-message-archive/blob/main/docs/message-archive-client/release-notes/release-notes.md)
+      [Documentation](https://github.com/Energinet-DataHub/geh-message-archive/blob/main/docs/message-archive-client/documentation.md)
     </PackageDescription>
-    <Description>Library to communicate with Metering Point Domain.</Description>
-    <PackageTags>energinet;datahub;meteringpoints</PackageTags>
+    <Description>Library to communicate with Message Archive Domain.</Description>
+    <PackageTags>energinet;datahub;messagearchive</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
