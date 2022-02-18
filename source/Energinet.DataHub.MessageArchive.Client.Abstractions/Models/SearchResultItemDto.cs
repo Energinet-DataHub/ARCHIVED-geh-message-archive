@@ -15,10 +15,14 @@
 using System;
 using System.Collections.Generic;
 
-namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
+namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public class BaseParsedModel
+    public sealed record SearchResultItemDto
     {
+        public SearchResultItemDto()
+        {
+        }
+
         public string? MessageId { get; set; }
 
         public string? MessageType { get; set; }
@@ -41,7 +45,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? ReceiverGlnMarketRoleType { get; set; }
 
+#pragma warning disable CA1056
         public string BlobContentUri { get; set; } = string.Empty;
+#pragma warning restore CA1056
 
         public string? HttpData { get; set; }
 
@@ -56,9 +62,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? ResponseStatus { get; set; }
 
         public string? OriginalTransactionIDReferenceId { get; set; }
-
+#pragma warning disable CA2227
         public IDictionary<string, string>? Data { get; set; }
-
-        public IEnumerable<ParsedErrorModel>? Errors { get; set; }
+#pragma warning restore CA2227
+        public IEnumerable<SearchResultItemErrorDto>? Errors { get; set; }
     }
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
     {
         public static void SetupApplicationInsightTelemetry(this IServiceCollection services, IConfiguration configuration)
         {
+            Guard.ThrowIfNull(configuration, nameof(configuration));
+
             var appInsightsInstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"] ?? string.Empty;
 
             var appInsightsServiceOptions = new Microsoft.ApplicationInsights.WorkerService.ApplicationInsightsServiceOptions
