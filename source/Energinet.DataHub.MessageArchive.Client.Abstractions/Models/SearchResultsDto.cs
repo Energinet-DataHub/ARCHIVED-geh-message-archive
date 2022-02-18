@@ -22,6 +22,6 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         {
         }
 
-        public IList<BaseParsedDto> Result { get; set; } = new List<BaseParsedDto>();
+        public IList<SearchResultItemDto> Result { get; set; } = new List<SearchResultItemDto>();
     }
 }

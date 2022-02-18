@@ -14,9 +14,9 @@
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record ParsedErrorDto
+    public sealed record SearchResultItemErrorDto
     {
-        public ParsedErrorDto()
+        public SearchResultItemErrorDto()
         {
         }
 

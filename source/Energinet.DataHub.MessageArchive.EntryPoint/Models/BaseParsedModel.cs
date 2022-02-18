@@ -41,7 +41,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? ReceiverGlnMarketRoleType { get; set; }
 
-        public string BlobContentUri { get; set; }
+        public string BlobContentUri { get; set; } = string.Empty;
 
         public string? HttpData { get; set; }
 

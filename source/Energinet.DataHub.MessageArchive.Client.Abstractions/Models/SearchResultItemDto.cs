@@ -17,9 +17,9 @@ using System.Collections.Generic;
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record BaseParsedDto
+    public sealed record SearchResultItemDto
     {
-        public BaseParsedDto()
+        public SearchResultItemDto()
         {
         }
 
@@ -63,6 +63,6 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public IDictionary<string, string>? Data { get; set; }
 
-        public IEnumerable<ParsedErrorDto>? Errors { get; set; }
+        public IEnumerable<SearchResultItemErrorDto>? Errors { get; set; }
     }
 }

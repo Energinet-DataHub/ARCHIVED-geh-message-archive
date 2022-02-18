@@ -48,14 +48,14 @@ namespace Energinet.DataHub.MessageArchive.Client
 
             if (!response.IsSuccessStatusCode) return null;
 
-            var parsedModel = await response.Content
+            var searchResults = await response.Content
                 .ReadFromJsonAsync<SearchResultsDto>(
                     new JsonSerializerOptions(JsonSerializerDefaults.Web)
                     {
                         Converters = { new JsonStringEnumConverter(), },
                     }).ConfigureAwait(false);
 
-            return parsedModel;
+            return searchResults;
         }
     }
 }
