@@ -45,7 +45,9 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public string? ReceiverGlnMarketRoleType { get; set; }
 
+#pragma warning disable CA1056
         public string BlobContentUri { get; set; } = string.Empty;
+#pragma warning restore CA1056
 
         public string? HttpData { get; set; }
 
@@ -60,9 +62,9 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         public string? ResponseStatus { get; set; }
 
         public string? OriginalTransactionIDReferenceId { get; set; }
-
+#pragma warning disable CA2227
         public IDictionary<string, string>? Data { get; set; }
-
+#pragma warning restore CA2227
         public IEnumerable<SearchResultItemErrorDto>? Errors { get; set; }
     }
 }

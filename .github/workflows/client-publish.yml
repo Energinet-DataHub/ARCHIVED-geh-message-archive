@@ -120,7 +120,7 @@ jobs:
 
       - name: Push to NuGet.org
         if: ${{ env.PUSH_PACKAGES == 'true' }}
-        run: dotnet nuget push ${{ env.NUPKG_FILTER_PATTERN }} --api-key ${{ secrets.NUGET_TOKEN }} --source ${{ env.NUGET_FEED_PATH }}
+        run: dotnet nuget push ${{ env.NUPKG_FILTER_PATTERN }} --api-key ${{ secrets.NUGET_TOKEN_MESSAGE_ARCHIVE }} --source ${{ env.NUGET_FEED_PATH }}
         env:
           NUPKG_FILTER_PATTERN: 'source/**/*.nupkg'
           NUGET_FEED_PATH: 'https://api.nuget.org/v3/index.json'
