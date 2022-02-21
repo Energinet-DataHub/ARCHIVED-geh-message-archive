@@ -20,23 +20,23 @@ on:
       - main
     paths:
       - source/Energinet.DataHub.MessageArchive.Client/**
-      - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
       - .github/workflows/search-logs-client-publish.yml
+      - .github/actions/publish-nuget-package/**
   pull_request:
     branches:
       - main
     paths:
       - source/Energinet.DataHub.MessageArchive.Client/**
-      - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
       - .github/workflows/search-logs-client-publish.yml
+      - .github/actions/publish-nuget-package/**
       - docs/message-archive-client/**
       - source/Energinet.DataHub.MessageArchive.Client.Tests/**
   workflow_dispatch: {}
 
 env:
   DOTNET_VERSION: '5.0.404'
-  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.Client/source/Energinet.DataHub.MessageArchive.Client/Energinet.DataHub.MarketParticipant.Client.csproj'
-  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Client/source/Energinet.DataHub.MessageArchive.Client/bin/Release/*.nupkg'
+  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.Client/Energinet.DataHub.MessageArchive.Client.csproj'
+  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Client/Energinet.DataHub.MessageArchive.Client/bin/Release/*.nupkg'
 
 jobs:
   build_and_publish:
