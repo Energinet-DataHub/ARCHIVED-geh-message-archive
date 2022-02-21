@@ -30,7 +30,6 @@ on:
       - .github/workflows/search-logs-client-publish.yml
       - .github/actions/publish-nuget-package/**
       - docs/message-archive-client/**
-      - source/Energinet.DataHub.MessageArchive.Client.Tests/**
   workflow_dispatch: {}
 
 env:
