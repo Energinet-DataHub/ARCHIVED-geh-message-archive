@@ -36,7 +36,7 @@ on:
 env:
   DOTNET_VERSION: '5.0.404'
   CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.Client/Energinet.DataHub.MessageArchive.Client.csproj'
-  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Client/Energinet.DataHub.MessageArchive.Client/bin/Release/*.nupkg'
+  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Client/bin/Release/*.nupkg'
 
 jobs:
   build_and_publish:
