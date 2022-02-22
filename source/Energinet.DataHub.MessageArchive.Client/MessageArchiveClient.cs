@@ -38,15 +38,17 @@ namespace Energinet.DataHub.MessageArchive.Client
             if (searchCriteria is null) throw new ArgumentNullException(nameof(searchCriteria));
 
             var queryString = Helpers.QueryStringHelper.BuildQueryString(searchCriteria);
-            var queryFromBaseUrl = _httpClient.BaseAddress?.Query ?? string.Empty;
+            var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query) ? "?" : _httpClient.BaseAddress?.Query;
 
-            var searchUriRelative = new Uri($"{queryFromBaseUrl}{queryString}", UriKind.Relative);
+            var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
 
             var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized) throw new UnauthorizedAccessException();
 
             if (!response.IsSuccessStatusCode) return null;
+
+            if (response.StatusCode == HttpStatusCode.NoContent) return new SearchResultsDto();
 
             var searchResults = await response.Content
                 .ReadFromJsonAsync<SearchResultsDto>(
