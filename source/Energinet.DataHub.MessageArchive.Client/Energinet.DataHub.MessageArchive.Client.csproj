@@ -59,7 +59,7 @@ limitations under the License.
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference PrivateAssets="All" Include="..\Energinet.DataHub.MessageArchive.Client.Abstractions\Energinet.DataHub.MessageArchive.Client.Abstractions.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Client.Abstractions\Energinet.DataHub.MessageArchive.Client.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
