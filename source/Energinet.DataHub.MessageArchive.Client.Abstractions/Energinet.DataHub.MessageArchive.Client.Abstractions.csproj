@@ -20,6 +20,36 @@ limitations under the License.
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    <RootNamespace>Energinet.DataHub.MessageArchive.Client.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Energinet.DataHub.MessageArchive.Client.Abstractions</PackageId>
+    <PackageVersion>1.1.0$(VersionSuffix)</PackageVersion>
+    <Title>MessageArchives client abstractions library</Title>
+    <Company>Energinet-DataHub</Company>
+    <Authors>Energinet-DataHub</Authors>
+    <PackageProjectUrl>https://github.com/Energinet-DataHub</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Energinet-DataHub/geh-message-archive</RepositoryUrl>
+    <!-- PackageReleaseNotes:
+      Is shown in Azure DevOps artifacts Release Notes section.
+    -->
+    <PackageReleaseNotes>
+      [Release Notes](https://github.com/Energinet-DataHub/geh-message-archive/tree/main/docs/message-archive-client/release-notes/release-notes.md)
+      [Documentation](https://github.com/Energinet-DataHub/geh-message-archive/tree/main/docs/message-archive-client/documentation.md)
+    </PackageReleaseNotes>
+    <!-- PackageDescription:
+      Is shown in GitHub packages "About this package" section,
+      and in Visual Studio package manager view.
+    -->
+    <PackageDescription>
+      [Release Notes](https://github.com/Energinet-DataHub/geh-message-archive/tree/main/docs/message-archive-client/release-notes/release-notes.md)
+      [Documentation](https://github.com/Energinet-DataHub/geh-message-archive/tree/main/docs/message-archive-client/documentation.md)
+    </PackageDescription>
+    <Description>Library with abstractions supporting communication with Message Archive Domain.</Description>
+    <PackageTags>energinet;datahub;messagearchive;abstractions</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>
