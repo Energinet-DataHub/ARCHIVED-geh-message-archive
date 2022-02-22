@@ -23,7 +23,7 @@ on:
     paths:
       - source/Energinet.DataHub.MessageArchive.Client/**
       - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
-      - .github/workflows/client-publish.yml
+      - .github/workflows/search-logs-client-publish.yml
   # Build, test, pack
   # Executed if Client or Client.Abstraction folder or this file itself has changed; including if documentation or tests has changed
   pull_request:
@@ -32,7 +32,7 @@ on:
     paths:
       - source/Energinet.DataHub.MessageArchive.Client/**
       - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
-      - .github/workflows/client-publish.yml
+      - .github/workflows/search-logs-client-publish.yml
       - docs/message-archive-client/**
       - source/Energinet.DataHub.MessageArchive.Client.Tests/**
   # Build, test, pack and publish prerelease packages
