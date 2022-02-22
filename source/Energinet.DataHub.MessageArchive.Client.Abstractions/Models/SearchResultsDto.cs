@@ -22,7 +22,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         {
         }
 #pragma warning disable CA2227
-        public IList<SearchResultItemDto> Result { get; } = new List<SearchResultItemDto>();
+        public List<SearchResultItemDto> Result { get; set; } = new List<SearchResultItemDto>();
 #pragma warning restore CA2227
 
     }
