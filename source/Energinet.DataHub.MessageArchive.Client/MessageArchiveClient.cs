@@ -48,6 +48,8 @@ namespace Energinet.DataHub.MessageArchive.Client
 
             if (!response.IsSuccessStatusCode) return null;
 
+            if (response.StatusCode == HttpStatusCode.NoContent) return new SearchResultsDto();
+
             var searchResults = await response.Content
                 .ReadFromJsonAsync<SearchResultsDto>(
                     new JsonSerializerOptions(JsonSerializerDefaults.Web)
