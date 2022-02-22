@@ -20,7 +20,7 @@ using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
 
 namespace Energinet.DataHub.MessageArchive.Client.Helpers
 {
-    public static class QueryStringHelper
+    internal static class QueryStringHelper
     {
         public static string BuildQueryString(SearchCriteria sc)
         {
