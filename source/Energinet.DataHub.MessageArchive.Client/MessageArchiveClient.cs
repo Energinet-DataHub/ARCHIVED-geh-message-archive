@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -21,16 +22,21 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Client.Abstractions;
 using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
+using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
 
 namespace Energinet.DataHub.MessageArchive.Client
 {
     public class MessageArchiveClient : IMessageArchiveClient
     {
         private readonly HttpClient _httpClient;
+        private readonly IStorageHandler _storageHandler;
 
-        public MessageArchiveClient(HttpClient httpClient)
+        public MessageArchiveClient(
+            HttpClient httpClient,
+            IStorageHandler storageHandler)
         {
             _httpClient = httpClient;
+            _storageHandler = storageHandler;
         }
 
         public async Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria)
@@ -58,6 +64,11 @@ namespace Energinet.DataHub.MessageArchive.Client
                     }).ConfigureAwait(false);
 
             return searchResults;
+        }
+
+        public Task<Stream> DownloadLogStream(Uri contentToDownload)
+        {
+            return _storageHandler.GetStreamFromStorageAsync(contentToDownload);
         }
     }
 }

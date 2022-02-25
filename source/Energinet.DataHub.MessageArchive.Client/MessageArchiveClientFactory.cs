@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
 using Microsoft.AspNetCore.Http;
 
 namespace Energinet.DataHub.MessageArchive.Client
@@ -23,18 +24,23 @@ namespace Energinet.DataHub.MessageArchive.Client
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IStorageHandler _storageHandler;
 
-        public MessageArchiveClientFactory(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public MessageArchiveClientFactory(
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
+            IStorageHandler storageHandler)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
+            _storageHandler = storageHandler;
         }
 
         public MessageArchiveClient CreateClient()
         {
             var httpClient = _httpClientFactory.CreateClient();
             SetAuthorizationHeader(httpClient);
-            return new MessageArchiveClient(httpClient);
+            return new MessageArchiveClient(httpClient, _storageHandler);
         }
 
         public MessageArchiveClient CreateClient(Uri baseUrl)
@@ -42,7 +48,7 @@ namespace Energinet.DataHub.MessageArchive.Client
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.BaseAddress = baseUrl;
             SetAuthorizationHeader(httpClient);
-            return new MessageArchiveClient(httpClient);
+            return new MessageArchiveClient(httpClient, _storageHandler);
         }
 
         private string GetAuthorizationHeaderValue()

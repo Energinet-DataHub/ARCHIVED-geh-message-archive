@@ -16,6 +16,8 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using Energinet.DataHub.MessageArchive.Client.Abstractions;
+using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
+using Energinet.DataHub.MessageArchive.Client.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,20 +25,33 @@ namespace Energinet.DataHub.MessageArchive.Client.Extensions
 {
     public static class ContainerExtensions
     {
-        public static IServiceCollection AddMessageArchiveClient(this IServiceCollection services, Uri baseUrl)
+        public static IServiceCollection AddMessageArchiveClient(
+            this IServiceCollection services,
+            Uri baseApiUrl,
+            string logStorageConnectionString,
+            string logStorageContainerName)
         {
             services.AddHttpContextAccessor();
+
             services.AddScoped<IMessageArchiveClient>(x =>
                 new MessageArchiveClientFactory(
                         x.GetRequiredService<IHttpClientFactory>(),
-                        x.GetRequiredService<IHttpContextAccessor>())
-                    .CreateClient(baseUrl));
+                        x.GetRequiredService<IHttpContextAccessor>(),
+                        CreateStorageHandler(logStorageConnectionString, logStorageContainerName))
+                    .CreateClient(baseApiUrl));
 
             if (services.Any(x => x.ServiceType == typeof(IHttpClientFactory))) return services;
 
             services.AddHttpClient();
 
             return services;
+        }
+
+        private static IStorageHandler CreateStorageHandler(
+            string logStorageConnectionString,
+            string logStorageContainerName)
+        {
+            return new StorageHandler(new StorageServiceClientFactory(logStorageConnectionString), new StorageConfig(logStorageContainerName));
         }
     }
 }

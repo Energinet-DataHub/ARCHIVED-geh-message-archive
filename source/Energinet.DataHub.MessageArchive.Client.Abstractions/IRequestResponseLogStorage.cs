@@ -15,27 +15,19 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions
 {
     /// <summary>
-    /// MessageArchiveClient abstraction
+    /// Abstraction for log storage
     /// </summary>
-    public interface IMessageArchiveClient
+    public interface IRequestResponseLogStorage
     {
         /// <summary>
-        /// Search gor request response logs with params
+        /// Downloads log from storage
         /// </summary>
-        /// <param name="searchCriteria"></param>
-        /// <returns>Search result</returns>
-        public Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria);
-
-        /// <summary>
-        /// Downloads log contents
-        /// </summary>
-        /// <param name="contentToDownload"></param>
-        /// <returns>stream with content</returns>
-        public Task<Stream> DownloadLogStream(Uri contentToDownload);
+        /// <param name="uri"></param>
+        /// <returns>stream with log</returns>
+        public Task<Stream> DownloadLogAsync(Uri uri);
     }
 }
