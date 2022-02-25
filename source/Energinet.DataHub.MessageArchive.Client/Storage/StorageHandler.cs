@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
+using Energinet.DataHub.MessageArchive.Client.Helpers;
 
 namespace Energinet.DataHub.MessageArchive.Client.Storage
 {
@@ -40,8 +41,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Storage
 
             try
             {
-                var startIndex = contentPath.AbsolutePath.IndexOf(_storageConfig.AzureBlobStorageContainerName, StringComparison.InvariantCultureIgnoreCase);
-                var blobName = contentPath.AbsolutePath.Substring(startIndex + _storageConfig.AzureBlobStorageContainerName.Length);
+                var blobName = UriHelper.DecodeBlobName(contentPath, _storageConfig.AzureBlobStorageContainerName);
                 var blobClient = CreateBlobClient(blobName);
                 var response = await blobClient
                         .DownloadStreamingAsync()
