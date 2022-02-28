@@ -39,7 +39,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 
         public async Task<Stream> GetStreamFromStorageAsync(string blobName)
         {
-            if (blobName is null) throw new ArgumentNullException(nameof(blobName));
+            Guard.ThrowIfNull(blobName, nameof(blobName));
 
             try
             {

@@ -43,12 +43,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
 
             var parsedQueryString = System.Web.HttpUtility.ParseQueryString(request.Url.Query);
 
-            var blobNameToDownload = parsedQueryString.Get("blobname");
-
-            if (blobNameToDownload is null)
-            {
-                throw new ArgumentNullException(nameof(blobNameToDownload));
-            }
+            var blobNameToDownload = parsedQueryString.Get("blobname") ?? throw new ArgumentNullException("blobname");
 
             var logStream = await _storageStreamReader
                 .GetStreamFromStorageAsync(blobNameToDownload)
