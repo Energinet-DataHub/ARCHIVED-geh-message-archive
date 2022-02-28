@@ -24,7 +24,9 @@ namespace Energinet.DataHub.MessageArchive.Client
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MessageArchiveClientFactory(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public MessageArchiveClientFactory(
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;

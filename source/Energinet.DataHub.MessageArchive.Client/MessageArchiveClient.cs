@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -21,6 +22,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Client.Abstractions;
 using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
+using Energinet.DataHub.MessageArchive.Client.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Client
 {
@@ -35,10 +37,12 @@ namespace Energinet.DataHub.MessageArchive.Client
 
         public async Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria)
         {
-            if (searchCriteria is null) throw new ArgumentNullException(nameof(searchCriteria));
+            Guard.ThrowIfNull(searchCriteria, nameof(searchCriteria));
 
             var queryString = Helpers.QueryStringHelper.BuildQueryString(searchCriteria);
-            var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query) ? "?" : _httpClient.BaseAddress?.Query;
+            var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query)
+                ? "?"
+                : _httpClient.BaseAddress?.Query;
 
             var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
 
@@ -58,6 +62,23 @@ namespace Energinet.DataHub.MessageArchive.Client
                     }).ConfigureAwait(false);
 
             return searchResults;
+        }
+
+        public async Task<Stream> GetStreamFromStorageAsync(string blobname)
+        {
+            Guard.ThrowIfNull(blobname, nameof(blobname));
+
+            var queryString = $"blobname={blobname}";
+
+            var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query)
+                ? "?"
+                : _httpClient.BaseAddress?.Query;
+
+            var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
+
+            var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
+
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
     }
 }

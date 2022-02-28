@@ -37,7 +37,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
 
         [Function("ArchiveSearchRequestListener")]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get")]
             HttpRequestData request)
         {
             Guard.ThrowIfNull(request, nameof(request));
