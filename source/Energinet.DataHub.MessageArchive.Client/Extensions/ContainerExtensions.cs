@@ -23,14 +23,17 @@ namespace Energinet.DataHub.MessageArchive.Client.Extensions
 {
     public static class ContainerExtensions
     {
-        public static IServiceCollection AddMessageArchiveClient(this IServiceCollection services, Uri baseUrl)
+        public static IServiceCollection AddMessageArchiveClient(
+            this IServiceCollection services,
+            Uri baseApiUrl)
         {
             services.AddHttpContextAccessor();
+
             services.AddScoped<IMessageArchiveClient>(x =>
                 new MessageArchiveClientFactory(
                         x.GetRequiredService<IHttpClientFactory>(),
                         x.GetRequiredService<IHttpContextAccessor>())
-                    .CreateClient(baseUrl));
+                    .CreateClient(baseApiUrl));
 
             if (services.Any(x => x.ServiceType == typeof(IHttpClientFactory))) return services;
 
