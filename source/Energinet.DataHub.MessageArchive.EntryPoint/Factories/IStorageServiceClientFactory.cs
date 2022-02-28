@@ -12,9 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Storage
+using Azure.Storage.Blobs;
+
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Factories
 {
-#pragma warning disable SA1313
-    public record StorageConfig(string AzureBlobStorageContainerName);
-#pragma warning restore SA1313
+    /// <summary>
+    /// Factory creating a new <see cref="BlobServiceClient"/>
+    /// </summary>
+    public interface IStorageServiceClientFactory
+    {
+        /// <summary>
+        /// Create a new <see cref="BlobServiceClient"/>
+        /// </summary>
+        /// <returns><see cref="BlobServiceClient"/></returns>
+        public BlobServiceClient Create();
+    }
 }

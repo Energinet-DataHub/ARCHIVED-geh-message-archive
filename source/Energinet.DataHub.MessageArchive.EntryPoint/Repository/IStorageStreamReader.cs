@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Azure.Storage.Blobs;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Storage
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 {
     /// <summary>
-    /// Factory creating a new <see cref="BlobServiceClient"/>
+    /// Storage reader abstraction
     /// </summary>
-    public interface IStorageServiceClientFactory
+    public interface IStorageStreamReader
     {
         /// <summary>
-        /// Create a new <see cref="BlobServiceClient"/>
+        /// Downloads log content
         /// </summary>
-        /// <returns><see cref="BlobServiceClient"/></returns>
-        public BlobServiceClient Create();
+        /// <returns>log stream</returns>
+        public Task<Stream> GetStreamFromStorageAsync(string blobName);
     }
 }

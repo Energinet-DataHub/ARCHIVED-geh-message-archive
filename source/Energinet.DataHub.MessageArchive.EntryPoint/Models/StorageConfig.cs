@@ -12,22 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace Energinet.DataHub.MessageArchive.Client.Abstractions
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 {
-    /// <summary>
-    /// Abstraction for log storage
-    /// </summary>
-    public interface IRequestResponseLogStorage
-    {
-        /// <summary>
-        /// Downloads log from storage
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <returns>stream with log</returns>
-        public Task<Stream> DownloadLogAsync(Uri uri);
-    }
+#pragma warning disable SA1313
+    public record StorageConfig(string AzureBlobStorageContainerName);
+#pragma warning restore SA1313
 }

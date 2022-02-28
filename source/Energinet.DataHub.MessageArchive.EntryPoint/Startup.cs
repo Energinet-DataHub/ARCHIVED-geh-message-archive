@@ -15,6 +15,7 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
+using Energinet.DataHub.MessageArchive.EntryPoint.Factories;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
 using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
@@ -65,13 +66,33 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             // Add Application insights telemetry
             services.SetupApplicationInsightTelemetry(config);
 
+            // TODO Can these two be combined ?
+            RegisterArchiveStorageReader(Container);
             RegisterBlobReader(Container);
+
             RegisterBlobArchive(Container);
             RegisterCosmosStorageWriter(Container);
 
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
             Container.Register<ArchiveSearchRequestListener>(Lifestyle.Scoped);
             Container.Register<RequestResponseLogTriggerFunction>(Lifestyle.Scoped);
+            Container.Register<ArchiveDownloadRequestResponseLog>(Lifestyle.Scoped);
+        }
+
+        private static void RegisterArchiveStorageReader(Container container)
+        {
+            container.Register<IStorageStreamReader>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME");
+
+                var factory = new StorageServiceClientFactory(connectionString);
+                var storageConfig = new StorageConfig(containerName);
+
+                return new BlobStorageStreamReader(factory, storageConfig);
+            });
         }
 
         private static void RegisterBlobReader(Container container)

@@ -14,20 +14,22 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
-using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
-using Energinet.DataHub.MessageArchive.Client.Helpers;
+using Energinet.DataHub.MessageArchive.EntryPoint.Factories;
+using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.Utilities;
 
-namespace Energinet.DataHub.MessageArchive.Client.Storage
+namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 {
-        public sealed class StorageHandler : IStorageHandler
+    public class BlobStorageStreamReader : IStorageStreamReader
     {
         private readonly IStorageServiceClientFactory _storageServiceClientFactory;
         private readonly StorageConfig _storageConfig;
 
-        public StorageHandler(
+        public BlobStorageStreamReader(
             IStorageServiceClientFactory storageServiceClientFactory,
             StorageConfig storageConfig)
         {
@@ -35,22 +37,27 @@ namespace Energinet.DataHub.MessageArchive.Client.Storage
             _storageConfig = storageConfig;
         }
 
-        public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
+        public async Task<Stream> GetStreamFromStorageAsync(string blobName)
         {
-            if (contentPath is null) throw new ArgumentNullException(nameof(contentPath));
+            if (blobName is null) throw new ArgumentNullException(nameof(blobName));
 
             try
             {
-                var blobName = UriHelper.DecodeBlobName(contentPath, _storageConfig.AzureBlobStorageContainerName);
-                var blobClient = CreateBlobClient(blobName);
+                var blobNameDecoded = Uri.UnescapeDataString(blobName);
+                var blobClient = CreateBlobClient(blobNameDecoded);
                 var response = await blobClient
-                        .DownloadStreamingAsync()
-                        .ConfigureAwait(false);
+                    .DownloadStreamingAsync()
+                    .ConfigureAwait(false);
 
                 return response.Value.Content;
             }
             catch (RequestFailedException e)
             {
+                if (e.Status is (int)HttpStatusCode.NotFound)
+                {
+                    return Stream.Null;
+                }
+
                 throw new RequestFailedException("Error downloading file from storage", e);
             }
         }
