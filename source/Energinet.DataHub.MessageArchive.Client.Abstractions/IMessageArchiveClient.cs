@@ -34,8 +34,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions
         /// <summary>
         /// Downloads log contents
         /// </summary>
-        /// <param name="contentToDownload"></param>
+        /// <param name="blobname"></param>
         /// <returns>stream with content</returns>
-        public Task<Stream> DownloadLogStream(Uri contentToDownload);
+        Task<Stream> GetStreamFromStorageAsync(string blobname);
     }
 }

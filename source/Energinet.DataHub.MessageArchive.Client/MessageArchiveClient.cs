@@ -22,21 +22,16 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Client.Abstractions;
 using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
-using Energinet.DataHub.MessageArchive.Client.Abstractions.Storage;
 
 namespace Energinet.DataHub.MessageArchive.Client
 {
     public class MessageArchiveClient : IMessageArchiveClient
     {
         private readonly HttpClient _httpClient;
-        private readonly IStorageHandler _storageHandler;
 
-        public MessageArchiveClient(
-            HttpClient httpClient,
-            IStorageHandler storageHandler)
+        public MessageArchiveClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _storageHandler = storageHandler;
         }
 
         public async Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria)
@@ -66,9 +61,18 @@ namespace Energinet.DataHub.MessageArchive.Client
             return searchResults;
         }
 
-        public Task<Stream> DownloadLogStream(Uri contentToDownload)
+        public async Task<Stream> GetStreamFromStorageAsync(string blobname)
         {
-            return _storageHandler.GetStreamFromStorageAsync(contentToDownload);
+            if (blobname is null) throw new ArgumentNullException(nameof(blobname));
+
+            var queryString = $"blobname={blobname}";
+
+            var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query) ? "?" : _httpClient.BaseAddress?.Query;
+            var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
+
+            var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
+
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
     }
 }
