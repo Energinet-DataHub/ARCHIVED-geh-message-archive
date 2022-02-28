@@ -44,13 +44,13 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Validation
                     return (false, "From and to date should be set");
                 }
 
-                var createdDateFromParsed = DateTimeOffset.TryParse(sc.DateTimeFrom, out var createdDateFromResult);
-                var createdDateToParsed = DateTimeOffset.TryParse(sc.DateTimeTo, out var createdDateToResult);
+                var createdDateFromParsed = DateTime.TryParse(sc.DateTimeFrom, out var createdDateFromResult);
+                var createdDateToParsed = DateTime.TryParse(sc.DateTimeTo, out var createdDateToResult);
 
                 if (createdDateFromParsed && createdDateToParsed)
                 {
-                    sc.DateTimeFromParsed = createdDateFromResult.ToUniversalTime();
-                    sc.DateTimeToParsed = createdDateToResult.ToUniversalTime();
+                    sc.DateTimeFromParsed = new DateTime(createdDateFromResult.Year, createdDateFromResult.Month, createdDateFromResult.Day, 0, 0, 0).ToUniversalTime();
+                    sc.DateTimeToParsed = new DateTime(createdDateToResult.Year, createdDateToResult.Month, createdDateToResult.Day, 23, 0, 0, DateTimeKind.Utc);
                     return (true, string.Empty);
                 }
 
