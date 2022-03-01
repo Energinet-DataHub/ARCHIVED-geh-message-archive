@@ -29,6 +29,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
             string? dateTimeFrom,
             string? dateTimeTo,
             string? senderId,
+            string? receiverId,
             string? businessSectorType,
             string? reasonCode,
             string? invocationId,
@@ -42,6 +43,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
             DateTimeFrom = dateTimeFrom;
             DateTimeTo = dateTimeTo;
             SenderId = senderId;
+            ReceiverId = receiverId;
             BusinessSectorType = businessSectorType;
             ReasonCode = reasonCode;
             InvocationId = invocationId;
@@ -56,6 +58,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? DateTimeFrom { get; set; }
         public string? DateTimeTo { get; set; }
         public string? SenderId { get; set; }
+        public string? ReceiverId { get; set; }
         public string? BusinessSectorType { get; set; }
         public string? ReasonCode { get; set; }
         public string? InvocationId { get; set; }
