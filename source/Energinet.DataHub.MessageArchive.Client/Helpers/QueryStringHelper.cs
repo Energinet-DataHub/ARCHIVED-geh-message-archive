@@ -37,13 +37,14 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "reasonCode", sc.ReasonCode);
             AddOnValue(nameValues, "referenceId", sc.ReferenceId);
             AddOnValue(nameValues, "senderId", sc.SenderId);
-            AddOnValue(nameValues, "senderId", sc.TraceId);
+            AddOnValue(nameValues, "traceId", sc.TraceId);
+            AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
-                var fromDate = DateTime.UtcNow.AddMonths(-3).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                var toDate = DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var fromDate = DateTime.UtcNow.AddMonths(-3).ToString("u", CultureInfo.InvariantCulture);
+                var toDate = DateTime.UtcNow.ToString("u", CultureInfo.InvariantCulture);
                 AddOnValue(nameValues, "dateTimeFrom", fromDate);
                 AddOnValue(nameValues, "dateTimeTo", toDate);
             }
