@@ -63,6 +63,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 null,
                 null,
+                null,
                 null);
 
             // Act

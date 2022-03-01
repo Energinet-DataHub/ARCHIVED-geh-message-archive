@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
@@ -44,8 +45,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Validation
                     return (false, "From and to date should be set");
                 }
 
-                var createdDateFromParsed = DateTimeOffset.TryParse(sc.DateTimeFrom, out var createdDateFromResult);
-                var createdDateToParsed = DateTimeOffset.TryParse(sc.DateTimeTo, out var createdDateToResult);
+                var createdDateFromParsed = TryParseExactDateTimeStringAsIso(sc.DateTimeFrom, out var createdDateFromResult);
+                var createdDateToParsed = TryParseExactDateTimeStringAsIso(sc.DateTimeTo, out var createdDateToResult);
 
                 if (createdDateFromParsed && createdDateToParsed)
                 {
@@ -54,12 +55,53 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Validation
                     return (true, string.Empty);
                 }
 
-                return (false, $"date time parse error, from date parsed: {createdDateFromParsed}, to date parsed: {createdDateToParsed}");
+                return (false, $"date time parse error, from date: {sc.DateTimeFrom}, to date: {sc.DateTimeTo}, should be in ISO 8601 format");
             }
             catch (Exception ex)
             {
                 return (false, ex.Message);
             }
         }
+
+        private static bool TryParseExactDateTimeStringAsIso(string datetime, out DateTimeOffset parsedResult)
+        {
+            if (DateTime.TryParseExact(datetime, _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+            {
+                parsedResult = result;
+                return true;
+            }
+
+            parsedResult = default;
+            return false;
+        }
+
+#pragma warning disable SA1201
+        private static readonly string[] _formats =
+        {
+#pragma warning restore SA1201
+            // Basic formats
+            "yyyyMMddTHHmmsszzz",
+            "yyyyMMddTHHmmsszz",
+            "yyyyMMddTHHmmssZ",
+            // Extended formats
+            "yyyy-MM-ddTHH:mm:sszzz",
+            "yyyy-MM-ddTHH:mm:sszz",
+            "yyyy-MM-ddTHH:mm:ssZ",
+            "yyyy-MM-ddTHH:mm:ss.fffzzz",
+            // All of the above with reduced accuracy
+            "yyyyMMddTHHmmzzz",
+            "yyyyMMddTHHmmzz",
+            "yyyyMMddTHHmmZ",
+            "yyyy-MM-ddTHH:mmzzz",
+            "yyyy-MM-ddTHH:mmzz",
+            "yyyy-MM-ddTHH:mmZ",
+            // Accuracy reduced to hours
+            "yyyyMMddTHHzzz",
+            "yyyyMMddTHHzz",
+            "yyyyMMddTHHZ",
+            "yyyy-MM-ddTHHzzz",
+            "yyyy-MM-ddTHHzz",
+            "yyyy-MM-ddTHHZ",
+        };
     }
 }
