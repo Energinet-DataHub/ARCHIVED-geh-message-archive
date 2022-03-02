@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Web;
 using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
+using Energinet.DataHub.MessageArchive.Client.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Client.Helpers
 {
@@ -24,7 +25,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
     {
         public static string BuildQueryString(SearchCriteria sc)
         {
-            if (sc is null) throw new ArgumentNullException(nameof(sc));
+            Guard.ThrowIfNull(sc, nameof(sc));
 
             var nameValues = HttpUtility.ParseQueryString(string.Empty);
 

@@ -38,9 +38,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
-                      (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
+                    (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
                     (criteria.ProcessType == null || criteria.ProcessType == searchResult.ProcessType) &&
                     (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
+                    (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
                     (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.LogCreatedDate) &&
                     (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.LogCreatedDate) &&
                     (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
