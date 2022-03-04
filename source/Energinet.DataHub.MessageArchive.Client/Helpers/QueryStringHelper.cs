@@ -37,6 +37,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "reasonCode", sc.ReasonCode);
             AddOnValue(nameValues, "referenceId", sc.ReferenceId);
             AddOnValue(nameValues, "senderId", sc.SenderId);
+            AddOnValue(nameValues, "senderRoleType", sc.SenderRoleType);
+            AddOnValue(nameValues, "receiverRoleType", sc.ReceiverRoleType);
             AddOnValue(nameValues, "traceId", sc.TraceId);
             AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
