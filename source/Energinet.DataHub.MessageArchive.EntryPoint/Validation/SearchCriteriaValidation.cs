@@ -33,7 +33,17 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Validation
                 return (datetimeValidation.Valid, datetimeValidation.ErrorMessage);
             }
 
+            ValidateAndUpdateRsmName(searchCriteria);
+
             return (true, string.Empty);
+        }
+
+        private static void ValidateAndUpdateRsmName(SearchCriteria sc)
+        {
+            if (!string.IsNullOrWhiteSpace(sc.RsmName))
+            {
+                sc.RsmName = sc.RsmName.ToLowerInvariant();
+            }
         }
 
         private static (bool Valid, string ErrorMessage) ValidateDateTime(SearchCriteria sc)

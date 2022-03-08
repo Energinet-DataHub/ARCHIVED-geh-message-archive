@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cim:NotifyBillingMasterData_MarketDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cim="urn:ediel.org:structure:notifybillingmasterdata:0:1" xsi:schemaLocation="urn:ediel.org:structure:notifybillingmasterdata:0:1 urn-ediel-org-structure-notifybillingmasterdata-0-1.xsd">
+    <cim:mRID>e6229e4bcf58430894adc05d9d01d988</cim:mRID>
+    <cim:type>D07</cim:type>
+    <cim:process.processType>D17</cim:process.processType>
+    <cim:businessSector.type>23</cim:businessSector.type>
+    <cim:sender_MarketParticipant.mRID codingScheme="A10">5790001330552</cim:sender_MarketParticipant.mRID>
+    <cim:sender_MarketParticipant.marketRole.type>DDZ</cim:sender_MarketParticipant.marketRole.type>
+    <cim:receiver_MarketParticipant.mRID codingScheme="A10">0808118335003</cim:receiver_MarketParticipant.mRID>
+    <cim:receiver_MarketParticipant.marketRole.type>DDM</cim:receiver_MarketParticipant.marketRole.type>
+    <cim:createdDateTime>2022-03-04T08:02:51Z</cim:createdDateTime>
+    <cim:MktActivityRecord>
+        <cim:mRID>eaa8cd57f54e4909936a241522bd8f66</cim:mRID>
+        <cim:marketEvaluationPoint.mRID codingScheme="A10">574558853077634375</cim:marketEvaluationPoint.mRID>
+        <cim:start_DateAndOrTime.dateTime>2021-09-25T23:00:00Z</cim:start_DateAndOrTime.dateTime>
+        <cim:ChargeGroup>
+            <cim:ChargeType>
+                <cim:chargeTypeOwner_MarketParticipant.mRID codingScheme="A10">5790000432752</cim:chargeTypeOwner_MarketParticipant.mRID>
+                <cim:type>D03</cim:type>
+                <cim:mRID>EA-001</cim:mRID>
+                <cim:factor>1</cim:factor>
+            </cim:ChargeType>
+        </cim:ChargeGroup>
+    </cim:MktActivityRecord>
+</cim:NotifyBillingMasterData_MarketDocument>

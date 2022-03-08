@@ -57,6 +57,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
 
         public string? OriginalTransactionIDReferenceId { get; set; }
 
+        public string? RsmName { get; set; }
+
         public IDictionary<string, string>? Data { get; set; }
 
         public IEnumerable<ParsedErrorModel>? Errors { get; set; }
