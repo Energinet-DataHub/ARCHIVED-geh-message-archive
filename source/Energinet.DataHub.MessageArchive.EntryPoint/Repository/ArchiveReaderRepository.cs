@@ -51,10 +51,12 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
                     (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
                     (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
-                    (criteria.ReferenceId == null || criteria.ReferenceId == searchResult.OriginalTransactionIDReferenceId)
+                    (criteria.RsmName == null || criteria.RsmName == searchResult.RsmName)
                 select searchResult;
 
             var cosmosDocuments = await ExecuteQueryAsync(query).ConfigureAwait(false);
+
+            await AddRelatedMessagesIfAnyAsync(criteria, cosmosDocuments);
 
             return Map(cosmosDocuments);
         }
@@ -85,6 +87,20 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             }
 
             return cosmosDocuments;
+        }
+
+        private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
+        {
+            if (documents.Any() && criteria.ReferenceId != null)
+            {
+                var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+                var relatedMessageQuery = from relatedMessageResult in asLinq
+                    where criteria.ReferenceId == relatedMessageResult.OriginalTransactionIDReferenceId
+                    select relatedMessageResult;
+
+                var relatedCosmosDocuments = await ExecuteQueryAsync(relatedMessageQuery).ConfigureAwait(false);
+                documents.AddRange(relatedCosmosDocuments);
+            }
         }
     }
 }

@@ -53,4 +53,10 @@ limitations under the License.
       <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint\Energinet.DataHub.MessageArchive.EntryPoint.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Assets\notifybillingmasterdata.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
