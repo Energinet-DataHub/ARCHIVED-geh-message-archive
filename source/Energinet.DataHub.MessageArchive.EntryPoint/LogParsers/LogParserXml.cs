@@ -23,6 +23,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
 {
     public class LogParserXml : LogParserBlobProperties
     {
+        private const string RsmNameSeparator = "_";
+
         public override BaseParsedModel Parse(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
@@ -46,6 +48,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
                 var originalTransactionIdReferenceId = ReadOriginalTransactionIdReferenceId(xmlDocument, ns);
+                var rsmName = ReadRsmName(xmlDocument);
 
                 parsedModel.MessageId = mridValue;
                 parsedModel.MessageType = typeValue;
@@ -57,6 +60,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
                 parsedModel.ReceiverGln = receiverGlnValue;
                 parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
                 parsedModel.OriginalTransactionIDReferenceId = originalTransactionIdReferenceId;
+                parsedModel.RsmName = rsmName;
 
                 var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
                 parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : null;
@@ -95,6 +99,19 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.LogParsers
             }
 
             return string.Empty;
+        }
+
+        private static string ReadRsmName(XElement xmlDocument)
+        {
+            var rootName = xmlDocument.Name.LocalName;
+            var indexOfSeparator = rootName.IndexOf(RsmNameSeparator, StringComparison.CurrentCultureIgnoreCase);
+            if (indexOfSeparator >= 0)
+            {
+                var rsmName = rootName.Substring(0, indexOfSeparator);
+                return rsmName.ToLowerInvariant();
+            }
+
+            return rootName;
         }
     }
 }

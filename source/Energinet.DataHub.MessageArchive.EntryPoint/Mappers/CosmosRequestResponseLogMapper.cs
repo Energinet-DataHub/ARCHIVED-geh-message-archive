@@ -42,6 +42,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
             toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
+            toobj.RsmName = fromobj.RsmName;
 
             toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;
@@ -73,6 +74,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Mappers
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
             toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
+            toobj.RsmName = fromobj.RsmName;
 
             toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;
