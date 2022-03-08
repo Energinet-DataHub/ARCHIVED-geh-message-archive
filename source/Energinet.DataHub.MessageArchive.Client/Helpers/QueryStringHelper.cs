@@ -42,6 +42,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "traceId", sc.TraceId);
             AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
+            AddOnValue(nameValues, "rsmName", sc.RsmName);
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {

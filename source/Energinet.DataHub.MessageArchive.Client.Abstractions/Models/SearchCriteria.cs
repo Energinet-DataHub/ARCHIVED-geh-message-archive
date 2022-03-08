@@ -35,7 +35,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             string? invocationId,
             string? functionName,
             string? traceId,
-            string? referenceId)
+            string? referenceId,
+            string? rsmName)
         {
             MessageId = messageId;
             MessageType = messageType;
@@ -52,6 +53,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             FunctionName = functionName;
             TraceId = traceId;
             ReferenceId = referenceId;
+            RsmName = rsmName;
         }
 
         public string? MessageId { get; set; }
@@ -69,5 +71,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         public string? FunctionName { get; set; }
         public string? TraceId { get; set; }
         public string? ReferenceId { get; set; }
+        public string? RsmName { get; set; }
+
     }
 }
