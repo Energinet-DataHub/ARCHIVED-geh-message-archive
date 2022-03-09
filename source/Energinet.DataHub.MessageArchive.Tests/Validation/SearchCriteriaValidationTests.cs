@@ -131,7 +131,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
                 InvocationId = "invocationId",
                 ProcessType = "processType",
                 ReasonCode = "reasonCode",
-                ReferenceId = "1234",
+                IncludeRelated = false,
                 SenderId = "senderId",
                 ReceiverId = "receiverId",
                 TraceId = "traceId",

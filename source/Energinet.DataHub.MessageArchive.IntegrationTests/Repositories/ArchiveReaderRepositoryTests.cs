@@ -68,7 +68,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 null,
                 null,
-                null,
+                false,
                 null);
 
             // Act
@@ -103,17 +103,13 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
-            var related = CreateCosmosRequestResponseLog("12345", "related", "process", "senderGln", "reasonCode", "rsmName");
-            related.OriginalTransactionIDReferenceId = "1";
-            await archiveContainer.Container.UpsertItemAsync(related).ConfigureAwait(false);
-            expected.Add(related);
+            var logWithReference = CreateCosmosRequestResponseLog("12345", "related", "process", "senderGln", "reasonCode", "rsmName");
+            logWithReference.OriginalTransactionIDReferenceId = "1";
+            await archiveContainer.Container.UpsertItemAsync(logWithReference).ConfigureAwait(false);
+            expected.Add(logWithReference);
 
             var searchCriteria = new SearchCriteria(
-                "1",
-                null,
-                null,
-                "2020-01-01",
-                "2020-04-04",
+                "12345",
                 null,
                 null,
                 null,
@@ -123,19 +119,22 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 null,
                 null,
-                "1",
+                null,
+                null,
+                null,
+                null,
+                true,
                 null);
 
             // Act
             var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
-            var relatedDbResult = result.Result.FirstOrDefault(e => e.MessageId == related.MessageId);
+            var referencedDbResult = result.Result.FirstOrDefault(e => e.MessageId == logWithReference.OriginalTransactionIDReferenceId);
 
-            Assert.NotNull(relatedDbResult);
-            Assert.Equal(related.MessageId, relatedDbResult.MessageId);
-            Assert.Equal(related.OriginalTransactionIDReferenceId, result.Result[0].MessageId);
-            Assert.NotEqual(relatedDbResult.MessageId, result.Result[0].MessageId);
+            Assert.NotNull(referencedDbResult);
+            Assert.Equal(logWithReference.OriginalTransactionIDReferenceId, referencedDbResult.MessageId);
+            Assert.NotEqual(referencedDbResult.MessageId, logWithReference.MessageId);
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }
