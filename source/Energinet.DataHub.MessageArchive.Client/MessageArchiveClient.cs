@@ -44,7 +44,7 @@ namespace Energinet.DataHub.MessageArchive.Client
                 ? "?"
                 : _httpClient.BaseAddress?.Query;
 
-            var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
+            var searchUriRelative = new Uri($"ArchiveSearchRequestListener/{queryFromBaseUrl}&{queryString}", UriKind.Relative);
 
             var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
 
@@ -74,7 +74,7 @@ namespace Energinet.DataHub.MessageArchive.Client
                 ? "?"
                 : _httpClient.BaseAddress?.Query;
 
-            var searchUriRelative = new Uri($"{queryFromBaseUrl}&{queryString}", UriKind.Relative);
+            var searchUriRelative = new Uri($"ArchiveDownloadRequestResponseLog/{queryFromBaseUrl}&{queryString}", UriKind.Relative);
 
             var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
 
