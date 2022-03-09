@@ -91,11 +91,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
 
         private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
         {
-            if (documents.Any() && criteria.ReferenceId != null)
+            if (criteria.MessageId != null && documents.Any() && criteria.IncludeRelated is true)
             {
+                var relatedMessageIds = documents
+                    .Where(d => !string.IsNullOrWhiteSpace(d.OriginalTransactionIDReferenceId))
+                    .Select(d => d.OriginalTransactionIDReferenceId);
                 var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                 var relatedMessageQuery = from relatedMessageResult in asLinq
-                    where criteria.ReferenceId == relatedMessageResult.OriginalTransactionIDReferenceId
+                    where relatedMessageResult.MessageId != null && relatedMessageResult.MessageId != string.Empty &&
+                          relatedMessageIds.Contains(relatedMessageResult.MessageId)
                     select relatedMessageResult;
 
                 var relatedCosmosDocuments = await ExecuteQueryAsync(relatedMessageQuery).ConfigureAwait(false);

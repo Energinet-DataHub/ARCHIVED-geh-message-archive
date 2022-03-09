@@ -34,8 +34,19 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Validation
             }
 
             ValidateAndUpdateRsmName(searchCriteria);
+            ValidateIncludeRelated(searchCriteria);
 
             return (true, string.Empty);
+        }
+
+        private static void ValidateIncludeRelated(SearchCriteria sc)
+        {
+            if (sc.MessageId is null)
+            {
+                sc.IncludeRelated = false;
+            }
+
+            sc.IncludeRelated ??= false;
         }
 
         private static void ValidateAndUpdateRsmName(SearchCriteria sc)
