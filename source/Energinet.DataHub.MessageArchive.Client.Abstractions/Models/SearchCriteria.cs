@@ -35,7 +35,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             string? invocationId,
             string? functionName,
             string? traceId,
-            string? referenceId,
+            bool includeRelated,
             string? rsmName)
         {
             MessageId = messageId;
@@ -52,7 +52,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             InvocationId = invocationId;
             FunctionName = functionName;
             TraceId = traceId;
-            ReferenceId = referenceId;
+            IncludeRelated = includeRelated;
             RsmName = rsmName;
         }
 
@@ -70,7 +70,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         public string? InvocationId { get; set; }
         public string? FunctionName { get; set; }
         public string? TraceId { get; set; }
-        public string? ReferenceId { get; set; }
+        public bool IncludeRelated { get; set; }
         public string? RsmName { get; set; }
 
     }

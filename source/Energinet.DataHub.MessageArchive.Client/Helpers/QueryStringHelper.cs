@@ -35,7 +35,6 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "invocationId", sc.InvocationId);
             AddOnValue(nameValues, "processType", sc.ProcessType);
             AddOnValue(nameValues, "reasonCode", sc.ReasonCode);
-            AddOnValue(nameValues, "referenceId", sc.ReferenceId);
             AddOnValue(nameValues, "senderId", sc.SenderId);
             AddOnValue(nameValues, "senderRoleType", sc.SenderRoleType);
             AddOnValue(nameValues, "receiverRoleType", sc.ReceiverRoleType);
@@ -43,6 +42,11 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
             AddOnValue(nameValues, "rsmName", sc.RsmName);
+
+            if (sc.IncludeRelated && sc.MessageId != null)
+            {
+                AddOnValue(nameValues, "referenceId", sc.MessageId);
+            }
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
