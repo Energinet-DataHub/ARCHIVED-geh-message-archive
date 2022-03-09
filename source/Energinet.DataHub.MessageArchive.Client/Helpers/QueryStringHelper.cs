@@ -42,11 +42,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
             AddOnValue(nameValues, "rsmName", sc.RsmName);
-
-            if (sc.IncludeRelated && sc.MessageId != null)
-            {
-                AddOnValue(nameValues, "referenceId", sc.MessageId);
-            }
+            AddOnValue(nameValues, "includeRelated", sc.IncludeRelated ? "true" : "false");
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
