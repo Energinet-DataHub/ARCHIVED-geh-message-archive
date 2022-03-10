@@ -76,5 +76,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? RsmName { get; set; }
         public DateTimeOffset? DateTimeFromParsed { get; set; }
         public DateTimeOffset? DateTimeToParsed { get; set; }
+        public string? ContinuationToken { get; set; } = null;
+        public int MaxItemCount { get; set; } = -1;
     }
 }

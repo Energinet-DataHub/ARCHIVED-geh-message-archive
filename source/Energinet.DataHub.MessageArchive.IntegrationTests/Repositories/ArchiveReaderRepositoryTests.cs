@@ -55,7 +55,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
             var searchCriteria = new SearchCriteria(
                 null,
-                null,
+                "group1",
                 null,
                 "2020-01-01",
                 "2020-04-04",
@@ -103,14 +103,14 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
-            var logWithReference = CreateCosmosRequestResponseLog("12345", "related", "process", "senderGln", "reasonCode", "rsmName");
+            var logWithReference = CreateCosmosRequestResponseLog("12345", "group1", "rsmName");
             logWithReference.OriginalTransactionIDReferenceId = "1";
             await archiveContainer.Container.UpsertItemAsync(logWithReference).ConfigureAwait(false);
             expected.Add(logWithReference);
 
             var searchCriteria = new SearchCriteria(
                 "12345",
-                null,
+                "group1",
                 null,
                 null,
                 null,
@@ -139,31 +139,87 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             await startup.DisposeAsync().ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task Test_CosmosPaging()
+        {
+            // Arrange
+            var startup = new Startup();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables()
+                .Build());
+            startup.ConfigureServices(serviceCollection);
+            serviceCollection.BuildServiceProvider().UseSimpleInjector(
+                startup.Container,
+                x => x.Container.Options.EnableAutoVerification = false);
+            startup.Container.Options.AllowOverridingRegistrations = true;
+            var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
+            var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
+            var archiveContainer = scope.GetInstance<IArchiveContainer>();
+
+            var testGroupMessageType = Guid.NewGuid().ToString();
+            var insertCount = 30;
+            var addedData = await AddDataToDbForPaging(archiveContainer, testGroupMessageType, insertCount).ConfigureAwait(false);
+
+            var searchCriteria = new SearchCriteria(
+                "pagingMessageId",
+                testGroupMessageType,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                null);
+            searchCriteria.MaxItemCount = 10;
+
+            // Act
+            var resultFirstPage = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+
+            searchCriteria.ContinuationToken = resultFirstPage.ContinuationToken;
+            var resultSecondPage = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+
+            searchCriteria.ContinuationToken = resultSecondPage.ContinuationToken;
+            var resultThirdPage = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(resultFirstPage.ContinuationToken);
+            Assert.NotEmpty(resultFirstPage.Result);
+            Assert.Equal(10, resultFirstPage.Result.Count);
+
+            Assert.NotNull(resultSecondPage.ContinuationToken);
+            Assert.NotEmpty(resultSecondPage.Result);
+            Assert.Equal(10, resultSecondPage.Result.Count);
+
+            Assert.Null(resultThirdPage.ContinuationToken);
+            Assert.NotEmpty(resultThirdPage.Result);
+            Assert.Equal(10, resultThirdPage.Result.Count);
+
+            await startup.DisposeAsync().ConfigureAwait(false);
+        }
+
         private static async Task<List<CosmosRequestResponseLog>> AddDataToDb(IArchiveContainer container)
         {
             var data = new List<CosmosRequestResponseLog>();
             data.Add(CreateCosmosRequestResponseLog(
                 "1",
-                "message",
-                "1",
-                "fake_value",
-                "fake_value",
+                "group1",
                 "notifybillingmasterdata"));
 
             data.Add(CreateCosmosRequestResponseLog(
                 "2",
-                "message",
-                "2",
-                "fake_value",
-                "fake_value",
+                "group1",
                 "notifybillingmasterdata"));
 
             data.Add(CreateCosmosRequestResponseLog(
                 "3",
-                "message",
-                "3",
-                "fake_value",
-                "fake_value",
+                "group1",
                 "notifybillingmasterdata"));
 
             foreach (var sample in data)
@@ -174,23 +230,33 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             return data;
         }
 
+        private static async Task<List<CosmosRequestResponseLog>> AddDataToDbForPaging(IArchiveContainer container, string groupMessageType, int insertCount)
+        {
+            var data = new List<CosmosRequestResponseLog>();
+
+            for (var i = 0; i < insertCount; i++)
+            {
+                var elem = CreateCosmosRequestResponseLog("pagingMessageId", groupMessageType, "MasterData");
+                data.Add(elem);
+                await container.Container.CreateItemAsync(elem).ConfigureAwait(false);
+            }
+
+            return data;
+        }
+
         private static CosmosRequestResponseLog CreateCosmosRequestResponseLog(
             string messageId,
             string messageType,
-            string processType,
-            string senderGln,
-            string reasonCode,
             string rsmName)
         {
-            var model = new CosmosRequestResponseLog();
-            model.Id = messageId;
-            model.PartitionKey = Guid.NewGuid().ToString();
-            model.MessageId = messageId;
-            model.MessageType = messageType;
-            model.ProcessType = processType;
-            model.SenderGln = senderGln;
-            model.ReasonCode = reasonCode;
-            model.RsmName = rsmName;
+            var model = new CosmosRequestResponseLog
+            {
+                Id = messageId,
+                PartitionKey = Guid.NewGuid().ToString(),
+                MessageId = messageId,
+                MessageType = messageType,
+                RsmName = rsmName,
+            };
             return model;
         }
     }
