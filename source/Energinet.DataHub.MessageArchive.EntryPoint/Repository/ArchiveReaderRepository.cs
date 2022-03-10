@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.EntryPoint.Models;
 using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
 using Energinet.DataHub.MessageArchive.Utilities;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
@@ -35,7 +36,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
         {
             Guard.ThrowIfNull(criteria, nameof(criteria));
 
-            var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+            var asLinq = _archiveContainer.Container
+                .GetItemLinqQueryable<CosmosRequestResponseLog>(
+                    requestOptions: new QueryRequestOptions() { MaxItemCount = criteria.MaxItemCount },
+                    continuationToken: criteria.ContinuationToken);
+
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
                     (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
@@ -54,11 +59,13 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
                     (criteria.RsmName == null || criteria.RsmName == searchResult.RsmName)
                 select searchResult;
 
-            var cosmosDocuments = await ExecuteQueryAsync(query).ConfigureAwait(false);
+            var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query).ConfigureAwait(false);
 
             await AddRelatedMessagesIfAnyAsync(criteria, cosmosDocuments);
 
-            return Map(cosmosDocuments);
+            var searchResultMapped = Map(cosmosDocuments);
+            searchResultMapped.ContinuationToken = continuationToken;
+            return searchResultMapped;
         }
 
         private static SearchResults Map(IEnumerable<CosmosRequestResponseLog> cosmosDocuments)
@@ -87,6 +94,18 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Repository
             }
 
             return cosmosDocuments;
+        }
+
+        private static async Task<(List<CosmosRequestResponseLog> Result, string? ContinuationToken)> ExecuteQueryWithContinuationTokenAsync(IQueryable<CosmosRequestResponseLog> query)
+        {
+            List<CosmosRequestResponseLog> cosmosDocuments = new ();
+
+            using var iterator = query.ToFeedIterator();
+
+            var response = await iterator.ReadNextAsync().ConfigureAwait(false);
+            cosmosDocuments.AddRange(response);
+
+            return (cosmosDocuments, response.ContinuationToken);
         }
 
         private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
