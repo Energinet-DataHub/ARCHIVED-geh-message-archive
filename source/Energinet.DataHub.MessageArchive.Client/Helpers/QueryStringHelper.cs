@@ -43,6 +43,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
             AddOnValue(nameValues, "rsmName", sc.RsmName);
             AddOnValue(nameValues, "includeRelated", sc.IncludeRelated ? "true" : "false");
+            AddOnValue(nameValues, "continuationToken", sc.ContinuationToken);
+            AddOnValue(nameValues, "maxItemCount", sc.MaxItemCount);
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
@@ -66,6 +68,11 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             {
                 nv.Add(name, value);
             }
+        }
+
+        private static void AddOnValue(NameValueCollection nv, string name, int value)
+        {
+            nv.Add(name, value + string.Empty);
         }
     }
 }
