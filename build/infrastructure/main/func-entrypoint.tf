@@ -47,4 +47,7 @@ module "kvs_app_message_archive_api_base_url" {
   key_vault_id  = data.azurerm_key_vault.kv_shared_resources.id
 
   tags          = azurerm_resource_group.this.tags
+  depends_on = [
+    func_entrypoint_messagearchive,
+  ]
 }
