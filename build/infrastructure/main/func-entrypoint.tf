@@ -48,6 +48,6 @@ module "kvs_app_message_archive_api_base_url" {
 
   tags          = azurerm_resource_group.this.tags
   depends_on = [
-    func_entrypoint_messagearchive,
+    module.func_entrypoint_messagearchive,
   ]
 }
