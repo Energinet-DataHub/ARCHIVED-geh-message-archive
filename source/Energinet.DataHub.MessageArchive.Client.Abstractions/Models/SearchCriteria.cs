@@ -57,20 +57,35 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         }
 
         public string? MessageId { get; set; }
+
         public string? MessageType { get; set; }
+
         public string? ProcessType { get; set; }
+
         public string? DateTimeFrom { get; set; }
+
         public string? DateTimeTo { get; set; }
+
         public string? SenderId { get; set; }
+
         public string? ReceiverId { get; set; }
+
         public string? SenderRoleType { get; set; }
+
         public string? ReceiverRoleType { get; set; }
+
         public string? BusinessSectorType { get; set; }
+
         public string? ReasonCode { get; set; }
+
         public string? InvocationId { get; set; }
+
         public string? FunctionName { get; set; }
+
         public string? TraceId { get; set; }
+
         public bool IncludeRelated { get; set; }
+
         public string? RsmName { get; set; }
 
         public string? ContinuationToken { get; set; } = null;
