@@ -35,7 +35,7 @@ namespace Energinet.DataHub.MessageArchive.Client
             _httpClient = httpClient;
         }
 
-        public async Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria)
+        public async Task<MessageArchiveSearchResultsDto?> SearchLogsAsync(MessageArchiveSearchCriteria searchCriteria)
         {
             Guard.ThrowIfNull(searchCriteria, nameof(searchCriteria));
 
@@ -52,10 +52,10 @@ namespace Energinet.DataHub.MessageArchive.Client
 
             if (!response.IsSuccessStatusCode) return null;
 
-            if (response.StatusCode == HttpStatusCode.NoContent) return new SearchResultsDto();
+            if (response.StatusCode == HttpStatusCode.NoContent) return new MessageArchiveSearchResultsDto();
 
             var searchResults = await response.Content
-                .ReadFromJsonAsync<SearchResultsDto>(
+                .ReadFromJsonAsync<MessageArchiveSearchResultsDto>(
                     new JsonSerializerOptions(JsonSerializerDefaults.Web)
                     {
                         Converters = { new JsonStringEnumConverter(), },
