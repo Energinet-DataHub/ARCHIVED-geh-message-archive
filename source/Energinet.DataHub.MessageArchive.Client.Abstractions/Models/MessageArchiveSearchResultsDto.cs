@@ -16,14 +16,14 @@ using System.Collections.Generic;
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record SearchResultsDto
+    public sealed record MessageArchiveSearchResultsDto
     {
-        public SearchResultsDto()
+        public MessageArchiveSearchResultsDto()
         {
         }
 
 #pragma warning disable CA2227
-        public List<SearchResultItemDto> Result { get; set; } = new List<SearchResultItemDto>();
+        public List<MessageArchiveSearchResultItemDto> Result { get; set; } = new List<MessageArchiveSearchResultItemDto>();
 #pragma warning restore CA2227
 
         public string? ContinuationToken { get; set; }

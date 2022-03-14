@@ -14,13 +14,13 @@
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record SearchCriteria
+    public sealed record MessageArchiveSearchCriteria
     {
-        public SearchCriteria()
+        public MessageArchiveSearchCriteria()
         {
         }
 
-        public SearchCriteria(
+        public MessageArchiveSearchCriteria(
             string? messageId,
             string? messageType,
             string? processType,
