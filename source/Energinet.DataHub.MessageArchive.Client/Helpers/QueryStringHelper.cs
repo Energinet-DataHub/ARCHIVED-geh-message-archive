@@ -23,7 +23,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
 {
     internal static class QueryStringHelper
     {
-        public static string BuildQueryString(SearchCriteria sc)
+        public static string BuildQueryString(MessageArchiveSearchCriteria sc)
         {
             Guard.ThrowIfNull(sc, nameof(sc));
 
