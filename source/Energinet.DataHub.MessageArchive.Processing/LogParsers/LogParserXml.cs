@@ -15,8 +15,9 @@
 using System;
 using System.Linq;
 using System.Xml.Linq;
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Logging;
 

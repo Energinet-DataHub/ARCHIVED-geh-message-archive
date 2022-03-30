@@ -13,19 +13,21 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+namespace Energinet.DataHub.MessageArchive.Processing.Services
 {
-    public class CosmosRequestResponseLog : BaseParsedModel
+    /// <summary>
+    /// Blob archive abstraction
+    /// </summary>
+    public interface IBlobArchive
     {
-        public CosmosRequestResponseLog()
-        {
-            Id = Guid.NewGuid().ToString();
-            PartitionKey = Guid.NewGuid().ToString();
-        }
-
-        public string Id { get; set; }
-
-        public string PartitionKey { get; set; }
+        /// <summary>
+        /// Method for moving blob
+        /// </summary>
+        /// <param name="itemToMove"></param>
+        /// <returns>Uri to new blob</returns>
+        Task<Uri> MoveToArchiveAsync(BlobItemData itemToMove);
     }
 }

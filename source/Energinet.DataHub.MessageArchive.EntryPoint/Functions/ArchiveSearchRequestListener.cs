@@ -17,7 +17,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Validation;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;

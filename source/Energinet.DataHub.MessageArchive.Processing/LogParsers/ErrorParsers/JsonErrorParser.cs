@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers
 {

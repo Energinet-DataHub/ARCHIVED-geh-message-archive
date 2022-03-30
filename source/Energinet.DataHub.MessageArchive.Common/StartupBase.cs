@@ -14,15 +14,16 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
-using Energinet.DataHub.MessageArchive.Domain.Services;
 using Energinet.DataHub.MessageArchive.Persistence;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.Persistence.Services;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Processing;
 using Energinet.DataHub.MessageArchive.Processing.Handlers;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Processing.Services;
-using Energinet.DataHub.MessageArchive.Search;
-using Energinet.DataHub.MessageArchive.Search.Factories;
+using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Factories;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;

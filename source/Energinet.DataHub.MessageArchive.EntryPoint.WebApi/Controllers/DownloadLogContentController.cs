@@ -17,7 +17,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
+using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,6 +25,7 @@ using Microsoft.Extensions.Logging;
 namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
 {
     [ApiController]
+    [Route("api/log")]
     public class DownloadLogContentController : ControllerBase
     {
         private readonly ILogger<DownloadLogContentController> _logger;
@@ -38,8 +39,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
             _storageStreamReader = storageStreamReader;
         }
 
-        [HttpGet("{logname}")]
-        public async Task<ActionResult> DownloadLogContentAsync(string logname)
+        [HttpGet("download/{logname}")]
+        public async Task<ActionResult> DownloadAsync(string logname)
         {
             try
             {

@@ -15,9 +15,10 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Processing;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
 

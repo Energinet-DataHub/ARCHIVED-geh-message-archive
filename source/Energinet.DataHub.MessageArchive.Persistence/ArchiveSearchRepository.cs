@@ -15,15 +15,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Mappers;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
-namespace Energinet.DataHub.MessageArchive.Search
+namespace Energinet.DataHub.MessageArchive.Persistence
 {
     public class ArchiveSearchRepository : IArchiveSearchRepository
     {
@@ -76,7 +76,7 @@ namespace Energinet.DataHub.MessageArchive.Search
 
             foreach (var cosmosSearchResult in cosmosDocuments)
             {
-                var searchResult = CosmosRequestResponseLogMapper.ToBaseParsedModels(cosmosSearchResult);
+                var searchResult = Reader.Mappers.CosmosRequestResponseLogMapper.ToBaseParsedModels(cosmosSearchResult);
                 searchResults.Result.Add(searchResult);
             }
 

@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+using System.Collections.Generic;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+
+namespace Energinet.DataHub.MessageArchive.Reader.Models
 {
-    public sealed record ParsedErrorModel
+    public sealed record SearchResults
     {
-        public ParsedErrorModel(string code, string message)
+        public SearchResults()
         {
-            Code = code;
-            Message = message;
+            Result = new List<BaseParsedModel>();
         }
 
-        public string Code { get; }
-
-        public string Message { get; }
+        public IList<BaseParsedModel> Result { get; }
+        public string? ContinuationToken { get; set; }
     }
 }

@@ -14,19 +14,17 @@
 
 using System;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
-using Energinet.DataHub.MessageArchive.Domain.Validation;
+using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Models;
+using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
 {
     [ApiController]
-    [Route("searchlogs")]
+    [Route("api/log")]
     public class SearchLogsController : ControllerBase
     {
         private readonly ILogger<SearchLogsController> _logger;

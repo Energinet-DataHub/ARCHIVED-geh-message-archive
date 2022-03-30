@@ -25,9 +25,13 @@ limitations under the License.
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Domain\Energinet.DataHub.MessageArchive.Domain.csproj" />
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Persistence\Energinet.DataHub.MessageArchive.Persistence.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Remove="Microsoft.CodeAnalysis.FxCopAnalyzers" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

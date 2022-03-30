@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Validation;
+using Energinet.DataHub.MessageArchive.Reader.Models;
+using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Xunit;
 using Xunit.Categories;
 

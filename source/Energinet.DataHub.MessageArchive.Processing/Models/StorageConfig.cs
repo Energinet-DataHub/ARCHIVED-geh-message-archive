@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+namespace Energinet.DataHub.MessageArchive.Processing.Models
 {
 #pragma warning disable SA1313
     public record StorageConfig(string AzureBlobStorageContainerName);

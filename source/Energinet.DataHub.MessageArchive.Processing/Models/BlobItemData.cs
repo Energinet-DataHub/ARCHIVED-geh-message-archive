@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+namespace Energinet.DataHub.MessageArchive.Processing.Models
 {
     public class BlobItemData
     {

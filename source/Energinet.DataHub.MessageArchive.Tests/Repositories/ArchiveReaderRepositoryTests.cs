@@ -14,8 +14,9 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.Persistence;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
-using Energinet.DataHub.MessageArchive.Search;
+using Energinet.DataHub.MessageArchive.Reader;
 using Moq;
 using Xunit;
 using Xunit.Categories;

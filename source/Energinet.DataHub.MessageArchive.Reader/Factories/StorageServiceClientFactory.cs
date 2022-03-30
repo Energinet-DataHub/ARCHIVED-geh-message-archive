@@ -14,7 +14,7 @@
 
 using Azure.Storage.Blobs;
 
-namespace Energinet.DataHub.MessageArchive.Search.Factories
+namespace Energinet.DataHub.MessageArchive.Reader.Factories
 {
     public sealed class StorageServiceClientFactory : IStorageServiceClientFactory
     {

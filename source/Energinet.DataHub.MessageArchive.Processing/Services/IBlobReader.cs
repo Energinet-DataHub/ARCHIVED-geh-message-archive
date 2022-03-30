@@ -13,17 +13,20 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+namespace Energinet.DataHub.MessageArchive.Processing.Services
 {
-    public sealed record SearchResults
+    /// <summary>
+    /// blob reader interface
+    /// </summary>
+    public interface IBlobReader
     {
-        public SearchResults()
-        {
-            Result = new List<BaseParsedModel>();
-        }
-
-        public IList<BaseParsedModel> Result { get; }
-        public string? ContinuationToken { get; set; }
+        /// <summary>
+        /// Returns blobs ready to process
+        /// </summary>
+        /// <returns>downloaded blob data</returns>
+        Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync();
     }
 }

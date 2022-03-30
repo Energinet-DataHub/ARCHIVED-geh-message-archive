@@ -22,15 +22,16 @@ limitations under the License.
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>Energinet.DataHub.MessageArchive.Reader</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Domain\Energinet.DataHub.MessageArchive.Domain.csproj" />
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Persistence\Energinet.DataHub.MessageArchive.Persistence.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.24.0" />
   </ItemGroup>
 

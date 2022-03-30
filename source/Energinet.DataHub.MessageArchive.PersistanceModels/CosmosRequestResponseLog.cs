@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Azure.Storage.Blobs;
+using System;
 
-namespace Energinet.DataHub.MessageArchive.Search.Factories
+namespace Energinet.DataHub.MessageArchive.PersistenceModels
 {
-    /// <summary>
-    /// Factory creating a new <see cref="BlobServiceClient"/>
-    /// </summary>
-    public interface IStorageServiceClientFactory
+    public class CosmosRequestResponseLog : BaseParsedModel
     {
-        /// <summary>
-        /// Create a new <see cref="BlobServiceClient"/>
-        /// </summary>
-        /// <returns><see cref="BlobServiceClient"/></returns>
-        public BlobServiceClient Create();
+        public CosmosRequestResponseLog()
+        {
+            Id = Guid.NewGuid().ToString();
+            PartitionKey = Guid.NewGuid().ToString();
+        }
+
+        public string Id { get; set; }
+
+        public string PartitionKey { get; set; }
     }
 }

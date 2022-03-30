@@ -31,7 +31,9 @@ limitations under the License.
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Domain\Energinet.DataHub.MessageArchive.Domain.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
 

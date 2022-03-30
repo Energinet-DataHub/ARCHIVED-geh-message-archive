@@ -12,22 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.Reader.Models;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Services
+namespace Energinet.DataHub.MessageArchive.Reader
 {
     /// <summary>
-    /// Blob archive abstraction
+    /// Entity to access data from search criteria
     /// </summary>
-    public interface IBlobArchive
+    public interface IArchiveSearchRepository
     {
         /// <summary>
-        /// Method for moving blob
+        /// Gets search results
         /// </summary>
-        /// <param name="itemToMove"></param>
-        /// <returns>Uri to new blob</returns>
-        Task<Uri> MoveToArchiveAsync(BlobItemData itemToMove);
+        /// <param name="criteria">The criteria to perform the search on</param>
+        /// <returns>A list of search results</returns>
+        Task<SearchResults> GetSearchResultsAsync(SearchCriteria criteria);
     }
 }

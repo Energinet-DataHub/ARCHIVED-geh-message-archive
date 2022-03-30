@@ -20,11 +20,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Services;
+using Energinet.DataHub.MessageArchive.Processing.Models;
+using Energinet.DataHub.MessageArchive.Processing.Services;
 using Energinet.DataHub.MessageArchive.Utilities;
 
-namespace Energinet.DataHub.MessageArchive.Processing.Services
+namespace Energinet.DataHub.MessageArchive.Persistence.Services
 {
     public class BlobReader : IBlobReader
     {

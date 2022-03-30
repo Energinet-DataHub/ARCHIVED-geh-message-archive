@@ -12,45 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Mappers
+namespace Energinet.DataHub.MessageArchive.Reader.Mappers
 {
     public static class CosmosRequestResponseLogMapper
     {
-        public static CosmosRequestResponseLog ToCosmosRequestResponseLog(BaseParsedModel fromobj)
-        {
-            Guard.ThrowIfNull(fromobj, nameof(fromobj));
-
-            var toobj = new CosmosRequestResponseLog();
-            toobj.MessageId = fromobj.MessageId;
-            toobj.MessageType = fromobj.MessageType;
-            toobj.ProcessType = fromobj.ProcessType;
-            toobj.BusinessSectorType = fromobj.BusinessSectorType;
-            toobj.ReasonCode = fromobj.ReasonCode;
-            toobj.CreatedDate = fromobj.CreatedDate;
-            toobj.LogCreatedDate = fromobj.LogCreatedDate;
-            toobj.SenderGln = fromobj.SenderGln;
-            toobj.SenderGlnMarketRoleType = fromobj.SenderGlnMarketRoleType;
-            toobj.ReceiverGln = fromobj.ReceiverGln;
-            toobj.ReceiverGlnMarketRoleType = fromobj.ReceiverGlnMarketRoleType;
-            toobj.BlobContentUri = fromobj.BlobContentUri;
-            toobj.HttpData = fromobj.HttpData;
-            toobj.InvocationId = fromobj.InvocationId;
-            toobj.FunctionName = fromobj.FunctionName;
-            toobj.TraceId = fromobj.TraceId;
-            toobj.TraceParent = fromobj.TraceParent;
-            toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
-            toobj.RsmName = fromobj.RsmName;
-
-            toobj.ResponseStatus = fromobj.ResponseStatus;
-            toobj.Errors = fromobj.Errors;
-            toobj.Data = fromobj.Data;
-
-            return toobj;
-        }
-
         public static BaseParsedModel ToBaseParsedModels(CosmosRequestResponseLog fromobj)
         {
             Guard.ThrowIfNull(fromobj, nameof(fromobj));

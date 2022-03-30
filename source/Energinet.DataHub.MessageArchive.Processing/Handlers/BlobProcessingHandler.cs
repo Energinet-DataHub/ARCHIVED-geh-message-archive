@@ -14,12 +14,11 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Mappers;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
-using Energinet.DataHub.MessageArchive.Domain.Services;
-using Energinet.DataHub.MessageArchive.Persistence;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
+using Energinet.DataHub.MessageArchive.Processing.Mappers;
+using Energinet.DataHub.MessageArchive.Processing.Models;
+using Energinet.DataHub.MessageArchive.Processing.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Processing.Handlers

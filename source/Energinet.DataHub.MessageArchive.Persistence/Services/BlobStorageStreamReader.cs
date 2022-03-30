@@ -18,12 +18,12 @@ using System.Net;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-using Energinet.DataHub.MessageArchive.Domain.Repositories;
-using Energinet.DataHub.MessageArchive.Search.Factories;
+using Energinet.DataHub.MessageArchive.Processing.Models;
+using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Factories;
 using Energinet.DataHub.MessageArchive.Utilities;
 
-namespace Energinet.DataHub.MessageArchive.Search
+namespace Energinet.DataHub.MessageArchive.Persistence.Services
 {
     public class BlobStorageStreamReader : IStorageStreamReader
     {

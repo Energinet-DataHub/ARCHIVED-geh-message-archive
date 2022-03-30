@@ -40,9 +40,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageAr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Processing", "Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj", "{D29F350F-2384-441F-96B0-6BFEBF95ABE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Domain", "Energinet.DataHub.MessageArchive.Domain\Energinet.DataHub.MessageArchive.Domain.csproj", "{7C13DF24-FB14-4A44-8CA1-FF6247D1792C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Reader", "Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj", "{25517BEF-5979-4A58-80A8-0E417774B1B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Search", "Energinet.DataHub.MessageArchive.Search\Energinet.DataHub.MessageArchive.Search.csproj", "{25517BEF-5979-4A58-80A8-0E417774B1B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.PersistanceModels", "Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj", "{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,14 +97,14 @@ Global
 		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C13DF24-FB14-4A44-8CA1-FF6247D1792C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C13DF24-FB14-4A44-8CA1-FF6247D1792C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C13DF24-FB14-4A44-8CA1-FF6247D1792C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C13DF24-FB14-4A44-8CA1-FF6247D1792C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0C284C68-2AE1-40A0-A77B-79173767DEF3} = {9FD00820-D6BC-44F4-AE61-8B792E7B77B9}

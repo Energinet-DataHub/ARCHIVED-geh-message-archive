@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.IO;
 using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Repositories
+namespace Energinet.DataHub.MessageArchive.Reader
 {
     /// <summary>
-    /// Storage interface
+    /// Storage reader abstraction
     /// </summary>
-    /// <typeparam name="T">type to save</typeparam>
-    public interface IStorageWriter<in T>
+    public interface IStorageStreamReader
     {
         /// <summary>
-        /// Write object to storage
+        /// Downloads log content
         /// </summary>
-        /// <param name="objectToSave"></param>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        Task WriteAsync(T objectToSave);
+        /// <returns>log stream</returns>
+        public Task<Stream> GetStreamFromStorageAsync(string name);
     }
 }

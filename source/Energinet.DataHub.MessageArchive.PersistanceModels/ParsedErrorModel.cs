@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
-
-namespace Energinet.DataHub.MessageArchive.Domain.Services
+namespace Energinet.DataHub.MessageArchive.PersistenceModels
 {
-    /// <summary>
-    /// blob reader interface
-    /// </summary>
-    public interface IBlobReader
+    public sealed record ParsedErrorModel
     {
-        /// <summary>
-        /// Returns blobs ready to process
-        /// </summary>
-        /// <returns>downloaded blob data</returns>
-        Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync();
+        public ParsedErrorModel(string code, string message)
+        {
+            Code = code;
+            Message = message;
+        }
+
+        public string Code { get; }
+
+        public string Message { get; }
     }
 }

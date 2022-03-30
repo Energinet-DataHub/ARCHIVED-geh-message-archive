@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Models
+namespace Energinet.DataHub.MessageArchive.Reader.Models
 {
     public sealed record SearchCriteria
     {

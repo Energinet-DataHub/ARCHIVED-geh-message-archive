@@ -14,10 +14,10 @@
 
 using System;
 using System.Globalization;
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Validation
+namespace Energinet.DataHub.MessageArchive.Reader.Validation
 {
     public static class SearchCriteriaValidation
     {

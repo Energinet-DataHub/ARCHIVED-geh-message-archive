@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers

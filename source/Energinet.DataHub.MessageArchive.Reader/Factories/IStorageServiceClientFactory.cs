@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Domain.Models;
+using Azure.Storage.Blobs;
 
-namespace Energinet.DataHub.MessageArchive.Domain.Repositories
+namespace Energinet.DataHub.MessageArchive.Reader.Factories
 {
     /// <summary>
-    /// Entity to access data from search criteria
+    /// Factory creating a new <see cref="BlobServiceClient"/>
     /// </summary>
-    public interface IArchiveSearchRepository
+    public interface IStorageServiceClientFactory
     {
         /// <summary>
-        /// Gets search results
+        /// Create a new <see cref="BlobServiceClient"/>
         /// </summary>
-        /// <param name="criteria">The criteria to perform the search on</param>
-        /// <returns>A list of search results</returns>
-        Task<SearchResults> GetSearchResultsAsync(SearchCriteria criteria);
+        /// <returns><see cref="BlobServiceClient"/></returns>
+        public BlobServiceClient Create();
     }
 }
