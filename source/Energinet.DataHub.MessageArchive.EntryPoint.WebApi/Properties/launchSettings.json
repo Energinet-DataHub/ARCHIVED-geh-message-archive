@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Energinet.DataHub.MarketParticipant.EntryPoint.WebApi": {
+    "Energinet.DataHub.MessageArchive.EntryPoint.WebApi": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
