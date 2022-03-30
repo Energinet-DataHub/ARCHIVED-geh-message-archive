@@ -17,8 +17,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
-using Energinet.DataHub.MessageArchive.EntryPoint.Utilities;
+using Energinet.DataHub.MessageArchive.EntryPoint.Extensions;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -27,14 +26,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
 {
     public sealed class ArchiveDownloadRequestResponseLog
     {
-        private readonly IStorageStreamReader _storageStreamReader;
-
-        public ArchiveDownloadRequestResponseLog(IStorageStreamReader storageStreamReader)
+        public ArchiveDownloadRequestResponseLog()
         {
-            _storageStreamReader = storageStreamReader;
         }
 
-        [Function("ArchiveDownloadRequestResponseLog")]
+        /*[Function("ArchiveDownloadRequestResponseLog")]
         public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")]
             HttpRequestData request)
@@ -54,6 +50,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
                 : request.CreateResponse(HttpStatusCode.NoContent);
 
             return response;
-        }
+        }*/
     }
 }

@@ -47,7 +47,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint(
                 "/swagger/v1/swagger.json",
-                "Energinet.DataHub.MarketParticipant.EntryPoint.WebApi v1"));
+                "Energinet.DataHub.MessageArchive.EntryPoint.WebApi v1"));
 
             app.UseHttpsRedirection();
 

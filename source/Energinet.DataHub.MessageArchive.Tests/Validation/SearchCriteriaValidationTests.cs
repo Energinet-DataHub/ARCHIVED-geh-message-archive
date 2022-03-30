@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.EntryPoint.Validation;
+using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.Domain.Validation;
 using Xunit;
 using Xunit.Categories;
 
@@ -31,10 +31,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             searchCriteria.DateTimeFrom = string.Empty;
 
             // Act
-            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
 
             // Assert
-            Assert.False(valid);
+            Assert.False(result.Valid);
         }
 
         [Fact]
@@ -48,10 +48,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             DateTimeOffset logCreatedDate = new DateTime(637782039340000000, DateTimeKind.Utc); // 2022-01-19 15:45:34
 
             // Act
-            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
 
             // Assert
-            Assert.True(valid);
+            Assert.True(result.Valid);
             Assert.True(searchCriteria.DateTimeFromParsed <= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed!.Value.Ticks >= logCreatedDate.Ticks);
         }
@@ -64,13 +64,11 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             searchCriteria.DateTimeFrom = "2022-01-01";
             searchCriteria.DateTimeTo = "2022-01-19 11?00:01";
 
-            var logCreatedDate = new DateTime(637782039340000000, DateTimeKind.Utc); // 2022-01-19 15:45:34
-
             // Act
-            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
 
             // Assert
-            Assert.False(valid);
+            Assert.False(result.Valid);
             Assert.Null(searchCriteria.DateTimeToParsed);
             Assert.Null(searchCriteria.DateTimeToParsed);
         }
@@ -84,15 +82,17 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             searchCriteria.DateTimeTo = "2022-01-19T15:45:34Z";
 
             DateTimeOffset logCreatedDate = new DateTime(637782039340000000, DateTimeKind.Utc); // 2022-01-19 15:45:34
+#pragma warning disable CA1305
             var logCreatedDateString = logCreatedDate.ToString();
+#pragma warning restore CA1305
 
             // Act
-            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
 
             var dateTimeParsedString = searchCriteria.DateTimeToParsed.ToString();
 
             // Assert
-            Assert.True(valid);
+            Assert.True(result.Valid);
             Assert.True(searchCriteria.DateTimeFromParsed <= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed >= logCreatedDate);
             Assert.True(dateTimeParsedString == logCreatedDateString);
@@ -109,10 +109,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             DateTimeOffset logCreatedDate = new DateTime(637782039340000000, DateTimeKind.Utc); // 2022-01-19 15:45:34
 
             // Act
-            var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
 
             // Assert
-            Assert.True(valid);
+            Assert.True(result.Valid);
             Assert.True(searchCriteria.DateTimeFromParsed <= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed >= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed!.Value.TimeOfDay == new TimeSpan(22, 59, 59));

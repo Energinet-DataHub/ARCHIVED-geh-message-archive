@@ -17,9 +17,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
-using Energinet.DataHub.MessageArchive.EntryPoint.Validation;
+using Energinet.DataHub.MessageArchive.Domain.Validation;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -28,14 +26,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
 {
     public sealed class ArchiveSearchRequestListener
     {
-        private readonly IArchiveReaderRepository _archiveReaderRepository;
-
-        public ArchiveSearchRequestListener(IArchiveReaderRepository archiveReaderRepository)
+        public ArchiveSearchRequestListener()
         {
-            _archiveReaderRepository = archiveReaderRepository;
         }
 
-        [Function("ArchiveSearchRequestListener")]
+        /*[Function("ArchiveSearchRequestListener")]
         public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")]
             HttpRequestData request)
@@ -63,7 +58,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             await response.WriteAsJsonAsync(searchResults).ConfigureAwait(false);
 
             return searchResults.Result.Count > 0 ? response : request.CreateResponse(HttpStatusCode.NoContent);
-        }
+        }*/
 
         private static T GetFromQueryString<T>(Uri uri)
             where T : new()

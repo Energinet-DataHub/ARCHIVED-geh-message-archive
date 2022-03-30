@@ -14,9 +14,21 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Common.MediatR;
+using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.Domain.Repositories;
+using Energinet.DataHub.MessageArchive.Domain.Services;
+using Energinet.DataHub.MessageArchive.Persistence;
+using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.Processing.Handlers;
+using Energinet.DataHub.MessageArchive.Processing.Services;
+using Energinet.DataHub.MessageArchive.Search;
+using Energinet.DataHub.MessageArchive.Search.Factories;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
+using Container = SimpleInjector.Container;
 
 namespace Energinet.DataHub.MessageArchive.Common
 {
@@ -31,31 +43,109 @@ namespace Energinet.DataHub.MessageArchive.Common
 
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore().ConfigureAwait(false);
+            await DisposeCoreAsync().ConfigureAwait(false);
             GC.SuppressFinalize(this);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContexts(Container);
             services.AddLogging();
 
             Configure(services);
             ConfigureSimpleInjector(services);
 
-            //Container.AddApplicationServices();
-            //Container.AddDbContextInterfaces();
-            //Container.AddRepositories();
-            //Container.AddServices();
+            // config
+            var config = services.BuildServiceProvider().GetService<IConfiguration>();
+            Container.Register(() => config!, Lifestyle.Singleton);
 
-            // Add MediatR
-            // Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
+            // Add Application insights telemetry
+            services.SetupApplicationInsightTelemetry(config ?? throw new InvalidOperationException());
+
+            RegisterLogStreamReader(Container);
+            RegisterBlobReader(Container);
+
+            RegisterBlobArchiveProcessed(Container);
+            RegisterCosmosStorageWriter(Container);
+
+            Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
+            Container.Register<IArchiveSearchRepository, ArchiveSearchRepository>(Lifestyle.Scoped);
+
             Configure(Container);
         }
 
-#pragma warning disable VSTHRD200
-        protected virtual ValueTask DisposeAsyncCore()
-#pragma warning restore VSTHRD200
+        private static void RegisterLogStreamReader(Container container)
+        {
+            container.Register<IStorageStreamReader>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME");
+
+                var factory = new StorageServiceClientFactory(connectionString);
+                var storageConfig = new StorageConfig(containerName);
+
+                return new BlobStorageStreamReader(factory, storageConfig);
+            });
+        }
+
+        private static void RegisterBlobReader(Container container)
+        {
+            container.Register<IBlobReader>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
+                return new BlobReader(connectionString, containerName);
+            });
+        }
+
+        private static void RegisterBlobArchiveProcessed(Container container)
+        {
+            container.Register<IBlobArchive>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+
+                var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
+                var fromContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
+                var toContainerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME");
+
+                return new BlobArchive(connectionString, fromContainerName, toContainerName);
+            });
+        }
+
+        private static void RegisterCosmosStorageWriter(Container container)
+        {
+            container.Register<IStorageWriter<CosmosRequestResponseLog>, ArchiveWriterRepository>();
+            container.RegisterSingleton(() => GetCosmosClient(container));
+            container.Register<IArchiveContainer, ArchiveContainer>(Lifestyle.Scoped);
+        }
+
+        private static IArchiveCosmosClient GetCosmosClient(Container container)
+        {
+            var configuration = container.GetService<IConfiguration>();
+            var connectionString = configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Please specify a valid CosmosDBConnection in the appSettings.json file or your Azure Functions Settings.");
+            }
+
+            var cosmosClient = new CosmosClientBuilder(connectionString)
+                .WithSerializerOptions(new CosmosSerializationOptions
+                {
+                    PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+                })
+                .Build();
+
+            return new ArchiveCosmosClient(cosmosClient);
+        }
+
+#pragma warning disable SA1202
+        protected virtual ValueTask DisposeCoreAsync()
+#pragma warning restore SA1202
         {
             return Container.DisposeAsync();
         }

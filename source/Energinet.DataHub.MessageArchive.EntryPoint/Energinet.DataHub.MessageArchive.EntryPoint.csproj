@@ -23,8 +23,7 @@ limitations under the License.
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0-beta.3" />
-    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.20.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.24.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
@@ -56,5 +55,10 @@ limitations under the License.
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Common\Energinet.DataHub.MessageArchive.Common.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
 </Project>

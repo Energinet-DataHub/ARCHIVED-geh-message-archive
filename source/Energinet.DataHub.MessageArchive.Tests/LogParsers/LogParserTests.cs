@@ -13,8 +13,10 @@
 // limitations under the License.
 
 using System.IO;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 using Xunit.Categories;
 
@@ -29,7 +31,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             // Arrange
             var xml = $"<message><MktActivityRecord><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
@@ -46,7 +48,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             // Arrange
             var xml = $"<message><Series><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
@@ -63,7 +65,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var filename = "assets/notifybillingmasterdata.xml";
             var xml = File.ReadAllText(filename);
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);

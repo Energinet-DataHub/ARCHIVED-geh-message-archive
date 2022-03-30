@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.Domain.Models;
 using Moq;
 
 namespace Energinet.DataHub.MessageArchive.Tests

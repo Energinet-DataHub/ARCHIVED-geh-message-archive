@@ -16,13 +16,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageArchive.Domain.Models;
+using Energinet.DataHub.MessageArchive.Domain.Repositories;
 using Energinet.DataHub.MessageArchive.EntryPoint;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
+using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.Search;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NuGet.Frameworks;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Xunit;
@@ -48,7 +48,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
             var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
-            var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
+            var archiveSearchRepository = scope.GetInstance<IArchiveSearchRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
@@ -72,7 +72,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null);
 
             // Act
-            var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+            var result = await archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(expected[0].MessageId, result.Result[0].MessageId);
@@ -99,7 +99,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
             var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
-            var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
+            var archiveReaderRepository = scope.GetInstance<IArchiveSearchRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
@@ -153,7 +153,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
             var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
-            var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
+            var archiveReaderRepository = scope.GetInstance<IArchiveSearchRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var testGroupMessageType = Guid.NewGuid().ToString();
