@@ -12,18 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record SearchResultsDto
+    public sealed record MessageArchiveSearchResultItemErrorDto
     {
-        public SearchResultsDto()
+        public MessageArchiveSearchResultItemErrorDto()
         {
         }
-#pragma warning disable CA2227
-        public List<SearchResultItemDto> Result { get; set; } = new List<SearchResultItemDto>();
-#pragma warning restore CA2227
 
+        public string Code { get; set; } = string.Empty;
+
+        public string Message { get; set; } = string.Empty;
     }
 }

@@ -64,7 +64,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             Container.RegisterSingleton(() => config!);
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(config);
+            services.SetupApplicationInsightTelemetry(config ?? throw new InvalidOperationException());
 
             // TODO Can these two be combined ?
             RegisterArchiveStorageReader(Container);

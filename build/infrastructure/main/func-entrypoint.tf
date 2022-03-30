@@ -41,3 +41,16 @@ module "func_entrypoint_messagearchive" {
   
   tags                                      = azurerm_resource_group.this.tags
 }
+
+module "kvs_app_message_archive_api_base_url" {
+  source        = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/key-vault-secret?ref=5.4.0"
+
+  name          = "app-message-archive-api-base-url"
+  value         = "https://${module.func_entrypoint_messagearchive.default_hostname}/api/"
+  key_vault_id  = data.azurerm_key_vault.kv_shared_resources.id
+
+  tags          = azurerm_resource_group.this.tags
+  depends_on = [
+    module.func_entrypoint_messagearchive,
+  ]
+}

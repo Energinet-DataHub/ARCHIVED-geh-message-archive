@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Tests.Helpers
         public void Test_QueryStringBuilder()
         {
             // Arrange
-            var searchCriteria = new SearchCriteria
+            var searchCriteria = new MessageArchiveSearchCriteria
             {
                 MessageId = "TestId",
                 MessageType = "TestType",

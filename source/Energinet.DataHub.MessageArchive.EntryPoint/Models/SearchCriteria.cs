@@ -30,12 +30,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
             string? dateTimeTo,
             string? senderId,
             string? receiverId,
+            string? senderRoleType,
+            string? receiverRoleType,
             string? businessSectorType,
             string? reasonCode,
             string? invocationId,
             string? functionName,
             string? traceId,
-            string? referenceId)
+            bool? includeRelated,
+            string? rsmName)
         {
             MessageId = messageId;
             MessageType = messageType;
@@ -44,12 +47,15 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
             DateTimeTo = dateTimeTo;
             SenderId = senderId;
             ReceiverId = receiverId;
+            SenderRoleType = senderRoleType;
+            ReceiverRoleType = receiverRoleType;
             BusinessSectorType = businessSectorType;
             ReasonCode = reasonCode;
             InvocationId = invocationId;
             FunctionName = functionName;
             TraceId = traceId;
-            ReferenceId = referenceId;
+            IncludeRelated = includeRelated;
+            RsmName = rsmName;
         }
 
         public string? MessageId { get; set; }
@@ -59,13 +65,18 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Models
         public string? DateTimeTo { get; set; }
         public string? SenderId { get; set; }
         public string? ReceiverId { get; set; }
+        public string? SenderRoleType { get; set; }
+        public string? ReceiverRoleType { get; set; }
         public string? BusinessSectorType { get; set; }
         public string? ReasonCode { get; set; }
         public string? InvocationId { get; set; }
         public string? FunctionName { get; set; }
         public string? TraceId { get; set; }
-        public string? ReferenceId { get; set; }
+        public bool? IncludeRelated { get; set; }
+        public string? RsmName { get; set; }
         public DateTimeOffset? DateTimeFromParsed { get; set; }
         public DateTimeOffset? DateTimeToParsed { get; set; }
+        public string? ContinuationToken { get; set; } = null;
+        public int MaxItemCount { get; set; } = -1;
     }
 }

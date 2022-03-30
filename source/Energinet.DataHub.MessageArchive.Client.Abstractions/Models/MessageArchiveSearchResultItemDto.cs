@@ -17,9 +17,9 @@ using System.Collections.Generic;
 
 namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 {
-    public sealed record SearchResultItemDto
+    public sealed record MessageArchiveSearchResultItemDto
     {
-        public SearchResultItemDto()
+        public MessageArchiveSearchResultItemDto()
         {
         }
 
@@ -62,9 +62,13 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         public string? ResponseStatus { get; set; }
 
         public string? OriginalTransactionIDReferenceId { get; set; }
+
+        public string? RsmName { get; set; }
+
 #pragma warning disable CA2227
         public IDictionary<string, string>? Data { get; set; }
+
 #pragma warning restore CA2227
-        public IEnumerable<SearchResultItemErrorDto>? Errors { get; set; }
+        public IEnumerable<MessageArchiveSearchResultItemErrorDto>? Errors { get; set; }
     }
 }

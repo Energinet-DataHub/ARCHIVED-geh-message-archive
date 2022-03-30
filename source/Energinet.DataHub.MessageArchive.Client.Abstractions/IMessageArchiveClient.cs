@@ -29,7 +29,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions
         /// </summary>
         /// <param name="searchCriteria"></param>
         /// <returns>Search result</returns>
-        public Task<SearchResultsDto?> SearchLogsAsync(SearchCriteria searchCriteria);
+        public Task<MessageArchiveSearchResultsDto?> SearchLogsAsync(MessageArchiveSearchCriteria searchCriteria);
 
         /// <summary>
         /// Downloads log contents

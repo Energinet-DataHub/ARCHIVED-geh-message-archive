@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.IO;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
 using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
 using Xunit;
@@ -54,6 +55,22 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             // Assert
             Assert.NotNull(originalTransactionIdReference);
             Assert.NotEmpty(originalTransactionIdReference);
+        }
+
+        [Fact]
+        public void Test_RsmNameParsing()
+        {
+            var filename = "assets/notifybillingmasterdata.xml";
+            var xml = File.ReadAllText(filename);
+            var blobItem = MockedTypes.BlobItemData("xml", xml);
+            var xmlParser = new LogParserXml();
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.RsmName);
+            Assert.Equal("notifybillingmasterdata", parsed.RsmName);
         }
     }
 }

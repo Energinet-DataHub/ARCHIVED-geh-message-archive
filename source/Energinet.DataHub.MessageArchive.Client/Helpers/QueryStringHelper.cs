@@ -23,7 +23,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
 {
     internal static class QueryStringHelper
     {
-        public static string BuildQueryString(SearchCriteria sc)
+        public static string BuildQueryString(MessageArchiveSearchCriteria sc)
         {
             Guard.ThrowIfNull(sc, nameof(sc));
 
@@ -35,15 +35,21 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "invocationId", sc.InvocationId);
             AddOnValue(nameValues, "processType", sc.ProcessType);
             AddOnValue(nameValues, "reasonCode", sc.ReasonCode);
-            AddOnValue(nameValues, "referenceId", sc.ReferenceId);
             AddOnValue(nameValues, "senderId", sc.SenderId);
-            AddOnValue(nameValues, "senderId", sc.TraceId);
+            AddOnValue(nameValues, "senderRoleType", sc.SenderRoleType);
+            AddOnValue(nameValues, "receiverRoleType", sc.ReceiverRoleType);
+            AddOnValue(nameValues, "traceId", sc.TraceId);
+            AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
+            AddOnValue(nameValues, "rsmName", sc.RsmName);
+            AddOnValue(nameValues, "includeRelated", sc.IncludeRelated ? "true" : "false");
+            AddOnValue(nameValues, "continuationToken", sc.ContinuationToken);
+            AddOnValue(nameValues, "maxItemCount", sc.MaxItemCount);
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
-                var fromDate = DateTime.UtcNow.AddMonths(-3).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                var toDate = DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var fromDate = DateTime.UtcNow.AddMonths(-3).ToString("u", CultureInfo.InvariantCulture);
+                var toDate = DateTime.UtcNow.ToString("u", CultureInfo.InvariantCulture);
                 AddOnValue(nameValues, "dateTimeFrom", fromDate);
                 AddOnValue(nameValues, "dateTimeTo", toDate);
             }
@@ -62,6 +68,11 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             {
                 nv.Add(name, value);
             }
+        }
+
+        private static void AddOnValue(NameValueCollection nv, string name, int value)
+        {
+            nv.Add(name, value + string.Empty);
         }
     }
 }

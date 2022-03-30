@@ -76,12 +76,13 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             foreach (var property in properties)
             {
                 var valueAsString = parsedQueryString.Get(property.Name);
-                var value = Parse(valueAsString, property.PropertyType);
 
                 if (string.IsNullOrWhiteSpace(valueAsString))
                 {
                     continue;
                 }
+
+                var value = Parse(valueAsString, property.PropertyType);
 
                 property.SetValue(obj, value, null);
             }
