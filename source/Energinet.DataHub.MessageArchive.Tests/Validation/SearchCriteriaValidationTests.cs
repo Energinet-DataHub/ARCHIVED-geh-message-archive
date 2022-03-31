@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Xunit;
@@ -116,6 +117,77 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             Assert.True(searchCriteria.DateTimeFromParsed <= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed >= logCreatedDate);
             Assert.True(searchCriteria.DateTimeToParsed!.Value.TimeOfDay == new TimeSpan(22, 59, 59));
+        }
+
+        [Fact]
+        public void Test_SearchParams_NoDateTime()
+        {
+            // Arrange
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.DateTimeFrom = null;
+            searchCriteria.DateTimeTo = null;
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.False(result.Valid);
+        }
+
+        [Fact]
+        public void Test_SearchParams_RsmName()
+        {
+            // Arrange
+            var rsmInputName = "Notifybillingmasterdata";
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.DateTimeFrom = "2022-01-01T00:00:00.000+01:00";
+            searchCriteria.DateTimeTo = "2022-01-19T23:59:59.000+01:00";
+            searchCriteria.RsmName = rsmInputName;
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+#pragma warning disable CA1308
+            Assert.True(searchCriteria.RsmName.Equals(rsmInputName.ToLowerInvariant()));
+#pragma warning restore CA1308
+        }
+
+        [Fact]
+        public void Test_SearchParams_IncludeRelated_NoMessageId()
+        {
+            // Arrange
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.DateTimeFrom = "2022-01-01T00:00:00.000+01:00";
+            searchCriteria.DateTimeTo = "2022-01-19T23:59:59.000+01:00";
+            searchCriteria.IncludeRelated = true;
+            searchCriteria.MessageId = null;
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+            Assert.False(searchCriteria.IncludeRelated);
+        }
+
+        [Fact]
+        public void Test_SearchParams_IncludeRelated_IsTrue()
+        {
+            // Arrange
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.DateTimeFrom = "2022-01-01T00:00:00.000+01:00";
+            searchCriteria.DateTimeTo = "2022-01-19T23:59:59.000+01:00";
+            searchCriteria.IncludeRelated = true;
+            searchCriteria.MessageId = "1234";
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+            Assert.True(searchCriteria.IncludeRelated);
         }
 
         private static SearchCriteria Create_ValidSearchCriteria()

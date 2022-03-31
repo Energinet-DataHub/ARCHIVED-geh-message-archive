@@ -18,19 +18,23 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
-using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Persistence
 {
     public class ArchiveWriterRepository : IStorageWriter<CosmosRequestResponseLog>
     {
         private readonly IArchiveContainer _archiveContainer;
+        private readonly ILogger<ArchiveWriterRepository> _logger;
 
-        public ArchiveWriterRepository(IArchiveContainer archiveContainer)
+        public ArchiveWriterRepository(
+            IArchiveContainer archiveContainer,
+            ILogger<ArchiveWriterRepository> logger)
         {
             _archiveContainer = archiveContainer;
+            _logger = logger;
         }
 
         public async Task WriteAsync(CosmosRequestResponseLog objectToSave)
@@ -42,8 +46,11 @@ namespace Energinet.DataHub.MessageArchive.Persistence
             var container = _archiveContainer.Container;
             var response = await container.CreateItemAsync(objectToSave, new PartitionKey(objectToSave.PartitionKey)).ConfigureAwait(false);
 
+            _logger.LogInformation($"{nameof(ArchiveWriterRepository)} cosmos write response code: {response.StatusCode}");
+
             if (response.StatusCode is not HttpStatusCode.Created)
             {
+                _logger.LogError($"CosmosWriter error status code: {response.StatusCode.ToString()}, diagnostics: {response.Diagnostics.ToString()}");
                 throw new InvalidOperationException($"CosmosWriter error {response.StatusCode.ToString()}");
             }
         }
