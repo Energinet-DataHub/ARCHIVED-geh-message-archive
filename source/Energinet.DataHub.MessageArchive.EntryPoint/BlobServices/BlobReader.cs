@@ -53,7 +53,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.BlobServices
                     tasks.Add(blobDataTask);
                 }
 
-                break;
+                if (tasks.Count > 0 || string.IsNullOrEmpty(blobPage.ContinuationToken))
+                {
+                    break;
+                }
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
