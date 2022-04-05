@@ -21,14 +21,14 @@ namespace Energinet.DataHub.MessageArchive.Tests
 {
     public static class MockedTypes
     {
-        public static BlobItemData BlobItemData(string contentType, string content)
+        public static BlobItemData BlobItemData(string contentType, string content, IDictionary<string, string>? indexTags = null)
         {
             var uri = new Uri("https://localhost/TestBlob");
 
             return new BlobItemData(
                 It.IsAny<string>(),
                 new Dictionary<string, string>() { { "contenttype", contentType } },
-                new Dictionary<string, string>(),
+                indexTags ?? new Dictionary<string, string>(),
                 content,
                 DateTimeOffset.Now,
                 uri);
