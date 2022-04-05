@@ -12,16 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.Persistence.Services;
-using Energinet.DataHub.MessageArchive.Processing.Models;
 using Xunit;
 using Xunit.Categories;
 
@@ -39,11 +35,11 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             var marketoplogs = "marketoplogs";
             var marketoplogsArchive = "marketoplogs-archive";
 
-            var itemToMove = PersistenceTestHelper.CrateRandomBlobItem();
+            var itemToMove = IntegrationTestHelper.CrateRandomBlobItem();
             await using var itemToMoveContentStream = new MemoryStream(Encoding.UTF8.GetBytes(itemToMove.Content));
 
-            var blobServiceClientMarketoplogs = await PersistenceTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogs).ConfigureAwait(false);
-            await PersistenceTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogsArchive).ConfigureAwait(false);
+            var blobServiceClientMarketoplogs = await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogs).ConfigureAwait(false);
+            await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogsArchive).ConfigureAwait(false);
             var containerClient = blobServiceClientMarketoplogs.GetBlobContainerClient(marketoplogs);
             var blobClient = containerClient.GetBlobClient(itemToMove.Name);
 

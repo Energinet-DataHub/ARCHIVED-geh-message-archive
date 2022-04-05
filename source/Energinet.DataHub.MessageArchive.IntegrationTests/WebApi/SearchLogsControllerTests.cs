@@ -14,7 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint;
+using Energinet.DataHub.MessageArchive.EntryPoint.WebApi;
 using Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
@@ -59,8 +59,6 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
 
             // Act
             var searchResultIActionResult = await searchController.SearchAsync(searchCriteria).ConfigureAwait(false);
-
-            var jsonResult = (searchResultIActionResult as OkObjectResult)?.Value as string;
             var searchResult = (searchResultIActionResult as OkObjectResult)?.Value as SearchResults;
 
             // Assert
@@ -70,10 +68,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
 
         private static (Scope scope, Startup startup) RunStartUp()
         {
-            var startup = new Startup();
+            var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+            configuration["FRONTEND_OPEN_ID_URL"] = "value";
+            configuration["FRONTEND_SERVICE_APP_ID"] = "value";
+            var startup = new Startup(configuration);
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables()
-                .Build());
+            serviceCollection.AddSingleton<IConfiguration>(configuration);
             startup.ConfigureServices(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(
                 startup.Container,

@@ -18,9 +18,9 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 
-namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
+namespace Energinet.DataHub.MessageArchive.IntegrationTests
 {
-    public static class PersistenceTestHelper
+    public static class IntegrationTestHelper
     {
         public static async Task<BlobServiceClient> InitTestBlobStorageAsync(string connectionString, string container)
         {

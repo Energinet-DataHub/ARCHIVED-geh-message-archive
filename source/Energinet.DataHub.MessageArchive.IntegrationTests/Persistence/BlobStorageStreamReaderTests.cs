@@ -70,10 +70,10 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
 
         private static async Task<BlobItemData> AddBlobToStorage(string connectionString, string container)
         {
-            var itemToMove = PersistenceTestHelper.CrateRandomBlobItem();
+            var itemToMove = IntegrationTestHelper.CrateRandomBlobItem();
             await using var itemToMoveContentStream = new MemoryStream(Encoding.UTF8.GetBytes(itemToMove.Content));
 
-            var blobServiceClientMarketoplogs = await PersistenceTestHelper.InitTestBlobStorageAsync(connectionString, container).ConfigureAwait(false);
+            var blobServiceClientMarketoplogs = await IntegrationTestHelper.InitTestBlobStorageAsync(connectionString, container).ConfigureAwait(false);
             var containerClient = blobServiceClientMarketoplogs.GetBlobContainerClient(container);
             var blobClient = containerClient.GetBlobClient(itemToMove.Name);
 
