@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
 using Microsoft.Extensions.Logging;
@@ -73,6 +76,99 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             // Assert
             Assert.NotNull(parsed.RsmName);
             Assert.Equal("notifybillingmasterdata", parsed.RsmName);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing()
+        {
+            var indexTagsCount = 10;
+            var indexTags = BuildIndexTagsDic(indexTagsCount);
+            var indexTagsJson = JsonSerializer.Serialize(indexTags);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
+            blobItem.MetaData.Add("indextags", indexTagsJson);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Data);
+            Assert.Equal(indexTagsCount, parsed.Data.Count);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing_IndexTagsFallBack()
+        {
+            var indexTagsCount = 2;
+            var indexTags = BuildIndexTagsDic(indexTagsCount);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, indexTags);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Data);
+            Assert.Equal(indexTagsCount, parsed.Data.Count);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing_IndexTagsNull()
+        {
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.Null(parsed.Data);
+        }
+
+        [Fact]
+        public void Test_QueryTagsInMetaDataParsing()
+        {
+            var tagsCount = 10;
+            var tags = BuildIndexTagsDic(tagsCount);
+            var tagsJson = JsonSerializer.Serialize(tags);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
+            blobItem.MetaData.Add("querytags", tagsJson);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Query);
+            Assert.Equal(tagsCount, parsed.Query.Count);
+        }
+
+        [Fact]
+        public void Test_QueryTagsInMetaDataParsing_Null()
+        {
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.Null(parsed.Query);
+        }
+
+        private static Dictionary<string, string> BuildIndexTagsDic(int count)
+        {
+            var dic = new Dictionary<string, string>();
+
+            for (var i = 0; i < count; i++)
+            {
+                dic.Add(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            }
+
+            return dic;
         }
     }
 }

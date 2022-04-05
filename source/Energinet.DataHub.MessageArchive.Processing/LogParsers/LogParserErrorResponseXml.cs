@@ -37,7 +37,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             catch
 #pragma warning restore CA1031
             {
-                // ignored
+                nocontentParse.ParsingSuccess = false;
             }
 
             return nocontentParse;

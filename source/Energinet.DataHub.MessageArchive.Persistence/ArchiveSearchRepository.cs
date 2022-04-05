@@ -51,8 +51,8 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
                     (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
                     (criteria.ReceiverRoleType == null || criteria.ReceiverRoleType == searchResult.ReceiverGlnMarketRoleType) &&
-                    (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.LogCreatedDate) &&
-                    (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.LogCreatedDate) &&
+                    (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.CreatedDate) &&
+                    (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.CreatedDate) &&
                     (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
                     (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&

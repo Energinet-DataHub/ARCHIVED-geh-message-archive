@@ -61,8 +61,14 @@ namespace Energinet.DataHub.MessageArchive.PersistenceModels
 
         public string? RsmName { get; set; }
 
+        public bool? HaveBodyContent { get; set; } = false;
+
+        public bool? ParsingSuccess { get; set; } = true;
+
 #pragma warning disable CA2227
         public IDictionary<string, string>? Data { get; set; }
+
+        public IDictionary<string, string>? Query { get; set; }
 #pragma warning restore CA2227
 
         public IEnumerable<ParsedErrorModel>? Errors { get; set; }

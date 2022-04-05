@@ -44,10 +44,13 @@ namespace Energinet.DataHub.MessageArchive.Reader.Mappers
             toobj.TraceParent = fromobj.TraceParent;
             toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
             toobj.RsmName = fromobj.RsmName;
+            toobj.HaveBodyContent = fromobj.HaveBodyContent;
+            toobj.ParsingSuccess = fromobj.ParsingSuccess;
 
             toobj.ResponseStatus = fromobj.ResponseStatus;
             toobj.Errors = fromobj.Errors;
             toobj.Data = fromobj.Data;
+            toobj.Query = fromobj.Query;
 
             return toobj;
         }

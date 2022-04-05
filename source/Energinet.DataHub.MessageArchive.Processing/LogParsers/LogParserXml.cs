@@ -71,13 +71,14 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 parsedModel.RsmName = rsmName;
 
                 var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
-                parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : null;
+                parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : parsedModel.LogCreatedDate;
             }
 #pragma warning disable CA1031
             catch (Exception ex)
 #pragma warning restore CA1031
             {
-                _applicationLogging.LogWarning(ex, "Parse Error in LogParserXml, returning base model");
+                _applicationLogging.LogError(ex, "Parse Error in LogParserXml, returning base model");
+                parsedModel.ParsingSuccess = false;
             }
 
             return parsedModel;
