@@ -64,17 +64,15 @@ namespace Energinet.DataHub.MessageArchive.Client
             return searchResults;
         }
 
-        public async Task<Stream> GetStreamFromStorageAsync(string blobname)
+        public async Task<Stream> GetStreamFromStorageAsync(string logname)
         {
-            Guard.ThrowIfNull(blobname, nameof(blobname));
-
-            var queryString = $"blobname={blobname}";
+            Guard.ThrowIfNull(logname, nameof(logname));
 
             var queryFromBaseUrl = string.IsNullOrWhiteSpace(_httpClient.BaseAddress?.Query)
-                ? "?"
+                ? string.Empty
                 : _httpClient.BaseAddress?.Query;
 
-            var searchUriRelative = new Uri($"api/log/download/{queryFromBaseUrl}&{queryString}", UriKind.Relative);
+            var searchUriRelative = new Uri($"api/log/download/{logname}/{queryFromBaseUrl}", UriKind.Relative);
 
             var response = await _httpClient.GetAsync(searchUriRelative).ConfigureAwait(false);
 
