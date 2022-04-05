@@ -60,7 +60,7 @@ jobs:
   create_prerelease:
     needs: [
       entry_point_ci,
-      webapi
+      webapi_ci
     ]
     uses: Energinet-DataHub/.github/.github/workflows/create-prerelease.yml@6.0.0
     with:
