@@ -46,6 +46,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
             {
                 var blobNameToDownload = logname ?? throw new ArgumentNullException(nameof(logname));
 
+                blobNameToDownload = Uri.UnescapeDataString(blobNameToDownload);
+
                 var logStream = await _storageStreamReader
                     .GetStreamFromStorageAsync(blobNameToDownload)
                     .ConfigureAwait(false);
