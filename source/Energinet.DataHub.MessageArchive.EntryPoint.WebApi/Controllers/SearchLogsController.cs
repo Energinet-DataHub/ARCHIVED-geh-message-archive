@@ -56,7 +56,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
 
                 var searchResults = await _archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
-                return searchResults.Result.Count > 0 ? Ok(searchResults) : Ok(HttpStatusCode.NoContent);
+                return searchResults.Result.Count > 0 ? Ok(searchResults) : NoContent();
             }
 #pragma warning disable CA1031
             catch (Exception e)
