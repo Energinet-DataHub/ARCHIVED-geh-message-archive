@@ -58,7 +58,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result.Result.Count == 5);
+            Assert.True(result!.Result.Count == 5);
         }
 
         [Fact]

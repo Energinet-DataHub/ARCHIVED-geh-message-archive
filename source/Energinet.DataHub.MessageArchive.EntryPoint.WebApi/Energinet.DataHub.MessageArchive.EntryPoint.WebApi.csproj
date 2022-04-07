@@ -24,18 +24,6 @@ limitations under the License.
     <ItemGroup>
       <PackageReference Include="Energinet.DataHub.Core.App.WebApp.SimpleInjector" Version="2.1.0" />
       <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0-beta1" />
-      <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0-preview1.22116.1">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.1.46">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Update="StyleCop.Analyzers" Version="1.2.0-beta.406">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.3.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
     </ItemGroup>

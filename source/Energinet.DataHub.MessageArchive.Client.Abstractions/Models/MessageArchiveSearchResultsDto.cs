@@ -22,9 +22,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         {
         }
 
-#pragma warning disable CA2227
         public List<MessageArchiveSearchResultItemDto> Result { get; set; } = new();
-#pragma warning restore CA2227
 
         public string? ContinuationToken { get; set; }
     }

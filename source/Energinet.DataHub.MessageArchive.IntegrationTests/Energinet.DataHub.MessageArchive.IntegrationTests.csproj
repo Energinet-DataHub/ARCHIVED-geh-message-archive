@@ -27,10 +27,6 @@ limitations under the License.
     <ItemGroup>
         <PackageReference Include="Energinet.DataHub.Core.FunctionApp.TestCommon" Version="2.1.0" />
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.24.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="NUnit" Version="3.13.1" />
@@ -38,11 +34,6 @@ limitations under the License.
         <PackageReference Include="coverlet.collector" Version="3.0.2" />
         <PackageReference Include="xunit" Version="2.4.2-pre.12" />
         <PackageReference Include="xunit.categories" Version="2.0.5" />
-        <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Remove="Microsoft.CodeAnalysis.FxCopAnalyzers" />
     </ItemGroup>
 
     <ItemGroup>
