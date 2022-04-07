@@ -86,7 +86,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
         }
 
         [Fact]
-        public async Task Test_IncludeRelated()
+        public async Task Test_IncludeRelated_In()
         {
             // Arrange
             var startup = new Startup();
@@ -102,15 +102,23 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
-            var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
-            var logWithReference = CreateCosmosRequestResponseLog("12345", "group1", "rsmName");
-            logWithReference.OriginalTransactionIDReferenceId = "1";
-            await archiveContainer.Container.UpsertItemAsync(logWithReference).ConfigureAwait(false);
-            expected.Add(logWithReference);
+            var testGroup = Guid.NewGuid().ToString();
+
+            await AddDataToDb(archiveContainer).ConfigureAwait(false);
+
+            var messageIdIn = Guid.NewGuid().ToString();
+            var logWithReferenceIn = CreateCosmosRequestResponseLog(messageIdIn, testGroup, "rsmName");
+            logWithReferenceIn.HttpData = "request";
+            await archiveContainer.Container.UpsertItemAsync(logWithReferenceIn).ConfigureAwait(false);
+
+            var logWithReferenceOut = CreateCosmosRequestResponseLog(Guid.NewGuid().ToString(), testGroup, "rsmName");
+            logWithReferenceOut.HttpData = "response";
+            logWithReferenceOut.OriginalTransactionIDReferenceId = messageIdIn;
+            await archiveContainer.Container.UpsertItemAsync(logWithReferenceOut).ConfigureAwait(false);
 
             var searchCriteria = new SearchCriteria(
-                "12345",
-                "group1",
+                messageIdIn,
+                testGroup,
                 null,
                 null,
                 null,
@@ -130,11 +138,77 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
-            var referencedDbResult = result.Result.FirstOrDefault(e => e.MessageId == logWithReference.OriginalTransactionIDReferenceId);
+            var inDbResult = result.Result.FirstOrDefault(e => e.MessageId == messageIdIn);
+            var outDbResult = result.Result.FirstOrDefault(e => e.OriginalTransactionIDReferenceId == messageIdIn);
 
-            Assert.NotNull(referencedDbResult);
-            Assert.Equal(logWithReference.OriginalTransactionIDReferenceId, referencedDbResult.MessageId);
-            Assert.NotEqual(referencedDbResult.MessageId, logWithReference.MessageId);
+            Assert.NotNull(inDbResult);
+            Assert.NotNull(outDbResult);
+            Assert.Equal(inDbResult.MessageId, outDbResult.OriginalTransactionIDReferenceId);
+
+            await startup.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task Test_IncludeRelated_Out()
+        {
+            // Arrange
+            var startup = new Startup();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables()
+                .Build());
+            startup.ConfigureServices(serviceCollection);
+            serviceCollection.BuildServiceProvider().UseSimpleInjector(
+                startup.Container,
+                x => x.Container.Options.EnableAutoVerification = false);
+            startup.Container.Options.AllowOverridingRegistrations = true;
+            var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
+            var archiveReaderRepository = scope.GetInstance<IArchiveReaderRepository>();
+            var archiveContainer = scope.GetInstance<IArchiveContainer>();
+
+            var testGroup = Guid.NewGuid().ToString();
+
+            await AddDataToDb(archiveContainer).ConfigureAwait(false);
+
+            var messageIdIn = Guid.NewGuid().ToString();
+            var messageIdOut = Guid.NewGuid().ToString();
+
+            var logWithReferenceOut = CreateCosmosRequestResponseLog(messageIdOut, testGroup, "rsmName");
+            logWithReferenceOut.HttpData = "response";
+            logWithReferenceOut.OriginalTransactionIDReferenceId = messageIdIn;
+            await archiveContainer.Container.UpsertItemAsync(logWithReferenceOut).ConfigureAwait(false);
+
+            var logWithReferenceIn = CreateCosmosRequestResponseLog(messageIdIn, testGroup, "rsmName");
+            logWithReferenceIn.HttpData = "request";
+            await archiveContainer.Container.UpsertItemAsync(logWithReferenceIn).ConfigureAwait(false);
+
+            var searchCriteria = new SearchCriteria(
+                messageIdOut,
+                testGroup,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true,
+                null);
+
+            // Act
+            var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+
+            // Assert
+            var inDbResult = result.Result.FirstOrDefault(e => e.MessageId == messageIdIn);
+            var outDbResult = result.Result.FirstOrDefault(e => e.OriginalTransactionIDReferenceId == messageIdIn);
+
+            Assert.NotNull(inDbResult);
+            Assert.NotNull(outDbResult);
+            Assert.Equal(inDbResult.MessageId, outDbResult.OriginalTransactionIDReferenceId);
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }
