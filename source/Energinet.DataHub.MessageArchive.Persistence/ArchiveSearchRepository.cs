@@ -72,7 +72,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         private static SearchResults Map(IEnumerable<CosmosRequestResponseLog> cosmosDocuments)
         {
-            SearchResults searchResults = new ();
+            SearchResults searchResults = new();
 
             foreach (var cosmosSearchResult in cosmosDocuments)
             {
@@ -85,7 +85,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         private static async Task<List<CosmosRequestResponseLog>> ExecuteQueryAsync(IQueryable<CosmosRequestResponseLog> query)
         {
-            List<CosmosRequestResponseLog> cosmosDocuments = new ();
+            List<CosmosRequestResponseLog> cosmosDocuments = new();
 
             using var iterator = query.ToFeedIterator();
 
@@ -99,7 +99,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         private static async Task<(List<CosmosRequestResponseLog> Result, string? ContinuationToken)> ExecuteQueryWithContinuationTokenAsync(IQueryable<CosmosRequestResponseLog> query)
         {
-            List<CosmosRequestResponseLog> cosmosDocuments = new ();
+            List<CosmosRequestResponseLog> cosmosDocuments = new();
 
             using var iterator = query.ToFeedIterator();
 

@@ -53,9 +53,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
 
             app.UseRouting();
 
-            //app.UseMiddleware<JwtTokenMiddleware>();
-            //app.UseMiddleware<UserMiddleware>();
-            //app.UseAuthorization();
+            app.UseMiddleware<JwtTokenMiddleware>();
+            app.UseMiddleware<UserMiddleware>();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
