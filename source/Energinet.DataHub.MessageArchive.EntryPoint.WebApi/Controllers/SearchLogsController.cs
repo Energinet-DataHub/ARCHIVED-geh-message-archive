@@ -55,7 +55,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
                     return BadRequest(validationResult.ErrorMessage);
                 }
 
-                return searchResult.Result.Count > 0 ? Ok(searchResult.Result) : NoContent();
+                return searchResult.Result.Count > 0 ? Ok(searchResult) : NoContent();
             }
 #pragma warning disable CA1031
             catch (Exception e)

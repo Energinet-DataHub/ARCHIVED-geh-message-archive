@@ -24,6 +24,7 @@ using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Processing.Services;
 using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Reader.Factories;
+using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
@@ -69,6 +70,7 @@ namespace Energinet.DataHub.MessageArchive.Common
             RegisterCosmosStorageWriter(Container);
 
             Container.Register<IBlobProcessingHandler, BlobProcessingHandler>(Lifestyle.Transient);
+            Container.Register<IArchiveSearchHandler, ArchiveSearchHandler>(Lifestyle.Scoped);
             Container.Register<IArchiveSearchRepository, ArchiveSearchRepository>(Lifestyle.Scoped);
 
             Configure(Container);
