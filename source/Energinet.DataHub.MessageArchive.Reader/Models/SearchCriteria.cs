@@ -59,26 +59,45 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
         }
 
         public string? MessageId { get; set; }
+
         public string? MessageType { get; set; }
+
         public string? ProcessType { get; set; }
+
         public string? DateTimeFrom { get; set; }
+
         public string? DateTimeTo { get; set; }
+
         public string? SenderId { get; set; }
+
         public string? ReceiverId { get; set; }
+
         public string? SenderRoleType { get; set; }
+
         public string? ReceiverRoleType { get; set; }
+
         public string? BusinessSectorType { get; set; }
+
         public string? ReasonCode { get; set; }
+
         public string? InvocationId { get; set; }
+
         public string? FunctionName { get; set; }
+
         public string? TraceId { get; set; }
+
         public bool? IncludeRelated { get; set; }
+
         public string? RsmName { get; set; }
+
         public DateTimeOffset? DateTimeFromParsed { get; set; }
+
         public DateTimeOffset? DateTimeToParsed { get; set; }
+
 #pragma warning disable CA1805
         public string? ContinuationToken { get; set; } = null;
 #pragma warning restore CA1805
+
         public int MaxItemCount { get; set; } = -1;
     }
 }

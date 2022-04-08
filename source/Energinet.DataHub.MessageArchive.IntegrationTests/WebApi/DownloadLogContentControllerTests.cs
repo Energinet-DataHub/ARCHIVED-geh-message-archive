@@ -60,7 +60,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
 
             // Assert
             Assert.NotNull(result);
-            Assert.Contains(logNameToDownload, streamContent?.FileDownloadName);
+            Assert.Contains(logNameToDownload, streamContent?.FileDownloadName, StringComparison.InvariantCultureIgnoreCase);
             Assert.Equal(logContent, contentAsString);
         }
 
@@ -71,7 +71,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
             await containerClient.UploadBlobAsync(blobName, logContent).ConfigureAwait(false);
         }
 
-        private static (Scope scope, Startup startup) RunSetup(string storageConnectionString, string storageContainerName)
+        private static (Scope Scope, Startup Startup) RunSetup(string storageConnectionString, string storageContainerName)
         {
             var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
             configuration["FRONTEND_OPEN_ID_URL"] = "value";

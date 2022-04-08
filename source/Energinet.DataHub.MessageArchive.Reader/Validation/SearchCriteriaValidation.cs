@@ -21,7 +21,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
 {
     public static class SearchCriteriaValidation
     {
-        public static (bool Valid, string ErrorMessage) Validate(SearchCriteria searchCriteria)
+        public static SearchCriteriaValidationResult Validate(SearchCriteria searchCriteria)
         {
             Guard.ThrowIfNull(searchCriteria, nameof(searchCriteria));
 
@@ -30,13 +30,13 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             {
                 searchCriteria.DateTimeFrom = null;
                 searchCriteria.DateTimeTo = null;
-                return (datetimeValidation.Valid, datetimeValidation.ErrorMessage);
+                return new SearchCriteriaValidationResult(datetimeValidation.Valid, datetimeValidation.ErrorMessage);
             }
 
             ValidateAndUpdateRsmName(searchCriteria);
             ValidateIncludeRelated(searchCriteria);
 
-            return (true, string.Empty);
+            return new SearchCriteriaValidationResult(true);
         }
 
         private static void ValidateIncludeRelated(SearchCriteria sc)
@@ -59,13 +59,13 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             }
         }
 
-        private static (bool Valid, string ErrorMessage) ValidateDateTime(SearchCriteria sc)
+        private static SearchCriteriaValidationResult ValidateDateTime(SearchCriteria sc)
         {
             try
             {
                 if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
                 {
-                    return (false, "From and to date should be set");
+                    return new SearchCriteriaValidationResult(false, "From and to date should be set");
                 }
 
                 var createdDateFromParsed = TryParseExactDateTimeStringAsIso(sc.DateTimeFrom, out var createdDateFromResult);
@@ -75,16 +75,16 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
                 {
                     sc.DateTimeFromParsed = createdDateFromResult.ToUniversalTime();
                     sc.DateTimeToParsed = createdDateToResult.ToUniversalTime();
-                    return (true, string.Empty);
+                    return new SearchCriteriaValidationResult(true);
                 }
 
-                return (false, $"date time parse error, from date: {sc.DateTimeFrom}, to date: {sc.DateTimeTo}");
+                return new SearchCriteriaValidationResult(false, $"date time parse error, from date: {sc.DateTimeFrom}, to date: {sc.DateTimeTo}");
             }
 #pragma warning disable CA1031
             catch (Exception ex)
 #pragma warning restore CA1031
             {
-                return (false, ex.Message);
+                return new SearchCriteriaValidationResult(false, ex.Message);
             }
         }
 

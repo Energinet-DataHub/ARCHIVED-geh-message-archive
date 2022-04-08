@@ -12,26 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Persistence;
-using Energinet.DataHub.MessageArchive.Processing;
-
-namespace Energinet.DataHub.MessageArchive.Tests
+namespace Energinet.DataHub.MessageArchive.Reader.Models
 {
-    public class MockedStorageWriter<T> : IStorageWriter<T>
+    public class SearchCriteriaValidationResult
     {
-        private List<T> _storage = new();
-
-        public Task WriteAsync(T objectToSave)
+        public SearchCriteriaValidationResult(bool valid, string errorMessage = "")
         {
-            _storage.Add(objectToSave);
-            return Task.CompletedTask;
+            Valid = valid;
+            ErrorMessage = errorMessage;
         }
 
-        public IEnumerable<T> Storage()
-        {
-            return _storage;
-        }
+        public bool Valid { get; }
+
+        public string ErrorMessage { get; }
     }
 }

@@ -18,7 +18,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Factories
 {
     public sealed class StorageServiceClientFactory : IStorageServiceClientFactory
     {
-        private readonly object _lockObject = new ();
+        private readonly object _lockObject = new();
         private readonly string _connectionString;
 
         private BlobServiceClient? _blobServiceClient;

@@ -150,7 +150,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             // Assert
             Assert.True(result.Valid);
 #pragma warning disable CA1308
-            Assert.True(searchCriteria.RsmName.Equals(rsmInputName.ToLowerInvariant()));
+            Assert.True(searchCriteria.RsmName.Equals(rsmInputName.ToLowerInvariant(), StringComparison.Ordinal));
 #pragma warning restore CA1308
         }
 

@@ -25,6 +25,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
         }
 
         public IList<BaseParsedModel> Result { get; }
+
         public string? ContinuationToken { get; set; }
     }
 }

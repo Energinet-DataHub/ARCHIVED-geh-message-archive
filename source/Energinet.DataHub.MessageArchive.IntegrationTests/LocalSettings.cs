@@ -29,7 +29,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
 
                 if (File.Exists(localSettingsPath))
                 {
-                    var json = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllBytes(localSettingsPath)) !;
+                    var json = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllBytes(localSettingsPath))!;
                     if (json.TryGetValue("connectionString", out var cosmosConnectionString))
                     {
                         ConnectionString = cosmosConnectionString;

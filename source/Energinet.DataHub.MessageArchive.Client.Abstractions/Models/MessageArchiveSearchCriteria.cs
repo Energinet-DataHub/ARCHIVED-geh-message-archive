@@ -88,7 +88,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public string? RsmName { get; set; }
 
-        public string? ContinuationToken { get; set; } = null;
+        public string? ContinuationToken { get; set; }
 
         public int MaxItemCount { get; set; } = -1;
     }

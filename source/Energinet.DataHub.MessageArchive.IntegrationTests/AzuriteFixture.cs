@@ -26,7 +26,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
         {
             if (!LocalSettings.DisableAzurite)
             {
-                _azuriteManager = new ();
+                _azuriteManager = new();
             }
         }
 

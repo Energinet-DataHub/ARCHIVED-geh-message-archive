@@ -30,7 +30,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers
                 var message = errorProp.GetProperty("message").GetString();
                 if (errorPropParsed)
                 {
-                    return new List<ParsedErrorModel> { new (code ?? string.Empty, message ?? string.Empty) };
+                    return new List<ParsedErrorModel> { new(code ?? string.Empty, message ?? string.Empty) };
                 }
             }
 #pragma warning disable CA1031

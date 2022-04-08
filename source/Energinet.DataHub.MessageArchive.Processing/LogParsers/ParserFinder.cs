@@ -57,30 +57,30 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
         private static bool IsXmlWithContent(string contentType, string content)
         {
-            return (contentType.Contains("xml") && !string.IsNullOrWhiteSpace(content))
+            return (contentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrWhiteSpace(content))
                 || (!string.IsNullOrWhiteSpace(content) &&
-                    content.Trim().StartsWith("<?xml version", StringComparison.InvariantCulture))
+                    content.Trim().StartsWith("<?xml version", StringComparison.InvariantCultureIgnoreCase))
                 || (!string.IsNullOrWhiteSpace(content) &&
-                    content.Trim().StartsWith("<cim:", StringComparison.InvariantCulture));
+                    content.Trim().StartsWith("<cim:", StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static bool IsErrorXmlWithContent(string contentType, string content)
         {
-            return contentType.Contains("xml")
+            return contentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase)
                    && !string.IsNullOrWhiteSpace(content)
                    && content.Trim().Contains("<Error>", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static bool IsJsonContent(string contentType, string content)
         {
-            return contentType.Contains("json")
+            return contentType.Contains("json", StringComparison.InvariantCultureIgnoreCase)
                    || (!string.IsNullOrWhiteSpace(content) &&
                        content.Trim().StartsWith("{", StringComparison.InvariantCulture));
         }
 
         private static bool IsErrorJsonWithContent(string contentType, string content)
         {
-            return contentType.Contains("json")
+            return contentType.Contains("json", StringComparison.InvariantCultureIgnoreCase)
                    || (!string.IsNullOrWhiteSpace(content)
                        && content.Contains("error", StringComparison.InvariantCultureIgnoreCase)
                        && content.Contains("code", StringComparison.InvariantCultureIgnoreCase));

@@ -15,7 +15,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Microsoft.AspNetCore.Mvc;
@@ -28,14 +28,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
     public class SearchLogsController : ControllerBase
     {
         private readonly ILogger<SearchLogsController> _logger;
-        private readonly IArchiveSearchRepository _archiveSearchRepository;
+        private readonly IArchiveSearchHandler _archiveSearchHandler;
 
         public SearchLogsController(
             ILogger<SearchLogsController> logger,
-            IArchiveSearchRepository archiveSearchRepository)
+            IArchiveSearchHandler archiveSearchHandler)
         {
             _logger = logger;
-            _archiveSearchRepository = archiveSearchRepository;
+            _archiveSearchHandler = archiveSearchHandler;
         }
 
         [HttpGet("search")]
@@ -48,15 +48,14 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
                     throw new InvalidOperationException(nameof(searchCriteria));
                 }
 
-                var (valid, errorMessage) = SearchCriteriaValidation.Validate(searchCriteria);
-                if (!valid)
+                var (searchResult, validationResult) = await _archiveSearchHandler.SearchAsync(searchCriteria).ConfigureAwait(false);
+
+                if (!validationResult.Valid)
                 {
-                    return BadRequest(errorMessage);
+                    return BadRequest(validationResult.ErrorMessage);
                 }
 
-                var searchResults = await _archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
-
-                return searchResults.Result.Count > 0 ? Ok(searchResults) : NoContent();
+                return searchResult.Result.Count > 0 ? Ok(searchResult.Result) : NoContent();
             }
 #pragma warning disable CA1031
             catch (Exception e)

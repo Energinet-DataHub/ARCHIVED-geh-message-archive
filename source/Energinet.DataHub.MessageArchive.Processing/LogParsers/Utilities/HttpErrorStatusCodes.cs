@@ -19,7 +19,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities
 {
     public static class HttpErrorStatusCodes
     {
-        private static HashSet<HttpStatusCode> _statusCodes = new ()
+        private static readonly HashSet<HttpStatusCode> _statusCodes = new()
         {
             HttpStatusCode.BadRequest,
             HttpStatusCode.Unauthorized,

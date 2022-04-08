@@ -19,6 +19,7 @@ using Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
 using Energinet.DataHub.MessageArchive.Reader;
+using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +42,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
             // Arrange
             var (scope, startup) = RunStartUp();
             var logger = scope.GetInstance<ILogger<SearchLogsController>>();
-            var archiveSearchRepository = scope.GetInstance<IArchiveSearchRepository>();
+            var archiveSearchRepository = scope.GetInstance<IArchiveSearchHandler>();
             var archiveWriter = scope.GetInstance<IStorageWriter<CosmosRequestResponseLog>>();
 
             var searchController = new SearchLogsController(logger, archiveSearchRepository);
@@ -66,7 +67,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
             Assert.Equal(expectedResults, searchResult.Result.Count);
         }
 
-        private static (Scope scope, Startup startup) RunStartUp()
+        private static (Scope Scope, Startup Startup) RunStartUp()
         {
             var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
             configuration["FRONTEND_OPEN_ID_URL"] = "value";

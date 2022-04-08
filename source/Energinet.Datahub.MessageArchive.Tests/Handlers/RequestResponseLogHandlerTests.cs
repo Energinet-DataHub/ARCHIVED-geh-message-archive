@@ -68,7 +68,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            var storageList = storage.GetStorage().ToList();
+            var storageList = storage.Storage().ToList();
             Assert.Equal(logsToParse.Count, storageList.Count);
         }
 
@@ -106,10 +106,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            var storageList = storage.GetStorage().ToList();
+            var storageList = storage.Storage().ToList();
             Assert.NotNull(storageList.FirstOrDefault(
                 e => e.Errors != null
-                     && e.Errors.Any(f => f.Code.Equals("1") && f.Message.Equals("test"))));
+                     && e.Errors.Any(f => f.Code.Equals("1", StringComparison.Ordinal) && f.Message.Equals("test", StringComparison.Ordinal))));
         }
 
         [Theory]

@@ -99,7 +99,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             return model;
         }
 
-        private static (Scope scope, Startup startup) RunStartUp()
+        private static (Scope Scope, Startup Startup) RunStartUp()
         {
             var startup = new Startup();
             var serviceCollection = new ServiceCollection();

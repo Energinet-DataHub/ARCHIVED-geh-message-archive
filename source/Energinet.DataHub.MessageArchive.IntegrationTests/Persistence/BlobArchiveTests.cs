@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -53,7 +54,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             var blobReader = new BlobReader(archiveConn, marketoplogs);
             var blobsForProcessing = await blobReader.GetBlobsReadyForProcessingAsync().ConfigureAwait(false);
 
-            var firstItem = blobsForProcessing.First(e => e.Name.Equals(itemToMove.Name));
+            var firstItem = blobsForProcessing.First(e => e.Name.Equals(itemToMove.Name, StringComparison.Ordinal));
 
             // Now move to archive
             var blobArchive = new BlobArchive(archiveConn, marketoplogs, marketoplogsArchive);
@@ -61,7 +62,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
 
             // Assert -------------
             Assert.NotNull(resultUri);
-            Assert.EndsWith(itemToMove.Name, resultUri.AbsolutePath);
+            Assert.EndsWith(itemToMove.Name, resultUri.AbsolutePath, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

@@ -12,30 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.Client.Abstractions.Models;
+using Energinet.DataHub.MessageArchive.Reader.Models;
 
-namespace Energinet.DataHub.MessageArchive.Client.Abstractions
+namespace Energinet.DataHub.MessageArchive.Reader.Handlers
 {
     /// <summary>
-    /// MessageArchiveClient abstraction
+    /// Search handler
     /// </summary>
-    public interface IMessageArchiveClient
+    public interface IArchiveSearchHandler
     {
         /// <summary>
-        /// Search gor request response logs with params
+        /// Search in message archive
         /// </summary>
         /// <param name="searchCriteria"></param>
-        /// <returns>Search result</returns>
-        public Task<MessageArchiveSearchResultsDto?> SearchLogsAsync(MessageArchiveSearchCriteria searchCriteria);
-
-        /// <summary>
-        /// Downloads log contents
-        /// </summary>
-        /// <param name="logname"></param>
-        /// <returns>stream with content</returns>
-        Task<Stream> GetStreamFromStorageAsync(string logname);
+        /// <returns>search result</returns>
+        public Task<(SearchResults SearchResult, SearchCriteriaValidationResult ValidationResult)> SearchAsync(SearchCriteria searchCriteria);
     }
 }

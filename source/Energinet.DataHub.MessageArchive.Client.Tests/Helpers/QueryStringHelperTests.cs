@@ -39,19 +39,19 @@ namespace Energinet.DataHub.MessageArchive.Client.Tests.Helpers
             var queryString = QueryStringHelper.BuildQueryString(searchCriteria);
 
             // Assert
-            Assert.Contains("messageId", queryString);
-            Assert.Contains("TestId", queryString);
+            Assert.Contains("messageId", queryString, StringComparison.InvariantCultureIgnoreCase);
+            Assert.Contains("TestId", queryString, StringComparison.InvariantCultureIgnoreCase);
 
-            Assert.Contains("messageType", queryString);
-            Assert.Contains("TestType", queryString);
+            Assert.Contains("messageType", queryString, StringComparison.InvariantCultureIgnoreCase);
+            Assert.Contains("TestType", queryString, StringComparison.InvariantCultureIgnoreCase);
 
-            Assert.Contains("businessSectorType", queryString);
-            Assert.Contains("BusType", queryString);
+            Assert.Contains("businessSectorType", queryString, StringComparison.InvariantCultureIgnoreCase);
+            Assert.Contains("BusType", queryString, StringComparison.InvariantCultureIgnoreCase);
 
-            Assert.DoesNotContain("functionName", queryString);
+            Assert.DoesNotContain("functionName", queryString, StringComparison.InvariantCultureIgnoreCase);
 
             var toDate = DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            Assert.Contains(toDate, queryString);
+            Assert.Contains(toDate, queryString, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
