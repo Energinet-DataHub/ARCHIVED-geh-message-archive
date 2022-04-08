@@ -41,7 +41,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Repositories
         {
             var container = new Mock<IArchiveContainer>();
 
-            return new (container.Object);
+            return new ArchiveSearchRepository(container.Object);
         }
     }
 }
