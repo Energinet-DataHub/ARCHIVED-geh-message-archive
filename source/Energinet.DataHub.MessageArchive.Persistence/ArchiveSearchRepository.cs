@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -111,18 +112,32 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
         {
-            if (criteria.MessageId != null && documents.Any() && criteria.IncludeRelated is true)
+            if (criteria.MessageId != null && criteria.IncludeRelated == true && documents.Any())
             {
-                var relatedMessageIds = documents
-                    .Where(d => !string.IsNullOrWhiteSpace(d.OriginalTransactionIDReferenceId))
-                    .Select(d => d.OriginalTransactionIDReferenceId);
-                var asLinq = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
-                var relatedMessageQuery = from relatedMessageResult in asLinq
-                    where relatedMessageIds.Contains(relatedMessageResult.MessageId)
-                    select relatedMessageResult;
+                var document = documents.FirstOrDefault();
+                var httpDataType = document?.HttpData ?? "unknown";
+                var referenceId = string.IsNullOrWhiteSpace(document?.OriginalTransactionIDReferenceId) ? null : document.OriginalTransactionIDReferenceId;
 
-                var relatedCosmosDocuments = await ExecuteQueryAsync(relatedMessageQuery).ConfigureAwait(false);
-                documents.AddRange(relatedCosmosDocuments);
+                if (httpDataType.Equals("request", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+                    var relatedQuery = from relatedMessageResult in asLinqIn
+                        where criteria.MessageId == relatedMessageResult.OriginalTransactionIDReferenceId
+                        select relatedMessageResult;
+
+                    var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
+                    documents.AddRange(relatedCosmosDocuments);
+                }
+                else if (httpDataType.Equals("response", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+                    var relatedQuery = from relatedMessageResult in asLinqIn
+                        where referenceId == relatedMessageResult.MessageId
+                        select relatedMessageResult;
+
+                    var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
+                    documents.AddRange(relatedCosmosDocuments);
+                }
             }
         }
     }
