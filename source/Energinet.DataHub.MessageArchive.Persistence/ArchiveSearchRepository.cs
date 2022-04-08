@@ -118,7 +118,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                 var httpDataType = document?.HttpData ?? "unknown";
                 var referenceId = string.IsNullOrWhiteSpace(document?.OriginalTransactionIDReferenceId) ? null : document.OriginalTransactionIDReferenceId;
 
-                if (httpDataType.Equals("request", StringComparison.InvariantCultureIgnoreCase))
+                if (httpDataType.Equals("request", StringComparison.OrdinalIgnoreCase))
                 {
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
@@ -128,7 +128,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
                     documents.AddRange(relatedCosmosDocuments);
                 }
-                else if (httpDataType.Equals("response", StringComparison.InvariantCultureIgnoreCase))
+                else if (httpDataType.Equals("response", StringComparison.OrdinalIgnoreCase))
                 {
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
