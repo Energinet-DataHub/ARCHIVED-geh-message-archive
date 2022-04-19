@@ -28,6 +28,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageAr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Client.Tests", "Energinet.DataHub.MessageArchive.Client.Tests\Energinet.DataHub.MessageArchive.Client.Tests.csproj", "{EC9B0936-3406-4FFC-9DA0-A331694E0AE4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{67B4724E-55FD-4C13-9459-A98D889A6DF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.EntryPoint.WebApi", "Energinet.DataHub.MessageArchive.EntryPoint.WebApi\Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj", "{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Common", "Energinet.DataHub.MessageArchive.Common\Energinet.DataHub.MessageArchive.Common.csproj", "{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Utilities", "Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj", "{3DE5B4A4-4257-405A-8791-F2EE241268B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Persistence", "Energinet.DataHub.MessageArchive.Persistence\Energinet.DataHub.MessageArchive.Persistence.csproj", "{6F09733A-533A-48C7-9C42-9F6D78060F70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Processing", "Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj", "{D29F350F-2384-441F-96B0-6BFEBF95ABE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.Reader", "Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj", "{25517BEF-5979-4A58-80A8-0E417774B1B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.PersistanceModels", "Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj", "{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +77,34 @@ Global
 		{EC9B0936-3406-4FFC-9DA0-A331694E0AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC9B0936-3406-4FFC-9DA0-A331694E0AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC9B0936-3406-4FFC-9DA0-A331694E0AE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DE5B4A4-4257-405A-8791-F2EE241268B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE5B4A4-4257-405A-8791-F2EE241268B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE5B4A4-4257-405A-8791-F2EE241268B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE5B4A4-4257-405A-8791-F2EE241268B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F09733A-533A-48C7-9C42-9F6D78060F70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F09733A-533A-48C7-9C42-9F6D78060F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F09733A-533A-48C7-9C42-9F6D78060F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F09733A-533A-48C7-9C42-9F6D78060F70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D29F350F-2384-441F-96B0-6BFEBF95ABE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25517BEF-5979-4A58-80A8-0E417774B1B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0C284C68-2AE1-40A0-A77B-79173767DEF3} = {9FD00820-D6BC-44F4-AE61-8B792E7B77B9}
@@ -68,5 +112,8 @@ Global
 		{5E5D8B56-0D6A-4EFF-A470-82397C42725C} = {00B181C5-7E3E-40FC-AF30-C75201E137CE}
 		{C96F1226-29A4-4EB0-A755-54DED36AC3DC} = {00B181C5-7E3E-40FC-AF30-C75201E137CE}
 		{EC9B0936-3406-4FFC-9DA0-A331694E0AE4} = {9FD00820-D6BC-44F4-AE61-8B792E7B77B9}
+		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
+		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
+		{3369FFA9-7C92-40B8-86C1-5D93CCAED059} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
 	EndGlobalSection
 EndGlobal

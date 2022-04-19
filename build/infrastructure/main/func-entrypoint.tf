@@ -21,7 +21,7 @@ module "func_entrypoint_messagearchive" {
   resource_group_name                       = azurerm_resource_group.this.name
   location                                  = azurerm_resource_group.this.location
   app_service_plan_id                       = data.azurerm_key_vault_secret.plan_shared_id.value
-  application_insights_instrumentation_key  = data.azurerm_key_vault_secret.appi_instrumentation_key.value
+  application_insights_instrumentation_key  = data.azurerm_key_vault_secret.appi_shared_instrumentation_key.value
   always_on                                 = true
   app_settings                              = {
     # Region: Default Values
@@ -37,17 +37,4 @@ module "func_entrypoint_messagearchive" {
   }
   
   tags                                      = azurerm_resource_group.this.tags
-}
-
-module "kvs_app_message_archive_api_base_url" {
-  source        = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/key-vault-secret?ref=5.4.0"
-
-  name          = "app-message-archive-api-base-url"
-  value         = "https://${module.func_entrypoint_messagearchive.default_hostname}/api/"
-  key_vault_id  = data.azurerm_key_vault.kv_shared_resources.id
-
-  tags          = azurerm_resource_group.this.tags
-  depends_on = [
-    module.func_entrypoint_messagearchive,
-  ]
 }

@@ -14,8 +14,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository.Containers;
+using Energinet.DataHub.MessageArchive.Persistence;
+using Energinet.DataHub.MessageArchive.Persistence.Containers;
+using Energinet.DataHub.MessageArchive.Reader;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -36,11 +37,11 @@ namespace Energinet.DataHub.MessageArchive.Tests.Repositories
                 .ConfigureAwait(false);
         }
 
-        private static ArchiveReaderRepository CreateTarget()
+        private static ArchiveSearchRepository CreateTarget()
         {
             var container = new Mock<IArchiveContainer>();
 
-            return new (container.Object);
+            return new ArchiveSearchRepository(container.Object);
         }
     }
 }
