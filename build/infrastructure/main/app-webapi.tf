@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-resource "app_webapi" {
+module "app_webapi" {
   source                                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/app-service?ref=5.8.0"
 
   name                                      = "webapi"
@@ -25,16 +25,16 @@ resource "app_webapi" {
   dotnet_framework_version                  = "v5.0"
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY"                    = "${data.azurerm_key_vault_secret.appi_shared_instrumentation_key.value}"
-    "FRONTEND_OPEN_ID_URL"                              = "${data.azurerm_key_vault_secret.frontend_open_id_url.value}"
-    "FRONTEND_SERVICE_APP_ID"                           = "${data.azurerm_key_vault_secret.frontend_service_app_id.value}"
-    "STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING"         = "${data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value}"
-    "STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME"            = "${data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value}"
-    "STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME"  = "${data.azurerm_key_vault_secret.st_market_operator_logs_archive_container_name.value}"
-    "COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING"          = local.cosmos_db_connection_string
+    APPINSIGHTS_INSTRUMENTATIONKEY                    = "${data.azurerm_key_vault_secret.appi_shared_instrumentation_key.value}"
+    FRONTEND_OPEN_ID_URL                              = "${data.azurerm_key_vault_secret.frontend_open_id_url.value}"
+    FRONTEND_SERVICE_APP_ID                           = "${data.azurerm_key_vault_secret.frontend_service_app_id.value}"
+    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "${data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value}"
+    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "${data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value}"
+    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "${data.azurerm_key_vault_secret.st_market_operator_logs_archive_container_name.value}"
+    COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }
 
-  tags                                      = azurerm_resource_group.this.tags
+  tags                                                = azurerm_resource_group.this.tags
 }
 
 module "kvs_app_message_archive_api_base_url" {
