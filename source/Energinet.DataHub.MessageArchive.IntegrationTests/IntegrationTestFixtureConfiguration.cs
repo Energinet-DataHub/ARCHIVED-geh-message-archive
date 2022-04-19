@@ -18,7 +18,8 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
 {
     [CollectionDefinition("IntegrationTest")]
     public sealed class IntegrationTestFixtureConfiguration :
-        ICollectionFixture<CosmosDbFixture>
+        ICollectionFixture<CosmosDbFixture>,
+        ICollectionFixture<AzuriteFixture>
     {
         // This class has no code, and is never created. Its purpose is simply
         // to be the place to apply [CollectionDefinition] and all the

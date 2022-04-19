@@ -65,6 +65,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public string? RsmName { get; set; }
 
+        public bool? HaveBodyContent { get; set; }
+
 #pragma warning disable CA2227
         public IDictionary<string, string>? Data { get; set; }
 

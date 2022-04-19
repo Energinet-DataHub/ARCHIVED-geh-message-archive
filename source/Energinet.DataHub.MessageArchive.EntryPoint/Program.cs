@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
+using Energinet.DataHub.MessageArchive.Common.SimpleInjector;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
 
