@@ -47,7 +47,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var expected = await AddDataToDb(archiveWriter, messageType).ConfigureAwait(false);
 
             // Act
-            var searchCriteria = BuildCriteria(messageType, "notifybillingmasterdata");
+            var searchCriteria = BuildCriteria(messageType, new List<string>() { "notifybillingmasterdata" });
             var result = await archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
@@ -114,12 +114,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             return (scope, startup);
         }
 
-        private static SearchCriteria BuildCriteria(string messageType, string rsmName)
+        private static SearchCriteria BuildCriteria(string messageType, List<string> rsmNames)
         {
             return new SearchCriteria(
                 null,
                 messageType,
-                null,
+                new List<string>(),
                 null,
                 null,
                 null,
@@ -132,7 +132,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 null,
                 false,
-                rsmName);
+                rsmNames);
         }
     }
 }

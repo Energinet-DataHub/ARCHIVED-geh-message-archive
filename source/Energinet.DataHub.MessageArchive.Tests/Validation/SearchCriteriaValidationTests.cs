@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Xunit;
@@ -135,14 +135,14 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
         }
 
         [Fact]
-        public void Test_SearchParams_RsmName()
+        public void Test_SearchParams_ProcessType()
         {
             // Arrange
-            var rsmInputName = "Notifybillingmasterdata";
+            var processTypes = "d12";
             var searchCriteria = Create_ValidSearchCriteria();
             searchCriteria.DateTimeFrom = "2022-01-01T00:00:00.000+01:00";
             searchCriteria.DateTimeTo = "2022-01-19T23:59:59.000+01:00";
-            searchCriteria.RsmName = rsmInputName;
+            searchCriteria.ProcessTypes = new List<string>() { processTypes };
 
             // Act
             var result = SearchCriteriaValidation.Validate(searchCriteria);
@@ -150,7 +150,27 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
             // Assert
             Assert.True(result.Valid);
 #pragma warning disable CA1308
-            Assert.True(searchCriteria.RsmName.Equals(rsmInputName.ToLowerInvariant(), StringComparison.Ordinal));
+            Assert.Contains(processTypes.ToUpperInvariant(), searchCriteria.ProcessTypes);
+#pragma warning restore CA1308
+        }
+
+        [Fact]
+        public void Test_SearchParams_RsmName()
+        {
+            // Arrange
+            var rsmInputName = "Notifybillingmasterdata";
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.DateTimeFrom = "2022-01-01T00:00:00.000+01:00";
+            searchCriteria.DateTimeTo = "2022-01-19T23:59:59.000+01:00";
+            searchCriteria.RsmNames = new List<string>() { rsmInputName };
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+#pragma warning disable CA1308
+            Assert.Contains(rsmInputName.ToLowerInvariant(), searchCriteria.RsmNames);
 #pragma warning restore CA1308
         }
 
@@ -201,7 +221,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
                 DateTimeTo = "2022-01-31",
                 FunctionName = "functionName",
                 InvocationId = "invocationId",
-                ProcessType = "processType",
+                ProcessTypes = new List<string>() { "processType" },
                 ReasonCode = "reasonCode",
                 IncludeRelated = false,
                 SenderId = "senderId",

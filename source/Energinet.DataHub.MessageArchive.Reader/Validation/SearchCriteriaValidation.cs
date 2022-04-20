@@ -34,6 +34,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             }
 
             ValidateAndUpdateRsmName(searchCriteria);
+            ValidateAndUpdateProcessTypes(searchCriteria);
             ValidateIncludeRelated(searchCriteria);
 
             return new SearchCriteriaValidationResult(true);
@@ -51,11 +52,19 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
 
         private static void ValidateAndUpdateRsmName(SearchCriteria sc)
         {
-            if (!string.IsNullOrWhiteSpace(sc.RsmName))
+            for (var i = 0; i < sc.RsmNames.Count; i++)
             {
 #pragma warning disable CA1308
-                sc.RsmName = sc.RsmName.ToLowerInvariant();
+                sc.RsmNames[i] = sc.RsmNames[i].ToLowerInvariant();
 #pragma warning restore CA1308
+            }
+        }
+
+        private static void ValidateAndUpdateProcessTypes(SearchCriteria sc)
+        {
+            for (var i = 0; i < sc.ProcessTypes.Count; i++)
+            {
+                sc.ProcessTypes[i] = sc.ProcessTypes[i].ToUpperInvariant();
             }
         }
 

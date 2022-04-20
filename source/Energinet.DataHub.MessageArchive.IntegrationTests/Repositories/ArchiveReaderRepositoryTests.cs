@@ -22,6 +22,7 @@ using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
+using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -52,25 +53,13 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var archiveSearchRepository = scope.GetInstance<IArchiveSearchRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
-            var expected = await AddDataToDb(archiveContainer).ConfigureAwait(false);
+            var testGroup = Guid.NewGuid().ToString();
+            var expected = await AddDataToDb(archiveContainer, testGroup).ConfigureAwait(false);
 
-            var searchCriteria = new SearchCriteria(
-                null,
-                "group1",
-                null,
-                "2020-01-01",
-                "2020-04-04",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                false,
-                null);
+            var searchCriteria = GetSearchCriteria(null, testGroup, false);
+            searchCriteria.DateTimeFrom = "2020-01-01";
+            searchCriteria.DateTimeTo = "2020-04-04";
+            searchCriteria.RsmNames = new List<string>();
 
             // Act
             var result = await archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
@@ -82,6 +71,53 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             Assert.Equal(expected[0].SenderGln, result.Result[0].SenderGln);
             Assert.Equal(expected[0].ReasonCode, result.Result[0].ReasonCode);
             Assert.Equal(expected[0].RsmName, result.Result[0].RsmName);
+
+            await startup.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetSearchResultsAsync_RsmNamesAndProcessTypes()
+        {
+            // Arrange
+            var startup = new Startup();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables()
+                .Build());
+            startup.ConfigureServices(serviceCollection);
+            serviceCollection.BuildServiceProvider().UseSimpleInjector(
+                startup.Container,
+                x => x.Container.Options.EnableAutoVerification = false);
+            startup.Container.Options.AllowOverridingRegistrations = true;
+            var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
+            var archiveSearchRepository = scope.GetInstance<IArchiveSearchRepository>();
+            var archiveContainer = scope.GetInstance<IArchiveContainer>();
+
+            var rsmProcessTypes = new List<(string RsmName, string ProcessType)>
+            {
+                ("notifybillingmasterdata", "D1"),
+                ("requestchangeaccountingpointcharacteristics", "D5"),
+                ("rejectrequestchangeaccountingpointcharacteristics", "D3"),
+                ("requestchangeaccountingpointcharacteristics", "D6"),
+                ("genericnotification", "D5"),
+                ("genericnotification", "D6"),
+                ("genericnotification", "D6"),
+                ("genericnotification", "D11"),
+            };
+
+            var testGroup = Guid.NewGuid().ToString();
+            await AddDataToDbForRsmNamesAndProcessTypes(archiveContainer, testGroup, rsmProcessTypes).ConfigureAwait(false);
+
+            var searchCriteria = GetSearchCriteria(null, testGroup, false);
+            searchCriteria.DateTimeFrom = "2020-01-01";
+            searchCriteria.DateTimeTo = "2020-04-04";
+            searchCriteria.RsmNames = new List<string>() { "genericnotification", "requestchangeaccountingpointcharacteristics" };
+            searchCriteria.ProcessTypes = new List<string>() { "D6", "D5" };
+
+            // Act
+            var result = await archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
+
+            // Assert
+            Assert.True(result.Result.Count == 5);
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }
@@ -105,7 +141,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
             var testGroup = Guid.NewGuid().ToString();
 
-            await AddDataToDb(archiveContainer).ConfigureAwait(false);
+            await AddDataToDb(archiveContainer, Guid.NewGuid().ToString()).ConfigureAwait(false);
 
             var messageIdIn = Guid.NewGuid().ToString();
             var logWithReferenceIn = CreateCosmosRequestResponseLog(messageIdIn, testGroup, "rsmName");
@@ -117,23 +153,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             logWithReferenceOut.OriginalTransactionIDReferenceId = messageIdIn;
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceOut).ConfigureAwait(false);
 
-            var searchCriteria = new SearchCriteria(
-                messageIdIn,
-                testGroup,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                true,
-                null);
+            var searchCriteria = GetSearchCriteria(messageIdIn, testGroup, true);
 
             // Act
             var result = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
@@ -168,7 +188,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
             var testGroup = Guid.NewGuid().ToString();
 
-            await AddDataToDb(archiveContainer).ConfigureAwait(false);
+            await AddDataToDb(archiveContainer, Guid.NewGuid().ToString()).ConfigureAwait(false);
 
             var messageIdIn = Guid.NewGuid().ToString();
             var messageIdOut = Guid.NewGuid().ToString();
@@ -182,23 +202,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             logWithReferenceIn.HttpData = "request";
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceIn).ConfigureAwait(false);
 
-            var searchCriteria = new SearchCriteria(
-                messageIdOut,
-                testGroup,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                true,
-                null);
+            var searchCriteria = GetSearchCriteria(messageIdOut, testGroup, true);
 
             // Act
             var (searchResult, validationResult) = await archiveReaderRepository.SearchAsync(searchCriteria).ConfigureAwait(false);
@@ -235,23 +239,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var insertCount = 30;
             var addedData = await AddDataToDbForPaging(archiveContainer, testGroupMessageType, insertCount).ConfigureAwait(false);
 
-            var searchCriteria = new SearchCriteria(
-                "pagingMessageId",
-                testGroupMessageType,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                false,
-                null);
+            var searchCriteria = GetSearchCriteria("pagingMessageId", testGroupMessageType, false);
             searchCriteria.MaxItemCount = 10;
 
             // Act
@@ -279,22 +267,44 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             await startup.DisposeAsync().ConfigureAwait(false);
         }
 
-        private static async Task<List<CosmosRequestResponseLog>> AddDataToDb(IArchiveContainer container)
+        private static SearchCriteria GetSearchCriteria(string? messageId, string messageType, bool includeRelated)
+        {
+            var searchCriteria = new SearchCriteria(
+                messageId,
+                messageType,
+                new List<string>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                includeRelated,
+                new List<string>());
+            return searchCriteria;
+        }
+
+        private static async Task<List<CosmosRequestResponseLog>> AddDataToDb(IArchiveContainer container, string testGroup)
         {
             var data = new List<CosmosRequestResponseLog>();
             data.Add(CreateCosmosRequestResponseLog(
                 "1",
-                "group1",
+                testGroup,
                 "notifybillingmasterdata"));
 
             data.Add(CreateCosmosRequestResponseLog(
                 "2",
-                "group1",
+                testGroup,
                 "notifybillingmasterdata"));
 
             data.Add(CreateCosmosRequestResponseLog(
                 "3",
-                "group1",
+                testGroup,
                 "notifybillingmasterdata"));
 
             foreach (var sample in data)
@@ -312,6 +322,24 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             for (var i = 0; i < insertCount; i++)
             {
                 var elem = CreateCosmosRequestResponseLog("pagingMessageId", groupMessageType, "MasterData");
+                data.Add(elem);
+                await container.Container.CreateItemAsync(elem).ConfigureAwait(false);
+            }
+
+            return data;
+        }
+
+        private static async Task<List<CosmosRequestResponseLog>> AddDataToDbForRsmNamesAndProcessTypes(
+            IArchiveContainer container,
+            string testGroup,
+            List<(string RsmName, string ProcessType)> rsmAndProcessType)
+        {
+            var data = new List<CosmosRequestResponseLog>();
+
+            foreach (var (rsmName, processType) in rsmAndProcessType)
+            {
+                var elem = CreateCosmosRequestResponseLog(Guid.NewGuid().ToString(), testGroup, rsmName);
+                elem.ProcessType = processType;
                 data.Add(elem);
                 await container.Container.CreateItemAsync(elem).ConfigureAwait(false);
             }

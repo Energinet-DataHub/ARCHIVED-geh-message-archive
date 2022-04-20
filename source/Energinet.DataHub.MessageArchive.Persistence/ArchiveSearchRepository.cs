@@ -44,10 +44,12 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     requestOptions: new QueryRequestOptions() { MaxItemCount = criteria.MaxItemCount },
                     continuationToken: criteria.ContinuationToken);
 
+            var ignoreProcessTypes = criteria.ProcessTypes is not { Count: > 0 };
+            var ignoreRsmNames = criteria.RsmNames is not { Count: > 0 };
+
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
                     (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
-                    (criteria.ProcessType == null || criteria.ProcessType == searchResult.ProcessType) &&
                     (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
                     (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
                     (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
@@ -59,7 +61,9 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
                     (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
                     (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
-                    (criteria.RsmName == null || criteria.RsmName == searchResult.RsmName)
+
+                    (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
+                    (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
                 select searchResult;
 
             var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query).ConfigureAwait(false);

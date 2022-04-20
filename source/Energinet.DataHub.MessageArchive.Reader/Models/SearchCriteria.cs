@@ -13,11 +13,15 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 
 namespace Energinet.DataHub.MessageArchive.Reader.Models
 {
     public sealed record SearchCriteria
     {
+#pragma warning disable CA1002
+#pragma warning disable CA1805
+#pragma warning disable CA2227
         public SearchCriteria()
         {
         }
@@ -25,7 +29,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
         public SearchCriteria(
             string? messageId,
             string? messageType,
-            string? processType,
+            List<string> processTypes,
             string? dateTimeFrom,
             string? dateTimeTo,
             string? senderId,
@@ -38,11 +42,11 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
             string? functionName,
             string? traceId,
             bool? includeRelated,
-            string? rsmName)
+            List<string> rsmNames)
         {
             MessageId = messageId;
             MessageType = messageType;
-            ProcessType = processType;
+            ProcessTypes = processTypes;
             DateTimeFrom = dateTimeFrom;
             DateTimeTo = dateTimeTo;
             SenderId = senderId;
@@ -55,14 +59,14 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
             FunctionName = functionName;
             TraceId = traceId;
             IncludeRelated = includeRelated;
-            RsmName = rsmName;
+            RsmNames = rsmNames;
         }
 
         public string? MessageId { get; set; }
 
         public string? MessageType { get; set; }
 
-        public string? ProcessType { get; set; }
+        public List<string> ProcessTypes { get; set; } = new();
 
         public string? DateTimeFrom { get; set; }
 
@@ -88,16 +92,18 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
 
         public bool? IncludeRelated { get; set; }
 
-        public string? RsmName { get; set; }
+        public List<string> RsmNames { get; set; } = new();
 
         public DateTimeOffset? DateTimeFromParsed { get; set; }
 
         public DateTimeOffset? DateTimeToParsed { get; set; }
 
-#pragma warning disable CA1805
         public string? ContinuationToken { get; set; } = null;
-#pragma warning restore CA1805
 
         public int MaxItemCount { get; set; } = -1;
     }
+#pragma warning restore CA1002
+#pragma warning restore CA1805
+#pragma warning restore CA2227
+
 }
