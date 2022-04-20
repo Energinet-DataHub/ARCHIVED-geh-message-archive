@@ -86,6 +86,8 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public bool IncludeRelated { get; set; }
 
+        public bool IncludeResultsWithoutContent { get; set; }
+
         public string? RsmName { get; set; }
 
         public string? ContinuationToken { get; set; }

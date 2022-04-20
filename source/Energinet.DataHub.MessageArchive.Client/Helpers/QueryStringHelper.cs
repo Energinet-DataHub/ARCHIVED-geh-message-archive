@@ -43,6 +43,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
             AddOnValue(nameValues, "rsmName", sc.RsmName);
             AddOnValue(nameValues, "includeRelated", sc.IncludeRelated ? "true" : "false");
+            AddOnValue(nameValues, "includeResultsWithoutContent", sc.IncludeResultsWithoutContent ? "true" : "false");
             AddOnValue(nameValues, "continuationToken", sc.ContinuationToken);
             AddOnValue(nameValues, "maxItemCount", sc.MaxItemCount);
 
