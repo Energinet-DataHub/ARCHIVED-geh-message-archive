@@ -55,9 +55,6 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var expected = await AddDataToDb(archiveContainer, testGroup).ConfigureAwait(false);
 
             var searchCriteria = GetSearchCriteria(null, testGroup, false);
-            searchCriteria.DateTimeFrom = "2020-01-01";
-            searchCriteria.DateTimeTo = "2020-04-04";
-            searchCriteria.RsmNames = new List<string>();
 
             // Act
             var result = await archiveSearchRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
@@ -106,8 +103,6 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             await AddDataToDbForRsmNamesAndProcessTypes(archiveContainer, testGroup, rsmProcessTypes).ConfigureAwait(false);
 
             var searchCriteria = GetSearchCriteria(null, testGroup, false);
-            searchCriteria.DateTimeFrom = "2020-01-01";
-            searchCriteria.DateTimeTo = "2020-04-04";
             searchCriteria.RsmNames = new List<string>() { "genericnotification", "requestchangeaccountingpointcharacteristics" };
             searchCriteria.ProcessTypes = new List<string>() { "D6", "D5" };
 
@@ -282,6 +277,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 includeRelated,
                 new List<string>());
+            searchCriteria.IncludeResultsWithoutContent = true;
             return searchCriteria;
         }
 
@@ -359,6 +355,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 RsmName = rsmName,
                 CreatedDate = createdDataValueParsed,
                 LogCreatedDate = createdDataValueParsed,
+                HaveBodyContent = true,
             };
             return model;
         }

@@ -92,6 +92,8 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
 
         public bool? IncludeRelated { get; set; }
 
+        public bool IncludeResultsWithoutContent { get; set; } = false;
+
         public List<string> RsmNames { get; set; } = new();
 
         public DateTimeOffset? DateTimeFromParsed { get; set; }

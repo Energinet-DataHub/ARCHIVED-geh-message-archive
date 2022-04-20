@@ -61,6 +61,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
                     (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
                     (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
+                    (criteria.IncludeResultsWithoutContent == false || searchResult.HaveBodyContent == true) &&
 
                     (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
                     (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
