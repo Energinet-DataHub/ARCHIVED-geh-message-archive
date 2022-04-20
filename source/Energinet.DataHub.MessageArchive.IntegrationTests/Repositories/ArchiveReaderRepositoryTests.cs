@@ -20,9 +20,7 @@ using Energinet.DataHub.MessageArchive.EntryPoint;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Reader;
-using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -183,12 +181,10 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
             var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
-            var archiveReaderRepository = scope.GetInstance<IArchiveSearchHandler>();
+            var archiveReaderRepository = scope.GetInstance<IArchiveSearchRepository>();
             var archiveContainer = scope.GetInstance<IArchiveContainer>();
 
             var testGroup = Guid.NewGuid().ToString();
-
-            await AddDataToDb(archiveContainer, Guid.NewGuid().ToString()).ConfigureAwait(false);
 
             var messageIdIn = Guid.NewGuid().ToString();
             var messageIdOut = Guid.NewGuid().ToString();
@@ -205,7 +201,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var searchCriteria = GetSearchCriteria(messageIdOut, testGroup, true);
 
             // Act
-            var (searchResult, validationResult) = await archiveReaderRepository.SearchAsync(searchCriteria).ConfigureAwait(false);
+            var searchResult = await archiveReaderRepository.GetSearchResultsAsync(searchCriteria).ConfigureAwait(false);
 
             // Assert
             var inDbResult = searchResult.Result.FirstOrDefault(e => e.MessageId == messageIdIn);
@@ -352,6 +348,8 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             string messageType,
             string rsmName)
         {
+            var createdDateParsed = DateTimeOffset.TryParse("2022-03-01T00:00:00Z", out var createdDataValueParsed);
+
             var model = new CosmosRequestResponseLog
             {
                 Id = messageId,
@@ -359,6 +357,8 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 MessageId = messageId,
                 MessageType = messageType,
                 RsmName = rsmName,
+                CreatedDate = createdDataValueParsed,
+                LogCreatedDate = createdDataValueParsed,
             };
             return model;
         }
