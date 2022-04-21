@@ -33,7 +33,6 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "messageType", sc.MessageType);
             AddOnValue(nameValues, "functionName", sc.FunctionName);
             AddOnValue(nameValues, "invocationId", sc.InvocationId);
-            AddOnValue(nameValues, "processType", sc.ProcessType);
             AddOnValue(nameValues, "reasonCode", sc.ReasonCode);
             AddOnValue(nameValues, "senderId", sc.SenderId);
             AddOnValue(nameValues, "senderRoleType", sc.SenderRoleType);
@@ -41,10 +40,12 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             AddOnValue(nameValues, "traceId", sc.TraceId);
             AddOnValue(nameValues, "receiverId", sc.ReceiverId);
             AddOnValue(nameValues, "businessSectorType", sc.BusinessSectorType);
-            AddOnValue(nameValues, "rsmName", sc.RsmName);
             AddOnValue(nameValues, "includeRelated", sc.IncludeRelated ? "true" : "false");
+            AddOnValue(nameValues, "includeResultsWithoutContent", sc.IncludeResultsWithoutContent ? "true" : "false");
             AddOnValue(nameValues, "continuationToken", sc.ContinuationToken);
             AddOnValue(nameValues, "maxItemCount", sc.MaxItemCount);
+            AddArrayValues(nameValues, "processTypes", sc.ProcessTypes ?? Array.Empty<string>());
+            AddArrayValues(nameValues, "rsmNames", sc.RsmNames ?? Array.Empty<string>());
 
             if (sc.DateTimeFrom is null || sc.DateTimeTo is null)
             {
@@ -60,6 +61,17 @@ namespace Energinet.DataHub.MessageArchive.Client.Helpers
             }
 
             return nameValues.ToString() ?? string.Empty;
+        }
+
+        private static void AddArrayValues(NameValueCollection nv, string name, string[] values)
+        {
+            foreach (var value in values)
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    nv.Add(name, value);
+                }
+            }
         }
 
         private static void AddOnValue(NameValueCollection nv, string name, string? value)
