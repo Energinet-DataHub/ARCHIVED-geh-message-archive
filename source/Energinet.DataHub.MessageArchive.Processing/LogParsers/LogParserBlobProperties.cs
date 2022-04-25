@@ -40,7 +40,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 SenderGlnMarketRoleType = string.Empty,
                 ReceiverGln = string.Empty,
                 ReceiverGlnMarketRoleType = string.Empty,
-                CreatedDate = null,
+                CreatedDate = blobItemData.BlobCreatedOn,
                 LogCreatedDate = blobItemData.BlobCreatedOn,
                 BlobContentUri = blobItemData.Uri.AbsoluteUri,
                 HttpData = blobItemData.MetaData.TryGetValue("httpdatatype", out var httpdatatype) ? httpdatatype : string.Empty,
