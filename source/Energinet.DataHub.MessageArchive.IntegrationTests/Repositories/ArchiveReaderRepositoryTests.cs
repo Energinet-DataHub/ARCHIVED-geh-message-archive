@@ -137,13 +137,35 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             await AddDataToDb(archiveContainer, Guid.NewGuid().ToString()).ConfigureAwait(false);
 
             var messageIdIn = Guid.NewGuid().ToString();
+            var mridTransaction1 = Guid.NewGuid().ToString();
+
             var logWithReferenceIn = CreateCosmosRequestResponseLog(messageIdIn, testGroup, "rsmName");
             logWithReferenceIn.HttpData = "request";
+            logWithReferenceIn.TransactionRecords = new List<TransactionRecord>
+            {
+                new()
+                {
+                    MRid = mridTransaction1,
+                    OriginalTransactionIdReferenceId = Guid.NewGuid().ToString(),
+                },
+                new()
+                {
+                    MRid = Guid.NewGuid().ToString(),
+                    OriginalTransactionIdReferenceId = Guid.NewGuid().ToString(),
+                },
+            };
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceIn).ConfigureAwait(false);
 
             var logWithReferenceOut = CreateCosmosRequestResponseLog(Guid.NewGuid().ToString(), testGroup, "rsmName");
             logWithReferenceOut.HttpData = "response";
-            logWithReferenceOut.OriginalTransactionIDReferenceId = messageIdIn;
+            logWithReferenceOut.TransactionRecords = new List<TransactionRecord>
+            {
+                new()
+                {
+                    MRid = Guid.NewGuid().ToString(),
+                    OriginalTransactionIdReferenceId = mridTransaction1,
+                },
+            };
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceOut).ConfigureAwait(false);
 
             var searchCriteria = GetSearchCriteria(messageIdIn, testGroup, true);
@@ -153,11 +175,11 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
             // Assert
             var inDbResult = result.Result.FirstOrDefault(e => e.MessageId == messageIdIn);
-            var outDbResult = result.Result.FirstOrDefault(e => e.OriginalTransactionIDReferenceId == messageIdIn);
 
             Assert.NotNull(inDbResult);
-            Assert.NotNull(outDbResult);
-            Assert.Equal(inDbResult.MessageId, outDbResult.OriginalTransactionIDReferenceId);
+            Assert.True(result.Result.Count == 2);
+            Assert.Contains(result.Result, e => e.TransactionRecords != null && e.TransactionRecords.Any(r => r.MRid == mridTransaction1));
+            Assert.Contains(result.Result, e => e.TransactionRecords != null && e.TransactionRecords.Any(r => r.OriginalTransactionIdReferenceId == mridTransaction1));
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }
@@ -184,13 +206,39 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
             var messageIdIn = Guid.NewGuid().ToString();
             var messageIdOut = Guid.NewGuid().ToString();
 
+            var mridTransaction1 = Guid.NewGuid().ToString();
+            var mridTransaction2 = Guid.NewGuid().ToString();
+
             var logWithReferenceOut = CreateCosmosRequestResponseLog(messageIdOut, testGroup, "rsmName");
             logWithReferenceOut.HttpData = "response";
-            logWithReferenceOut.OriginalTransactionIDReferenceId = messageIdIn;
+            logWithReferenceOut.TransactionRecords = new List<TransactionRecord>
+            {
+                new()
+                {
+                    MRid = Guid.NewGuid().ToString(),
+                    OriginalTransactionIdReferenceId = mridTransaction1,
+                },
+                new()
+                {
+                    MRid = Guid.NewGuid().ToString(),
+                    OriginalTransactionIdReferenceId = mridTransaction2,
+                },
+            };
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceOut).ConfigureAwait(false);
 
             var logWithReferenceIn = CreateCosmosRequestResponseLog(messageIdIn, testGroup, "rsmName");
             logWithReferenceIn.HttpData = "request";
+            logWithReferenceIn.TransactionRecords = new List<TransactionRecord>
+            {
+                new()
+                {
+                    MRid = mridTransaction1,
+                },
+                new()
+                {
+                    MRid = mridTransaction2,
+                },
+            };
             await archiveContainer.Container.UpsertItemAsync(logWithReferenceIn).ConfigureAwait(false);
 
             var searchCriteria = GetSearchCriteria(messageIdOut, testGroup, true);
@@ -200,11 +248,32 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
             // Assert
             var inDbResult = searchResult.Result.FirstOrDefault(e => e.MessageId == messageIdIn);
-            var outDbResult = searchResult.Result.FirstOrDefault(e => e.OriginalTransactionIDReferenceId == messageIdIn);
+            var outDbResult = searchResult.Result.FirstOrDefault(e => e.MessageId == messageIdOut);
 
             Assert.NotNull(inDbResult);
             Assert.NotNull(outDbResult);
-            Assert.Equal(inDbResult.MessageId, outDbResult.OriginalTransactionIDReferenceId);
+            Assert.True(searchResult.Result.Count == 2);
+            if (inDbResult.TransactionRecords != null)
+            {
+                Assert.Contains(
+                    inDbResult.TransactionRecords.Select(e => e.MRid),
+                    r => outDbResult.TransactionRecords != null && outDbResult.TransactionRecords.Select(t => t.OriginalTransactionIdReferenceId).Contains(r));
+            }
+
+            if (outDbResult.TransactionRecords != null)
+            {
+                Assert.Contains(
+                    outDbResult.TransactionRecords.Select(e => e.OriginalTransactionIdReferenceId),
+                    r => inDbResult.TransactionRecords != null && inDbResult.TransactionRecords.Select(t => t.MRid).Contains(r));
+            }
+
+            Assert.Contains(
+                searchResult.Result,
+                e => e.TransactionRecords != null && e.TransactionRecords.Any(r => r.MRid == mridTransaction1));
+            Assert.Contains(
+                searchResult.Result,
+                e => e.TransactionRecords != null &&
+                     e.TransactionRecords.Any(r => r.OriginalTransactionIdReferenceId == mridTransaction1));
 
             await startup.DisposeAsync().ConfigureAwait(false);
         }

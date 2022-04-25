@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
@@ -29,16 +30,52 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
     public class LogParserTests
     {
         [Fact]
-        public void Parse_XML_MktActivityRecord_LinkedMessage()
+        public void Parse_XML_MktActivityRecord_TransactionIds()
         {
             // Arrange
-            var xml = $"<message><MktActivityRecord><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
+            var filename = "assets/requestchangeaccountingpointcharacteristics.xml";
+            var xml = File.ReadAllText(filename);
             var blobItem = MockedTypes.BlobItemData("xml", xml);
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
-            var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
+
+            // Assert
+            Assert.NotNull(parsed.TransactionRecords);
+            Assert.NotEmpty(parsed.TransactionRecords);
+            Assert.True(4 == parsed.TransactionRecords.Count());
+        }
+
+        [Fact]
+        public void Parse_XML_Series_TransactionIds()
+        {
+            // Arrange
+            var filename = "assets/test-series-ids.xml";
+            var xml = File.ReadAllText(filename);
+            var blobItem = MockedTypes.BlobItemData("xml", xml);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.TransactionRecords);
+            Assert.NotEmpty(parsed.TransactionRecords);
+            Assert.True(4 == parsed.TransactionRecords.Count());
+        }
+
+        [Fact]
+        public void Parse_XML_MktActivityRecord_LinkedMessage()
+        {
+            // Arrange
+            var xml = $"<message><MktActivityRecord><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
+            var blobItem = MockedTypes.BlobItemData("xml", xml);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+            var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
             Assert.NotNull(originalTransactionIdReference);
@@ -49,13 +86,13 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         public void Parse_XML_Series_LinkedMessage()
         {
             // Arrange
-            var xml = $"<message><Series><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
+            var xml = $"<message><Series><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
             var blobItem = MockedTypes.BlobItemData("xml", xml);
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
-            var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
+            var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
             Assert.NotNull(originalTransactionIdReference);
