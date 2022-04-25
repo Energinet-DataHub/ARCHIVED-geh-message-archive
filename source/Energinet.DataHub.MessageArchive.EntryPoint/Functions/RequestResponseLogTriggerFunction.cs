@@ -45,7 +45,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             await _blobProcessingHandler.HandleAsync().ConfigureAwait(false);
 
             stopWatch.Stop();
-            _logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {time}", stopWatch.ElapsedMilliseconds);
+            _logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {Time}", stopWatch.ElapsedMilliseconds);
         }
     }
 }
