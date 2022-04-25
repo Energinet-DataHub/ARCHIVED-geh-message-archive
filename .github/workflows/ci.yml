@@ -23,11 +23,12 @@ jobs:
     uses: Energinet-DataHub/.github/.github/workflows/ci-base.yml@6.3.0
 
   dotnet_solution_ci:
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@6.1.0
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
-      DOTNET_VERSION: '5.0'
+      DOTNET_VERSION: '6.0.201'
       USE_COSMOS_DB_EMULATOR: true
+      USE_AZURE_FUNCTIONS_TOOLS: true
     secrets:
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -43,18 +44,18 @@ jobs:
 
   entry_point_ci:
     needs: [ci_base, dotnet_solution_ci, terraform_validate]
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-function-artifact.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-function-artifact.yml@6.1.0
     with:
       CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.EntryPoint.csproj'
-      DOTNET_VERSION: '5.0'
+      DOTNET_VERSION: '6.0.201'
       ARTIFACT_NAME: entrypoint
 
   webapi_ci:
     needs: [ci_base, terraform_validate, dotnet_solution_ci]
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-webapi-artifact.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-webapi-artifact.yml@6.1.0
     with:
       CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint.WebApi/Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj'
-      DOTNET_VERSION: '5.0'
+      DOTNET_VERSION: '6.0.201'
       ARTIFACT_NAME: webapi
 
   create_prerelease:
@@ -66,4 +67,4 @@ jobs:
     with:
       CALLER_REPOSITORY_PATH: Energinet-DataHub/geh-message-archive
     secrets:
-      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
