@@ -45,3 +45,8 @@ variable shared_resources_resource_group_name {
   type          = string
   description   = "Name of the Resource Group, that contains the shared resources."
 }
+
+data "azurerm_key_vault_secret" "log_shared_id" {
+  name         = "log-shared-id"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
