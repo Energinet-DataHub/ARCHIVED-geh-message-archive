@@ -116,7 +116,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
 
         private static SearchCriteria BuildCriteria(string messageType, List<string> rsmNames)
         {
-            return new SearchCriteria(
+            var sc = new SearchCriteria(
                 null,
                 messageType,
                 new List<string>(),
@@ -133,6 +133,8 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Repositories
                 null,
                 false,
                 rsmNames);
+            sc.IncludeResultsWithoutContent = true;
+            return sc;
         }
     }
 }
