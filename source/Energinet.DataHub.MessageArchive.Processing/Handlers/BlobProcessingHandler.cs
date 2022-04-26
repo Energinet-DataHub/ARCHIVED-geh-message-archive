@@ -64,7 +64,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
                 catch (Exception e)
 #pragma warning restore CA1031
                 {
-                    _processingLogger.LogError(e, "Error in processing item: {name}", blobItemData.Name);
+                    _processingLogger.LogError(e, "Error in processing item: {Name}", blobItemData.Name);
                     await ParseAndSaveAsync(new LogParserBlobProperties(), blobItemData).ConfigureAwait(false);
                 }
             }
