@@ -46,6 +46,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
             var ignoreProcessTypes = criteria.ProcessTypes is not { Count: > 0 };
             var ignoreRsmNames = criteria.RsmNames is not { Count: > 0 };
+            var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent;
 
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
@@ -61,7 +62,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                     (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
                     (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
                     (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
-                    (criteria.IncludeResultsWithoutContent == false || searchResult.HaveBodyContent == true) &&
+                    (ignoreBodyRequirement || searchResult.HaveBodyContent == true) &&
 
                     (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
                     (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
