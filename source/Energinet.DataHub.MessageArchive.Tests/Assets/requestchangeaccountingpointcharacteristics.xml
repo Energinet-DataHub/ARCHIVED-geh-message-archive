@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2020 Energinet DataHub A/S
+
+Licensed under the Apache License, Version 2.0 (the "License2");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<cim:RequestChangeAccountingPointCharacteristics_MarketDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cim="urn:ediel.org:structure:requestchangeaccountingpointcharacteristics:0:1" xsi:schemaLocation="urn:ediel.org:structure:requestchangeaccountingpointcharacteristics:0:1 urn-ediel-org-structure-requestchangeaccountingpointcharacteristics-0-1.xsd">
+    <cim:mRID>4e433804-39f7-4658-9eb9-3466310f3003</cim:mRID>
+    <cim:type>E58</cim:type>
+    <cim:process.processType>E02</cim:process.processType>
+    <cim:businessSector.type>23</cim:businessSector.type>
+    <cim:sender_MarketParticipant.mRID codingScheme="NFI">8100000000047</cim:sender_MarketParticipant.mRID>
+    <cim:sender_MarketParticipant.marketRole.type>DDM</cim:sender_MarketParticipant.marketRole.type>
+    <cim:receiver_MarketParticipant.mRID codingScheme="NLT">DHGLN</cim:receiver_MarketParticipant.mRID>
+    <cim:receiver_MarketParticipant.marketRole.type>DDZ</cim:receiver_MarketParticipant.marketRole.type>
+    <cim:createdDateTime>2022-04-22T11:01:09Z</cim:createdDateTime>
+    <cim:MktActivityRecord>
+        <cim:mRID>f2a7dfe2-c4c5-4308-87ed-8237587d1aca</cim:mRID>
+        <cim:mRID>f2a7dfe2-c4c5-4308-87ed-8237587d1aca</cim:mRID>
+        <!-- other parts -->
+    </cim:MktActivityRecord>
+    <cim:MktActivityRecord>
+        <cim:mRID>47C82A50-C659-4571-BC5A-CA110355A665</cim:mRID>
+        <!-- other parts -->
+    </cim:MktActivityRecord>
+    <cim:MktActivityRecord>
+        <cim:mRID>2A464AD7-F141-42EE-B6AB-F416D3E30A39</cim:mRID>
+        <!-- other parts -->
+    </cim:MktActivityRecord>
+    <cim:MktActivityRecord>
+        <cim:mRID>D56808A7-88FA-454B-9279-74E9941FC953</cim:mRID>
+        <!-- other parts -->
+    </cim:MktActivityRecord>
+</cim:RequestChangeAccountingPointCharacteristics_MarketDocument>

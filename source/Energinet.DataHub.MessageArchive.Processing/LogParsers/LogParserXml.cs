@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
@@ -55,8 +56,8 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
                 var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
-                var originalTransactionIdReferenceId = ReadOriginalTransactionIdReferenceId(xmlDocument, ns);
                 var rsmName = ReadRsmName(xmlDocument);
+                var activityRecords = ParseTransactionRecords(xmlDocument, ns);
 
                 parsedModel.MessageId = mridValue;
                 parsedModel.MessageType = typeValue;
@@ -67,7 +68,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
                 parsedModel.ReceiverGln = receiverGlnValue;
                 parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
-                parsedModel.OriginalTransactionIDReferenceId = originalTransactionIdReferenceId;
+                parsedModel.TransactionRecords = activityRecords;
                 parsedModel.RsmName = rsmName;
 
                 var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
@@ -91,26 +92,58 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             return value;
         }
 
-        private static string ReadOriginalTransactionIdReferenceId(XElement xmlDocument, XNamespace ns)
+        private static IEnumerable<TransactionRecord> ParseTransactionRecords(XElement xmlDocument, XNamespace ns)
         {
-            var mktActivityRecord = xmlDocument.Elements($"{ns + "MktActivityRecord"}").FirstOrDefault();
-            var seriesRecord = xmlDocument.Elements($"{ns + "Series"}").FirstOrDefault();
+            var mktActivityRecords = xmlDocument
+                .Elements($"{ns + "MktActivityRecord"}")
+                .ToList();
 
-            if (mktActivityRecord is not null)
+            if (mktActivityRecords.Any())
             {
-                return ReadValueOrEmptyString(
-                    mktActivityRecord,
-                    $"{ns + ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}");
+                return ReadTransactionRecords(
+                    mktActivityRecords,
+                    ns,
+                    ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid);
             }
 
-            if (seriesRecord is not null)
+            var seriesRecords = xmlDocument
+                .Elements($"{ns + "Series"}")
+                .ToList();
+
+            if (seriesRecords.Any())
             {
-                return ReadValueOrEmptyString(
-                    seriesRecord,
-                    $"{ns + ElementNames.OriginalTransactionIdReferenceSeriesmRid}");
+                return ReadTransactionRecords(
+                    seriesRecords,
+                    ns,
+                    ElementNames.OriginalTransactionIdReferenceSeriesmRid);
             }
 
-            return string.Empty;
+            return Array.Empty<TransactionRecord>();
+        }
+
+        private static IEnumerable<TransactionRecord> ReadTransactionRecords(
+            IEnumerable<XElement> transactionRecords,
+            XNamespace ns,
+            string transactionReferenceIdName)
+        {
+            var parsedTransactionRecords = new List<TransactionRecord>();
+
+            foreach (var record in transactionRecords)
+            {
+                var mridValue = ReadValueOrEmptyString(record, $"{ns + ElementNames.MRid}");
+                var originalTransactionReferenceId = ReadValueOrEmptyString(record, $"{ns + transactionReferenceIdName}");
+
+                if (!string.IsNullOrWhiteSpace(mridValue))
+                {
+                    parsedTransactionRecords.Add(new TransactionRecord
+                    {
+                        MRid = mridValue,
+                        OriginalTransactionIdReferenceId = originalTransactionReferenceId,
+                    });
+                }
+            }
+
+            return parsedTransactionRecords;
         }
 
         private static string ReadRsmName(XElement xmlDocument)
