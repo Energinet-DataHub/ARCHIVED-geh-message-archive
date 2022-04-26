@@ -1,11 +1,3 @@
-# YOUR DOMAIN README
+# Message Archive
 
-## Intro
-
-This should be replaced by content that fits your domain.
-
-Before you start editing this repository, please read the [TEMPLATE README](./docs/template-readme/README.md)
-
-## Architecture
-
-![design](ARCHITECTURE.png)
+[![codecov](https://codecov.io/gh/Energinet-DataHub/geh-message-archive/branch/main/graph/badge.svg?token=RYDD1WHQMO)](https://codecov.io/gh/Energinet-DataHub/geh-message-archive)

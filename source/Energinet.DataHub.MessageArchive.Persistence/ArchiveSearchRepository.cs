@@ -121,13 +121,17 @@ namespace Energinet.DataHub.MessageArchive.Persistence
             {
                 var document = documents.FirstOrDefault();
                 var httpDataType = document?.HttpData ?? "unknown";
-                var referenceId = string.IsNullOrWhiteSpace(document?.OriginalTransactionIDReferenceId) ? null : document.OriginalTransactionIDReferenceId;
 
                 if (httpDataType.Equals("request", StringComparison.OrdinalIgnoreCase))
                 {
+                    var transactionRecordIds = document?.TransactionRecords?.Select(t => t.MRid).ToArray();
+
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
-                        where criteria.MessageId == relatedMessageResult.OriginalTransactionIDReferenceId
+                        where relatedMessageResult.HttpData == "response" &&
+                              transactionRecordIds != null &&
+                              relatedMessageResult.TransactionRecords != null &&
+                              relatedMessageResult.TransactionRecords.Any(x => transactionRecordIds.Contains(x.OriginalTransactionIdReferenceId))
                         select relatedMessageResult;
 
                     var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
@@ -135,9 +139,14 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                 }
                 else if (httpDataType.Equals("response", StringComparison.OrdinalIgnoreCase))
                 {
+                    var originalReferenceIds = document?.TransactionRecords?.Select(t => t.OriginalTransactionIdReferenceId).ToArray();
+
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
-                        where referenceId == relatedMessageResult.MessageId
+                        where relatedMessageResult.HttpData == "request" &&
+                              originalReferenceIds != null &&
+                              relatedMessageResult.TransactionRecords != null &&
+                              relatedMessageResult.TransactionRecords.Any(x => originalReferenceIds.Contains(x.MRid))
                         select relatedMessageResult;
 
                     var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);

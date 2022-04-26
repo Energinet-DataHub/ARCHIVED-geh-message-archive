@@ -57,7 +57,7 @@ namespace Energinet.DataHub.MessageArchive.PersistenceModels
 
         public string? ResponseStatus { get; set; }
 
-        public string? OriginalTransactionIDReferenceId { get; set; }
+        public IEnumerable<TransactionRecord>? TransactionRecords { get; set; }
 
         public string? RsmName { get; set; }
 

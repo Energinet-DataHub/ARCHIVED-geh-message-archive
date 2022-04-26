@@ -42,7 +42,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Mappers
             toobj.FunctionName = fromobj.FunctionName;
             toobj.TraceId = fromobj.TraceId;
             toobj.TraceParent = fromobj.TraceParent;
-            toobj.OriginalTransactionIDReferenceId = fromobj.OriginalTransactionIDReferenceId;
+            toobj.TransactionRecords = fromobj.TransactionRecords;
             toobj.RsmName = fromobj.RsmName;
             toobj.HaveBodyContent = fromobj.HaveBodyContent;
             toobj.ParsingSuccess = fromobj.ParsingSuccess;
