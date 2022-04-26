@@ -56,6 +56,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.WebApi
                 MessageType = messageTypeToGroupTest,
                 DateTimeFrom = "2022-01-01T00:00:00Z",
                 DateTimeTo = "2022-05-01T23:59:59Z",
+                IncludeResultsWithoutContent = true,
             };
 
             // Act
