@@ -46,7 +46,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
             var ignoreProcessTypes = criteria.ProcessTypes is not { Count: > 0 };
             var ignoreRsmNames = criteria.RsmNames is not { Count: > 0 };
-            var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent;
+            var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent || !string.IsNullOrWhiteSpace(criteria.TraceId);
 
             var query = from searchResult in asLinq
                 where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
@@ -125,7 +125,8 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
                 if (httpDataType.Equals("request", StringComparison.OrdinalIgnoreCase))
                 {
-                    var transactionRecordIds = document?.TransactionRecords?.Select(t => t.MRid).ToArray();
+                    var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
+                    var transactionRecordIds = transactionRecords.Select(t => t.MRid).ToArray();
 
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
@@ -140,7 +141,8 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                 }
                 else if (httpDataType.Equals("response", StringComparison.OrdinalIgnoreCase))
                 {
-                    var originalReferenceIds = document?.TransactionRecords?.Select(t => t.OriginalTransactionIdReferenceId).ToArray();
+                    var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
+                    var originalReferenceIds = transactionRecords.Select(t => t.OriginalTransactionIdReferenceId).ToArray();
 
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
