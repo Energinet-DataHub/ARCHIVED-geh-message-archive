@@ -17,6 +17,7 @@ using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.MessageArchive.Common;
 using Energinet.DataHub.MessageArchive.Common.SimpleInjector;
 using Energinet.DataHub.MessageArchive.EntryPoint.Functions;
+using Energinet.DataHub.MessageArchive.EntryPoint.Monitor;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
 
             // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
@@ -68,6 +68,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
         protected override void Configure(Container container)
         {
             Container.Register<RequestResponseLogTriggerFunction>();
+            Container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            Container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
 }
