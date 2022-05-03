@@ -14,8 +14,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
-using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.MessageArchive.Persistence;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.Persistence.Services;
@@ -61,15 +59,6 @@ namespace Energinet.DataHub.MessageArchive.Common
             // config
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
             Container.Register(() => config!, Lifestyle.Singleton);
-
-            // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
-            services
-                .AddHealthChecks()
-                .AddLiveCheck()
-                .AddAzureBlobStorage(config.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING"), config.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME"))
-                .AddAzureBlobStorage(config.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING"), config.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME"))
-                .AddCosmosDb(config.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING"), "message-archive");
 
             // Add Application insights telemetry
             services.SetupApplicationInsightTelemetry(config ?? throw new InvalidOperationException());
