@@ -14,6 +14,7 @@
 
 using System;
 using System.Text.Json.Serialization;
+using Energinet.DataHub.Core.App.WebApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.WebApp.Middleware;
 using Energinet.DataHub.Core.App.WebApp.SimpleInjector;
 using Microsoft.AspNetCore.Builder;
@@ -58,6 +59,10 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // Health check
+                endpoints.MapLiveHealthChecks();
+                endpoints.MapReadyHealthChecks();
             });
 
             app.UseSimpleInjector(Container);

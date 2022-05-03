@@ -23,18 +23,22 @@ using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Processing.Services;
 using Energinet.DataHub.MessageArchive.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Persistence.Services
 {
     public class BlobReader : IBlobReader
     {
+        private readonly ILogger<BlobReader> _logger;
         private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         private readonly BlobContainerClient _blobContainerClient;
 
         public BlobReader(
             string connectionString,
-            string containerName)
+            string containerName,
+            ILogger<BlobReader> logger)
         {
+            _logger = logger;
             _blobContainerClient = new BlobContainerClient(connectionString, containerName);
         }
 
@@ -60,7 +64,11 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
                 }
             }
 
+            _logger.LogInformation("Starts downloading log content for {TaskCount} tasks", tasks.Count);
+
             await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            _logger.LogInformation("Downloading done for all {TaskCount} tasks", tasks.Count);
 
             var downloadedBlobData = tasks.Select(t => t.Result);
 

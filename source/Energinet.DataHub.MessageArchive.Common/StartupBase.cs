@@ -29,6 +29,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SimpleInjector;
 using Container = SimpleInjector.Container;
 
@@ -97,10 +98,11 @@ namespace Energinet.DataHub.MessageArchive.Common
             container.Register<IBlobReader>(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
+                var logger = container.GetService<ILogger<BlobReader>>() ?? throw new InvalidOperationException();
 
                 var connectionString = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING");
                 var containerName = configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME");
-                return new BlobReader(connectionString, containerName);
+                return new BlobReader(connectionString, containerName, logger);
             });
         }
 

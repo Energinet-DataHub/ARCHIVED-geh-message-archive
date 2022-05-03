@@ -78,7 +78,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             catch (Exception ex)
 #pragma warning restore CA1031
             {
-                _applicationLogging.LogError(ex, "Parse Error in LogParserXml, returning base model");
+                _applicationLogging.LogError(ex, "Parse Error in LogParserXml, returning base model, name: {Name}", blobItemData.Name);
                 parsedModel.ParsingSuccess = false;
             }
 

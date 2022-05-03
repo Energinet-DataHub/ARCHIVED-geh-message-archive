@@ -19,6 +19,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.Persistence.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 using Xunit.Categories;
 
@@ -43,6 +45,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogsArchive).ConfigureAwait(false);
             var containerClient = blobServiceClientMarketoplogs.GetBlobContainerClient(marketoplogs);
             var blobClient = containerClient.GetBlobClient(itemToMove.Name);
+            var logger = new Mock<ILogger<BlobReader>>();
 
             // Act -----------------------
             var options = new BlobUploadOptions { Tags = itemToMove.IndexTags, Metadata = itemToMove.MetaData };
@@ -51,7 +54,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             await blobClient.UploadAsync(itemToMoveContentStream, options).ConfigureAwait(false);
 
             // Find blobs to Process and move
-            var blobReader = new BlobReader(archiveConn, marketoplogs);
+            var blobReader = new BlobReader(archiveConn, marketoplogs, logger.Object);
             var blobsForProcessing = await blobReader.GetBlobsReadyForProcessingAsync().ConfigureAwait(false);
 
             var firstItem = blobsForProcessing.First(e => e.Name.Equals(itemToMove.Name, StringComparison.Ordinal));
