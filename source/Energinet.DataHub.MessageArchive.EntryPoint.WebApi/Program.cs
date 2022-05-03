@@ -13,8 +13,10 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
@@ -35,6 +37,21 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.AddEnvironmentVariables();
+                })
+                .ConfigureServices((hostingContext, services) =>
+                {
+                    var configuration = hostingContext.Configuration;
+
+                    // Health check
+                    services
+                        .AddHealthChecks()
+                        .AddLiveCheck()
+                        .AddAzureBlobStorage(
+                            configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING"),
+                            configuration.GetValue<string>("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME"))
+                        .AddCosmosDb(
+                            configuration.GetValue<string>("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING"),
+                            "message-archive");
                 });
     }
 }
