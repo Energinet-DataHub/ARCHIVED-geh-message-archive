@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 Copyright 2020 Energinet DataHub A/S
 
 Licensed under the Apache License, Version 2.0 (the "License2");
@@ -16,35 +16,32 @@ limitations under the License.
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RootNamespace>Energinet.DataHub.MessageArchive.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.24.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-        <PackageReference Include="Moq" Version="4.16.1" />
-        <PackageReference Include="NUnit" Version="3.13.1" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+        <PackageReference Include="Energinet.DataHub.Core.FunctionApp.TestCommon" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.26.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="Moq" Version="4.17.2" />
         <PackageReference Include="coverlet.collector" Version="3.0.2" />
         <PackageReference Include="xunit" Version="2.4.2-pre.12" />
-        <PackageReference Include="xunit.categories" Version="2.0.5" />
-        <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+        <PackageReference Include="xunit.categories" Version="2.0.6" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Remove="Microsoft.CodeAnalysis.FxCopAnalyzers" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint.WebApi\Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj" />
       <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint\Energinet.DataHub.MessageArchive.EntryPoint.csproj" />
+      <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj" />
     </ItemGroup>
 
 </Project>

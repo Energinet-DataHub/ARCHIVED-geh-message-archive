@@ -14,13 +14,13 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Repository;
+using Energinet.DataHub.MessageArchive.Processing;
 
 namespace Energinet.DataHub.MessageArchive.Tests
 {
     public class MockedStorageWriter<T> : IStorageWriter<T>
     {
-        private List<T> _storage = new ();
+        private List<T> _storage = new();
 
         public Task WriteAsync(T objectToSave)
         {
@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.Tests
             return Task.CompletedTask;
         }
 
-        public IEnumerable<T> GetStorage()
+        public IEnumerable<T> Storage()
         {
             return _storage;
         }

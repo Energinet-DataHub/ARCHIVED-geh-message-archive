@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers.Utilities;
+using System.Linq;
+using System.Text.Json;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 using Xunit.Categories;
 
@@ -24,16 +30,52 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
     public class LogParserTests
     {
         [Fact]
-        public void Parse_XML_MktActivityRecord_LinkedMessage()
+        public void Parse_XML_MktActivityRecord_TransactionIds()
         {
             // Arrange
-            var xml = $"<message><MktActivityRecord><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
+            var filename = "assets/requestchangeaccountingpointcharacteristics.xml";
+            var xml = File.ReadAllText(filename);
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
-            var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
+
+            // Assert
+            Assert.NotNull(parsed.TransactionRecords);
+            Assert.NotEmpty(parsed.TransactionRecords);
+            Assert.True(4 == parsed.TransactionRecords.Count());
+        }
+
+        [Fact]
+        public void Parse_XML_Series_TransactionIds()
+        {
+            // Arrange
+            var filename = "assets/test-series-ids.xml";
+            var xml = File.ReadAllText(filename);
+            var blobItem = MockedTypes.BlobItemData("xml", xml);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.TransactionRecords);
+            Assert.NotEmpty(parsed.TransactionRecords);
+            Assert.True(4 == parsed.TransactionRecords.Count());
+        }
+
+        [Fact]
+        public void Parse_XML_MktActivityRecord_LinkedMessage()
+        {
+            // Arrange
+            var xml = $"<message><MktActivityRecord><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
+            var blobItem = MockedTypes.BlobItemData("xml", xml);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+            var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
             Assert.NotNull(originalTransactionIdReference);
@@ -44,13 +86,13 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         public void Parse_XML_Series_LinkedMessage()
         {
             // Arrange
-            var xml = $"<message><Series><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
+            var xml = $"<message><Series><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
-            var originalTransactionIdReference = parsed.OriginalTransactionIDReferenceId;
+            var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
             Assert.NotNull(originalTransactionIdReference);
@@ -63,7 +105,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var filename = "assets/notifybillingmasterdata.xml";
             var xml = File.ReadAllText(filename);
             var blobItem = MockedTypes.BlobItemData("xml", xml);
-            var xmlParser = new LogParserXml();
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
             var parsed = xmlParser.Parse(blobItem);
@@ -71,6 +113,99 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             // Assert
             Assert.NotNull(parsed.RsmName);
             Assert.Equal("notifybillingmasterdata", parsed.RsmName);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing()
+        {
+            var indexTagsCount = 10;
+            var indexTags = BuildIndexTagsDic(indexTagsCount);
+            var indexTagsJson = JsonSerializer.Serialize(indexTags);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
+            blobItem.MetaData.Add("indextags", indexTagsJson);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Data);
+            Assert.Equal(indexTagsCount, parsed.Data.Count);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing_IndexTagsFallBack()
+        {
+            var indexTagsCount = 2;
+            var indexTags = BuildIndexTagsDic(indexTagsCount);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, indexTags);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Data);
+            Assert.Equal(indexTagsCount, parsed.Data.Count);
+        }
+
+        [Fact]
+        public void Test_IndexTagsInMetaDataParsing_IndexTagsNull()
+        {
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.Null(parsed.Data);
+        }
+
+        [Fact]
+        public void Test_QueryTagsInMetaDataParsing()
+        {
+            var tagsCount = 10;
+            var tags = BuildIndexTagsDic(tagsCount);
+            var tagsJson = JsonSerializer.Serialize(tags);
+
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
+            blobItem.MetaData.Add("querytags", tagsJson);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.NotNull(parsed.Query);
+            Assert.Equal(tagsCount, parsed.Query.Count);
+        }
+
+        [Fact]
+        public void Test_QueryTagsInMetaDataParsing_Null()
+        {
+            var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
+            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+
+            // Act
+            var parsed = xmlParser.Parse(blobItem);
+
+            // Assert
+            Assert.Null(parsed.Query);
+        }
+
+        private static Dictionary<string, string> BuildIndexTagsDic(int count)
+        {
+            var dic = new Dictionary<string, string>();
+
+            for (var i = 0; i < count; i++)
+            {
+                dic.Add(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            }
+
+            return dic;
         }
     }
 }

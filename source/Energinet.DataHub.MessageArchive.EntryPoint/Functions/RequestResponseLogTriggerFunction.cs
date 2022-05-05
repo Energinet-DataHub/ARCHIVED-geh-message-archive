@@ -14,7 +14,7 @@
 
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
+using Energinet.DataHub.MessageArchive.Processing.Handlers;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +35,9 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
         }
 
         [Function(FunctionName)]
-        public async Task RunAsync([TimerTrigger("*/5 */1 * * * *")] FunctionContext context)
+        public async Task RunAsync(
+            [TimerTrigger("*/5 */1 * * * *")]
+            FunctionContext context)
         {
             _logger.LogInformation("RequestResponseLogTriggerFunction starting");
             var stopWatch = Stopwatch.StartNew();
@@ -43,7 +45,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Functions
             await _blobProcessingHandler.HandleAsync().ConfigureAwait(false);
 
             stopWatch.Stop();
-            _logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {time}", stopWatch.ElapsedMilliseconds);
+            _logger.LogInformation("RequestResponseLogTriggerFunction executed, time ms: {Time}", stopWatch.ElapsedMilliseconds);
         }
     }
 }

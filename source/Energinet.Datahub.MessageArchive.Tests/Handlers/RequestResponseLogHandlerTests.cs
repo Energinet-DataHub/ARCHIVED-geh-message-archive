@@ -17,10 +17,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.BlobServices;
-using Energinet.DataHub.MessageArchive.EntryPoint.Handlers;
-using Energinet.DataHub.MessageArchive.EntryPoint.LogParsers;
-using Energinet.DataHub.MessageArchive.EntryPoint.Models;
+using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Processing.Handlers;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers;
+using Energinet.DataHub.MessageArchive.Processing.Models;
+using Energinet.DataHub.MessageArchive.Processing.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -40,6 +41,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             var storage = new MockedStorageWriter<CosmosRequestResponseLog>();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+            var parserLogger = new Mock<ILogger<LogParserBlobProperties>>().Object;
 
             var logsToParse = new List<BlobItemData>()
             {
@@ -62,11 +64,11 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
                 .ReturnsAsync(MockedTypes.BlobItemData("txt", string.Empty).Uri);
 
             // Act
-            var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger);
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger, parserLogger);
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            var storageList = storage.GetStorage().ToList();
+            var storageList = storage.Storage().ToList();
             Assert.Equal(logsToParse.Count, storageList.Count);
         }
 
@@ -79,6 +81,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
 
             var storage = new MockedStorageWriter<CosmosRequestResponseLog>();
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+            var parserLogger = new Mock<ILogger<LogParserBlobProperties>>().Object;
 
             var blobItemErrorResponseXml = MockedTypes.BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
             blobItemErrorResponseXml.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
@@ -99,14 +102,14 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
                 .ReturnsAsync(MockedTypes.BlobItemData("txt", string.Empty).Uri);
 
             // Act
-            var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger);
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger, parserLogger);
             await handler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            var storageList = storage.GetStorage().ToList();
+            var storageList = storage.Storage().ToList();
             Assert.NotNull(storageList.FirstOrDefault(
                 e => e.Errors != null
-                     && e.Errors.Any(f => f.Code.Equals("1") && f.Message.Equals("test"))));
+                     && e.Errors.Any(f => f.Code.Equals("1", StringComparison.Ordinal) && f.Message.Equals("test", StringComparison.Ordinal))));
         }
 
         [Theory]
@@ -126,7 +129,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var httpStatusCodeStr = httpStatusCode?.ToString() ?? string.Empty;
 
             // Act
-            var parser = ParserFinder.FindParser(contentType, httpStatusCodeStr, content);
+            var parser = ParserFinder.FindParser(contentType, httpStatusCodeStr, content, new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Assert
             Assert.IsType(expectedParser, parser);

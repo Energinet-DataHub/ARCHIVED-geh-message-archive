@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.EntryPoint.SimpleInjector;
+using Energinet.DataHub.MessageArchive.Common.SimpleInjector;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
 
@@ -21,6 +22,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
 {
     public static class Program
     {
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public static async Task Main()
         {
             await using var startup = new Startup();

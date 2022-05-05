@@ -23,7 +23,7 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
         public MessageArchiveSearchCriteria(
             string? messageId,
             string? messageType,
-            string? processType,
+            string[]? processTypes,
             string? dateTimeFrom,
             string? dateTimeTo,
             string? senderId,
@@ -36,11 +36,11 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             string? functionName,
             string? traceId,
             bool includeRelated,
-            string? rsmName)
+            string[]? rsmNames)
         {
             MessageId = messageId;
             MessageType = messageType;
-            ProcessType = processType;
+            ProcessTypes = processTypes;
             DateTimeFrom = dateTimeFrom;
             DateTimeTo = dateTimeTo;
             SenderId = senderId;
@@ -53,14 +53,14 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
             FunctionName = functionName;
             TraceId = traceId;
             IncludeRelated = includeRelated;
-            RsmName = rsmName;
+            RsmNames = rsmNames;
         }
 
         public string? MessageId { get; set; }
 
         public string? MessageType { get; set; }
 
-        public string? ProcessType { get; set; }
+        public string[]? ProcessTypes { get; set; }
 
         public string? DateTimeFrom { get; set; }
 
@@ -86,9 +86,11 @@ namespace Energinet.DataHub.MessageArchive.Client.Abstractions.Models
 
         public bool IncludeRelated { get; set; }
 
-        public string? RsmName { get; set; }
+        public bool IncludeResultsWithoutContent { get; set; }
 
-        public string? ContinuationToken { get; set; } = null;
+        public string[]? RsmNames { get; set; }
+
+        public string? ContinuationToken { get; set; }
 
         public int MaxItemCount { get; set; } = -1;
     }
