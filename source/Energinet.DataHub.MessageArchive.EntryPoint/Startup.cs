@@ -68,6 +68,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint
         protected override void Configure(Container container)
         {
             Container.Register<RequestResponseLogTriggerFunction>();
+            Container.Register<OverlapTestTimerTrigger>();
             Container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             Container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
