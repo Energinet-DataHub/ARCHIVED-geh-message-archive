@@ -24,7 +24,7 @@ jobs:
     uses: Energinet-DataHub/.github/.github/workflows/ci-base.yml@6.3.0
 
   dotnet_solution_ci:
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.3.1
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.3.2
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
       DOTNET_VERSION: '6.0.201'
