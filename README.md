@@ -4,12 +4,12 @@
 
 ## Intro
 
-Processing af saved request and response logs har in message-archive processed and saved.
-The type of log er determined and parsed with a xml or json parser.
+Request and response logs are in message-archive processed and saved.
+The type of logs are determined and parsed with a xml or json parser.
 
-The processed logs should be searchable later and the specific log can be downloaded for storage.
+The processed logs should be searchable and log body can be downloaded form storage.
 
-Logs are saved by a middleware use en domains.
+Logs are saved by a middleware used in domains.
 <https://github.com/Energinet-DataHub/geh-core/tree/main/source/Logging>
 
 ## Architecture
@@ -18,21 +18,21 @@ Logs are saved by a middleware use en domains.
 
 Runs every X second and parses new logs saved by middleware.
 
-Parsed with xml or json parser.
+Parsed with a xml or json parser.
 
-Saved to Cosmos Database.
+Processed log data are saved to Cosmos Database.
 
 ### Web API
 
-Search endpoint searches in saved logs.
+Search endpoint searches in processed logs.
 
-Download endpoint downloads saved log content.
+Download endpoint downloads saved log body content.
 
 ![Architecture](ARCHITECTURE.png)
 
 ## Structure
 
-Code contains two main solutions.
+Code contains two main parts.
 
 One regarding processing and reading log files and one encapsulation a client for connection to the webapi with a factory pattern.
 
@@ -41,11 +41,11 @@ One regarding processing and reading log files and one encapsulation a client fo
 The overall structure and idea described here.
 
 - Processing: Processing handler, log parsers, mappers and models.
-- Reader: Search query against persistence. Models describing the search criteria and result. Validation and mappers. 
+- Reader: Search query against persistence. Models describing the search criteria and result. Validation and mappers.
 - Persistence: Write and read services for log storage.
-- Persistence models: Contains shared models between reading and processing. 
+- Persistence models: Contains shared models between reading and processing.
 
 ### Client
 
 - Nuget package with container extensions for setting up client factory for message archive http web api.
-- Setup and calls the webapi from a input dto.
+- Setup and calls the webapi with an input dto.
