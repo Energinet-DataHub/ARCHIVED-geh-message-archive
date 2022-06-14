@@ -29,3 +29,23 @@ Search endpoint searches in saved logs.
 Download endpoint downloads saved log content.
 
 ![Architecture](ARCHITECTURE.png)
+
+## Structure
+
+Code contains two main solutions.
+
+One regarding processing and reading log files and one encapsulation a client for connection to the webapi with a factory pattern.
+
+### Processing and reading
+
+The overall structure and idea described here.
+
+- Processing: Processing handler, log parsers, mappers and models.
+- Reader: Search query against persistence. Models describing the search criteria and result. Validation and mappers. 
+- Persistence: Write and read services for log storage.
+- Persistence models: Contains shared models between reading and processing. 
+
+### Client
+
+- Nuget package with container extensions for setting up client factory for message archive http web api.
+- Setup and calls the webapi from a input dto.
