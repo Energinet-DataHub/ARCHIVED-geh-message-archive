@@ -14,6 +14,8 @@ Logs are saved by a middleware used in domains.
 
 ## Architecture
 
+![Architecture](ARCHITECTURE.png)
+
 ### Azure function trigger
 
 Runs every X second and parses new logs saved by middleware.
@@ -24,11 +26,51 @@ Processed log data are saved to Cosmos Database.
 
 ### Web API
 
-Search endpoint searches in processed logs.
-
 Download endpoint downloads saved log body content.
 
-![Architecture](ARCHITECTURE.png)
+<b>GET</b> <span style="color:orange">/api/log/download/ { logname })</span>
+
+```ts
+/**
+ * @api {get} /api/log/download/{ logname }
+ * @apiDescription Downloads saved log body content
+
+ * @apiParam logName string
+ */
+```
+
+Search endpoint searches in processed logs.
+
+<b>GET</b> <span style="color:orange">/api/log/search</span>
+
+```ts
+/**
+ * @api {get} /api/log/search
+ * @apiDescription Search processed and saved logs
+
+ * @apiParam MessageId string
+ * @apiParam MessageType string
+ * @apiParam ProcessTypes array
+ * @apiParam DateTimeFrom string
+ * @apiParam DateTimeTo string
+ * @apiParam SenderId string
+ * @apiParam ReceiverId string
+ * @apiParam SenderRoleType string
+ * @apiParam ReceiverRoleType string
+ * @apiParam BusinessSectorType string
+ * @apiParam ReasonCode string
+ * @apiParam InvocationId string
+ * @apiParam FunctionName string
+ * @apiParam TraceId string
+ * @apiParam IncludeRelated boolean
+ * @apiParam IncludeResultsWithoutContent boolean
+ * @apiParam RsmNames array
+ * @apiParam DateTimeFromParsed string
+ * @apiParam DateTimeToParsed string
+ * @apiParam ContinuationToken string
+ * @apiParam MaxItemCount integer
+ */
+```
 
 ## Structure
 
