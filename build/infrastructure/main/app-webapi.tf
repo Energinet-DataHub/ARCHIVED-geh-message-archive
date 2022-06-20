@@ -30,12 +30,12 @@ module "app_webapi" {
   dotnet_framework_version                  = "v6.0"
 
   app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY                    = "${data.azurerm_key_vault_secret.appi_shared_instrumentation_key.value}"
-    FRONTEND_OPEN_ID_URL                              = "${data.azurerm_key_vault_secret.frontend_open_id_url.value}"
-    FRONTEND_SERVICE_APP_ID                           = "${data.azurerm_key_vault_secret.frontend_service_app_id.value}"
-    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "${data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value}"
-    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "${data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value}"
-    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "${data.azurerm_key_vault_secret.st_market_operator_logs_archive_container_name.value}"
+    FRONTEND_OPEN_ID_URL                              = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend_open_id_url)"
+    FRONTEND_SERVICE_APP_ID                           = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend_service_app_id)"
+    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_primary_connection_string)"
+    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_container_name)"
+    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_archive_container_name)"
+
     COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }
 
@@ -50,4 +50,11 @@ module "kvs_app_message_archive_api_base_url" {
   key_vault_id  = data.azurerm_key_vault.kv_shared_resources.id
 
   tags          = azurerm_resource_group.this.tags
+}
+
+module "kv_shared_access_policy_app_webapi" {
+  source                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/key-vault-access-policy?ref=6.1.0"
+
+  key_vault_id              = data.azurerm_key_vault.kv_shared_resources.id
+  app_identity              = module.app_webapi.identity.0
 }
