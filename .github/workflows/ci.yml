@@ -21,10 +21,10 @@ on:
 
 jobs:
   ci_base:
-    uses: Energinet-DataHub/.github/.github/workflows/ci-base.yml@6.3.0
+    uses: Energinet-DataHub/.github/.github/workflows/ci-base.yml@7.5.0
 
   dotnet_solution_ci:
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.3.2
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.5.0
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.sln'
       DOTNET_VERSION: '6.0.201'
@@ -38,14 +38,14 @@ jobs:
       AZURE_KEYVAULT_URL: ${{ secrets.AZURE_KEYVAULT_URL }}
 
   terraform_validate:
-    uses: Energinet-DataHub/.github/.github/workflows/terraform-validate.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/terraform-validate.yml@7.5.0
     with:
       TERRAFORM_WORKING_DIR_PATH: './build/infrastructure/main'
       TERRAFORM_VERSION: '1.2.2'
 
   entry_point_ci:
     needs: [ci_base, dotnet_solution_ci, terraform_validate]
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-function-artifact.yml@6.1.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-function-artifact.yml@7.5.0
     with:
       CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint/Energinet.DataHub.MessageArchive.EntryPoint.csproj'
       DOTNET_VERSION: '6.0.201'
@@ -53,7 +53,7 @@ jobs:
 
   webapi_ci:
     needs: [ci_base, terraform_validate, dotnet_solution_ci]
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-webapi-artifact.yml@6.1.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-create-webapi-artifact.yml@7.5.0
     with:
       CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.EntryPoint.WebApi/Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj'
       DOTNET_VERSION: '6.0.201'
@@ -64,7 +64,7 @@ jobs:
       entry_point_ci,
       webapi_ci
     ]
-    uses: Energinet-DataHub/.github/.github/workflows/create-prerelease.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/create-prerelease.yml@7.5.0
     with:
       CALLER_REPOSITORY_PATH: Energinet-DataHub/geh-message-archive
     secrets:
