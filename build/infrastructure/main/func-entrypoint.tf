@@ -36,9 +36,9 @@ module "func_entrypoint_messagearchive" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE       = true
     FUNCTIONS_WORKER_RUNTIME                  = "dotnet-isolated"
     # Endregion
-    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_primary_connection_string)"
-    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_container_name)"
-    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_archive_container_name)"
+    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-primary-connection-string)"
+    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-container-name)"
+    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-archive-container-name)"
 
     COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }

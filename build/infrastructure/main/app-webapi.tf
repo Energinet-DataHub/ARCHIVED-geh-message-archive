@@ -30,11 +30,11 @@ module "app_webapi" {
   dotnet_framework_version                  = "v6.0"
 
   app_settings = {
-    FRONTEND_OPEN_ID_URL                              = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend_open_id_url)"
-    FRONTEND_SERVICE_APP_ID                           = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend_service_app_id)"
-    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_primary_connection_string)"
-    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_container_name)"
-    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st_market_operator_logs_archive_container_name)"
+    FRONTEND_OPEN_ID_URL                              = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend-open-id-url)"
+    FRONTEND_SERVICE_APP_ID                           = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=frontend-service-app-id)"
+    STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-primary-connection-string)"
+    STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-container-name)"
+    STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-archive-container-name)"
 
     COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING          = local.cosmos_db_connection_string
   }
