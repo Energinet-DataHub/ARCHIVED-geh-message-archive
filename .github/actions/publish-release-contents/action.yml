@@ -27,14 +27,8 @@ runs:
         mkdir ${{ inputs.RELEASE_FOLDER_PATH }}
         cp -fR ${{ inputs.REPO_FOLDER_PATH }}/build/infrastructure ${{ inputs.RELEASE_FOLDER_PATH }} 2>/dev/null || :
 
-    - name: Publish Entry point to release folder
-      uses: actions/download-artifact@v2
+    - name: Publish dotnet artifact to release folder
+      uses: actions/download-artifact@v3
       with:
-        name: entrypoint
-        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/entrypoint
-
-    - name: Publish Wep api to release folder
-      uses: actions/download-artifact@v2
-      with:
-        name: webapi
-        path: ${{ inputs.RELEASE_FOLDER_PATH }}/functions/webapi
+        name: dotnet
+        path: ${{ inputs.RELEASE_FOLDER_PATH }}
