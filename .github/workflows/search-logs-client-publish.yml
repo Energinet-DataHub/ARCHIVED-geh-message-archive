@@ -62,9 +62,6 @@ jobs:
     runs-on: windows-latest
     name: Publish bundle to NuGet.org
 
-    permissions:
-      contents: read
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
