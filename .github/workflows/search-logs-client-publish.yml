@@ -53,6 +53,10 @@ env:
   AZURE_KEYVAULT_URL: ${{ secrets.AZURE_KEYVAULT_URL }}
   AZURE_SECRETS_KEYVAULT_URL: ${{ secrets.AZURE_SECRETS_KEYVAULT_URL }}
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build_and_publish:
     runs-on: windows-latest
