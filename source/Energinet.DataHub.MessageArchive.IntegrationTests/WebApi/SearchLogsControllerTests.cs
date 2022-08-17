@@ -18,7 +18,6 @@ using Energinet.DataHub.MessageArchive.EntryPoint.WebApi;
 using Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
-using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Microsoft.AspNetCore.Mvc;
