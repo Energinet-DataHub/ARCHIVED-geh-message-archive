@@ -12,29 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Publish Energinet.DataHub.MessageArchive.Abstractions nuget package
+name: Publish Energinet.DataHub.MessageArchive.Client.Abstractions nuget package
 
 on:
   push:
     branches:
       - main
     paths:
-      - source/Energinet.DataHub.MessageArchive.Abstractions/**
+      - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
       - .github/workflows/publish-messagearchive-integration-client.yml
       - .github/actions/publish-nuget-package/**
   pull_request:
     branches:
       - main
     paths:
-      - source/Energinet.DataHub.MessageArchive.Abstractions/**
-      - .github/workflows/publish-messagearchive-client.yml
+      - source/Energinet.DataHub.MessageArchive.Client.Abstractions/**
+      - .github/workflows/publish-messagearchive-client-abstractions.yml
       - .github/actions/publish-nuget-package/**
   workflow_dispatch: {}
 
 env:
   DOTNET_VERSION: '6.0.201'
-  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.Abstractions/Energinet.DataHub.MessageArchive.Abstractions.csproj'
-  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Abstractions/bin/Release/*.nupkg'
+  CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageArchive.Client.Abstractions/Energinet.DataHub.MessageArchive.Client.Abstractions.csproj'
+  BINARY_PATH: 'source/Energinet.DataHub.MessageArchive.Client.Abstractions/bin/Release/*.nupkg'
 
 jobs:
   build_and_publish:
