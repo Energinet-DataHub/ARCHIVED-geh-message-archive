@@ -84,17 +84,14 @@ namespace Energinet.DataHub.MessageArchive.Client.Tests
             var searchCriteria = new MessageArchiveSearchCriteria();
             searchCriteria.MessageId = "1234";
 
-            // Act
-            var result = messageArchiveClient
-                .SearchLogsAsync(searchCriteria);
-
-            // Assert
-            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => result)
+            // act, assert
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => messageArchiveClient
+                .SearchLogsAsync(searchCriteria))
                 .ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task Test_MessageArchiveClient_Search_NullResult()
+        public async Task Test_MessageArchiveClient_BadRequestThrows()
         {
             // Arrange
             using var httpResponseMessage = new HttpResponseMessage
@@ -114,13 +111,9 @@ namespace Energinet.DataHub.MessageArchive.Client.Tests
             var messageArchiveClient = new MessageArchiveClient(httpClient);
 
             // Act
-            var result = await
-                messageArchiveClient
-                .SearchLogsAsync(new MessageArchiveSearchCriteria { MessageId = "1234" })
-                .ConfigureAwait(false);
-
-            // Assert
-            Assert.Null(result);
+            await Assert.ThrowsAsync<HttpRequestException>(
+                () => messageArchiveClient.SearchLogsAsync(new MessageArchiveSearchCriteria { MessageId = "1234" }))
+            .ConfigureAwait(false);
         }
 
         [Fact]

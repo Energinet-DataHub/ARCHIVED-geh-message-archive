@@ -17,7 +17,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Reader.Handlers;
 using Energinet.DataHub.MessageArchive.Reader.Models;
-using Energinet.DataHub.MessageArchive.Reader.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -38,8 +37,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
             _archiveSearchHandler = archiveSearchHandler;
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchAsync([FromQuery] SearchCriteria searchCriteria)
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchAsync(SearchCriteria searchCriteria)
         {
             try
             {
