@@ -49,26 +49,26 @@ namespace Energinet.DataHub.MessageArchive.Persistence
             var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent || !string.IsNullOrWhiteSpace(criteria.TraceId);
 
             var query = from searchResult in asLinq
-                where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
-                    (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
-                    (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
-                    (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
-                    (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
-                    (criteria.ReceiverRoleType == null || criteria.ReceiverRoleType == searchResult.ReceiverGlnMarketRoleType) &&
-                    (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.CreatedDate) &&
-                    (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.CreatedDate) &&
-                    (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
-                    (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
-                    (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
-                    (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
-                    (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
-                    (ignoreBodyRequirement || searchResult.HaveBodyContent == true) &&
+                        where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
+                            (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
+                            (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
+                            (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
+                            (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
+                            (criteria.ReceiverRoleType == null || criteria.ReceiverRoleType == searchResult.ReceiverGlnMarketRoleType) &&
+                            (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.CreatedDate) &&
+                            (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.CreatedDate) &&
+                            (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
+                            (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
+                            (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
+                            (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
+                            (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
+                            (ignoreBodyRequirement || searchResult.HaveBodyContent == true) &&
 
-                    (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
-                    (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
-                select searchResult;
+                            (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
+                            (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
+                        select searchResult;
 
-            var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query).ConfigureAwait(false);
+            var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query, criteria.MaxItemCount).ConfigureAwait(false);
 
             await AddRelatedMessagesIfAnyAsync(criteria, cosmosDocuments).ConfigureAwait(false);
 
@@ -104,16 +104,21 @@ namespace Energinet.DataHub.MessageArchive.Persistence
             return cosmosDocuments;
         }
 
-        private static async Task<(List<CosmosRequestResponseLog> Result, string? ContinuationToken)> ExecuteQueryWithContinuationTokenAsync(IQueryable<CosmosRequestResponseLog> query)
+        private static async Task<(List<CosmosRequestResponseLog> Result, string? ContinuationToken)> ExecuteQueryWithContinuationTokenAsync(IQueryable<CosmosRequestResponseLog> query, int maxItemCount)
         {
-            List<CosmosRequestResponseLog> cosmosDocuments = new();
+            var cosmosDocuments = new List<CosmosRequestResponseLog>();
 
-            using var iterator = query.ToFeedIterator();
+            string token;
+            do
+            {
+                using var iterator = query.ToFeedIterator();
+                var response = await iterator.ReadNextAsync().ConfigureAwait(false);
+                cosmosDocuments.AddRange(response);
+                token = response.ContinuationToken;
+            }
+            while (cosmosDocuments.Count < maxItemCount && token != null);
 
-            var response = await iterator.ReadNextAsync().ConfigureAwait(false);
-            cosmosDocuments.AddRange(response);
-
-            return (cosmosDocuments, response.ContinuationToken);
+            return (cosmosDocuments, token);
         }
 
         private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
@@ -130,11 +135,11 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
-                        where relatedMessageResult.HttpData == "response" &&
-                              transactionRecordIds != null &&
-                              relatedMessageResult.TransactionRecords != null &&
-                              relatedMessageResult.TransactionRecords.Any(x => transactionRecordIds.Contains(x.OriginalTransactionIdReferenceId))
-                        select relatedMessageResult;
+                                       where relatedMessageResult.HttpData == "response" &&
+                                             transactionRecordIds != null &&
+                                             relatedMessageResult.TransactionRecords != null &&
+                                             relatedMessageResult.TransactionRecords.Any(x => transactionRecordIds.Contains(x.OriginalTransactionIdReferenceId))
+                                       select relatedMessageResult;
 
                     var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
                     documents.AddRange(relatedCosmosDocuments);
@@ -146,11 +151,11 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
                     var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
                     var relatedQuery = from relatedMessageResult in asLinqIn
-                        where relatedMessageResult.HttpData == "request" &&
-                              originalReferenceIds != null &&
-                              relatedMessageResult.TransactionRecords != null &&
-                              relatedMessageResult.TransactionRecords.Any(x => originalReferenceIds.Contains(x.MRid))
-                        select relatedMessageResult;
+                                       where relatedMessageResult.HttpData == "request" &&
+                                             originalReferenceIds != null &&
+                                             relatedMessageResult.TransactionRecords != null &&
+                                             relatedMessageResult.TransactionRecords.Any(x => originalReferenceIds.Contains(x.MRid))
+                                       select relatedMessageResult;
 
                     var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
                     documents.AddRange(relatedCosmosDocuments);
