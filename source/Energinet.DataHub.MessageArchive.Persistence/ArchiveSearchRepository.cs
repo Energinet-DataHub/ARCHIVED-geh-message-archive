@@ -39,41 +39,50 @@ namespace Energinet.DataHub.MessageArchive.Persistence
         {
             Guard.ThrowIfNull(criteria, nameof(criteria));
 
-            var asLinq = _archiveContainer.Container
-                .GetItemLinqQueryable<CosmosRequestResponseLog>(
-                    requestOptions: new QueryRequestOptions() { MaxItemCount = criteria.MaxItemCount },
-                    continuationToken: criteria.ContinuationToken);
+            string? token = criteria.ContinuationToken;
+            var documents = new List<CosmosRequestResponseLog>();
 
-            var ignoreProcessTypes = criteria.ProcessTypes is not { Count: > 0 };
-            var ignoreRsmNames = criteria.RsmNames is not { Count: > 0 };
-            var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent || !string.IsNullOrWhiteSpace(criteria.TraceId);
+            do
+            {
+                var asLinq = _archiveContainer.Container
+                    .GetItemLinqQueryable<CosmosRequestResponseLog>(
+                        requestOptions: new QueryRequestOptions() { MaxItemCount = criteria.MaxItemCount },
+                        continuationToken: token);
 
-            var query = from searchResult in asLinq
-                        where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
-                            (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
-                            (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
-                            (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
-                            (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
-                            (criteria.ReceiverRoleType == null || criteria.ReceiverRoleType == searchResult.ReceiverGlnMarketRoleType) &&
-                            (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.CreatedDate) &&
-                            (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.CreatedDate) &&
-                            (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
-                            (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
-                            (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
-                            (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
-                            (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
-                            (ignoreBodyRequirement || searchResult.HaveBodyContent == true) &&
+                var ignoreProcessTypes = criteria.ProcessTypes is not { Count: > 0 };
+                var ignoreRsmNames = criteria.RsmNames is not { Count: > 0 };
+                var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent || !string.IsNullOrWhiteSpace(criteria.TraceId);
 
-                            (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
-                            (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
-                        select searchResult;
+                var query = from searchResult in asLinq
+                            where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
+                                (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
+                                (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
+                                (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
+                                (criteria.SenderRoleType == null || criteria.SenderRoleType == searchResult.SenderGlnMarketRoleType) &&
+                                (criteria.ReceiverRoleType == null || criteria.ReceiverRoleType == searchResult.ReceiverGlnMarketRoleType) &&
+                                (criteria.DateTimeFrom == null || criteria.DateTimeFromParsed <= searchResult.CreatedDate) &&
+                                (criteria.DateTimeTo == null || criteria.DateTimeToParsed >= searchResult.CreatedDate) &&
+                                (criteria.InvocationId == null || criteria.InvocationId == searchResult.InvocationId) &&
+                                (criteria.FunctionName == null || criteria.FunctionName == searchResult.FunctionName) &&
+                                (criteria.TraceId == null || criteria.TraceId == searchResult.TraceId) &&
+                                (criteria.BusinessSectorType == null || criteria.BusinessSectorType == searchResult.BusinessSectorType) &&
+                                (criteria.ReasonCode == null || criteria.ReasonCode == searchResult.ReasonCode) &&
+                                (ignoreBodyRequirement || searchResult.HaveBodyContent == true) &&
 
-            var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query, criteria.MaxItemCount).ConfigureAwait(false);
+                                (ignoreProcessTypes || (criteria.ProcessTypes != null && searchResult.ProcessType != null && criteria.ProcessTypes.Contains(searchResult.ProcessType))) &&
+                                (ignoreRsmNames || (criteria.RsmNames != null && searchResult.RsmName != null && criteria.RsmNames.Contains(searchResult.RsmName)))
+                            select searchResult;
 
-            await AddRelatedMessagesIfAnyAsync(criteria, cosmosDocuments).ConfigureAwait(false);
+                var (cosmosDocuments, continuationToken) = await ExecuteQueryWithContinuationTokenAsync(query, criteria.MaxItemCount).ConfigureAwait(false);
+                documents.AddRange(cosmosDocuments);
+                token = continuationToken;
+            }
+            while (documents.Count < criteria.MaxItemCount && !string.IsNullOrWhiteSpace(token));
 
-            var searchResultMapped = Map(cosmosDocuments);
-            searchResultMapped.ContinuationToken = continuationToken;
+            await AddRelatedMessagesIfAnyAsync(criteria, documents).ConfigureAwait(false);
+
+            var searchResultMapped = Map(documents);
+            searchResultMapped.ContinuationToken = token;
             return searchResultMapped;
         }
 
@@ -108,17 +117,11 @@ namespace Energinet.DataHub.MessageArchive.Persistence
         {
             var cosmosDocuments = new List<CosmosRequestResponseLog>();
 
-            string token;
-            do
-            {
-                using var iterator = query.ToFeedIterator();
-                var response = await iterator.ReadNextAsync().ConfigureAwait(false);
-                cosmosDocuments.AddRange(response);
-                token = response.ContinuationToken;
-            }
-            while (cosmosDocuments.Count < maxItemCount && token != null);
+            using var iterator = query.ToFeedIterator();
+            var response = await iterator.ReadNextAsync().ConfigureAwait(false);
+            cosmosDocuments.AddRange(response);
 
-            return (cosmosDocuments, token);
+            return (cosmosDocuments, response.ContinuationToken);
         }
 
         private async Task AddRelatedMessagesIfAnyAsync(SearchCriteria criteria, List<CosmosRequestResponseLog> documents)
