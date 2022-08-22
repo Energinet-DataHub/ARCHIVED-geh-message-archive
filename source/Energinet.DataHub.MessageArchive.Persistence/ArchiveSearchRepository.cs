@@ -77,7 +77,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                 documents.AddRange(cosmosDocuments);
                 token = continuationToken;
             }
-            while (documents.Count < criteria.MaxItemCount && token != null);
+            while (documents.Count < criteria.MaxItemCount && !string.IsNullOrWhiteSpace(token));
 
             await AddRelatedMessagesIfAnyAsync(criteria, documents).ConfigureAwait(false);
 
