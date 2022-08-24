@@ -1,0 +1,24 @@
+flag_management:
+  default_rules: # the rules that will be followed for any flag added, generally
+    carryforward: true
+  individual_flags: # exceptions to the default rules above, stated flag by flag
+    - name: business
+      paths:
+      - source/Energinet.DataHub.MessageArchive.Common
+      - source/Energinet.DataHub.MessageArchive.EntryPoint
+      - source/Energinet.DataHub.MessageArchive.EntryPoint.WebApi
+      - source/Energinet.DataHub.MessageArchive.PersistanceModels
+      - source/Energinet.DataHub.MessageArchive.Persistence
+      - source/Energinet.DataHub.MessageArchive.Processing
+      - source/Energinet.DataHub.MessageArchive.Reader
+      - source/Energinet.DataHub.MessageArchive.Utilities
+    - name: clientlibraries
+      paths:
+      - source/Energinet.DataHub.MessageArchive.Client
+      - source/Energinet.DataHub.MessageArchive.Client.Abstractions
+
+# https://docs.codecov.com/docs/ignoring-paths
+ignore:
+  - source/Energinet.DataHub.MessageArchive.Client.Tests
+  - source/Energinet.DataHub.MessageArchive.IntegrationTests
+  - source/Energinet.DataHub.MessageArchive.Tests
