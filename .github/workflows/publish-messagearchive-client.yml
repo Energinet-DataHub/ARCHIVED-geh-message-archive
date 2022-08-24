@@ -42,6 +42,8 @@ on:
 env:
   # Conditions
   PUSH_PACKAGES: ${{ github.event_name != 'pull_request' }}
+  # Set value used by 'AzuriteManager'
+  AzuriteBlobFolderPath: '${{ github.workspace }}\node_modules\.bin\'
 
 permissions:
   id-token: write
