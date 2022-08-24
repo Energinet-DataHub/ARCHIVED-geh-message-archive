@@ -57,6 +57,12 @@ limitations under the License.
     <!-- Disable warning on your public types/methods for not having added full documentation tags -->
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+  
+  <!-- Enable Source Link (https://github.com/dotnet/sourcelink/blob/master/README.md) -->
+  <PropertyGroup>
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Client.Abstractions\Energinet.DataHub.MessageArchive.Client.Abstractions.csproj" />
