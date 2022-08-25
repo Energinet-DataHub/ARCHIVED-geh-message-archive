@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.Common
 
             var appInsightsServiceOptions = new Microsoft.ApplicationInsights.WorkerService.ApplicationInsightsServiceOptions
             {
-                InstrumentationKey = appInsightsInstrumentationKey,
+                ConnectionString = $"InstrumentationKey={appInsightsInstrumentationKey}",
                 EnableDependencyTrackingTelemetryModule = !string.IsNullOrWhiteSpace(appInsightsInstrumentationKey),
             };
 

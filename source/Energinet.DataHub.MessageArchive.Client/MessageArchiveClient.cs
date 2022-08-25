@@ -44,10 +44,14 @@ namespace Energinet.DataHub.MessageArchive.Client
             var response = await _httpClient.PostAsJsonAsync(searchUriRelative, searchCriteria).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
                 throw new UnauthorizedAccessException();
+            }
 
             if (response.StatusCode == HttpStatusCode.NoContent)
+            {
                 return new MessageArchiveSearchResultsDto();
+            }
 
             response.EnsureSuccessStatusCode();
 
