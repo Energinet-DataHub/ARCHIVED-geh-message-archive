@@ -24,7 +24,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageArchive.Client</PackageId>
-    <PackageVersion>2.0.3$(VersionSuffix)</PackageVersion>
+    <PackageVersion>2.0.4$(VersionSuffix)</PackageVersion>
     <Title>MessageArchive client library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
@@ -56,6 +56,12 @@ limitations under the License.
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <!-- Disable warning on your public types/methods for not having added full documentation tags -->
     <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- Enable Source Link (https://github.com/dotnet/sourcelink/blob/master/README.md) -->
+  <PropertyGroup>
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
