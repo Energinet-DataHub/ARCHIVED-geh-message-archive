@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Extensions.DependencyInjection;
 using Energinet.DataHub.MessageArchive.Persistence;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.Persistence.Services;
@@ -62,7 +63,7 @@ namespace Energinet.DataHub.MessageArchive.Common
             Container.Register(() => config!, Lifestyle.Singleton);
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(config ?? throw new InvalidOperationException());
+            services.AddApplicationInsights();
 
             RegisterLogStreamReader(Container);
             RegisterBlobReader(Container);
