@@ -25,7 +25,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageArchive.Client.Abstractions</PackageId>
-    <PackageVersion>2.0.5$(VersionSuffix)</PackageVersion>
+    <PackageVersion>2.0.6$(VersionSuffix)</PackageVersion>
     <Title>MessageArchives client abstractions library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
