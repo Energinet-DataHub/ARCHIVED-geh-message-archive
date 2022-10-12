@@ -1,5 +1,9 @@
 # MessageArchive.Client Release notes
 
+## Version 2.0.6
+
+- Pipeline updated.
+
 ## Version 2.0.5
 
 - Cleanup and refactor.
