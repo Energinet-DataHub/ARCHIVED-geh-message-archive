@@ -29,7 +29,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
         public SearchCriteria(
             string? messageId,
             string? messageType,
-            List<string> processTypes,
+            List<string>? processTypes,
             string? dateTimeFrom,
             string? dateTimeTo,
             string? senderId,
@@ -42,7 +42,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
             string? functionName,
             string? traceId,
             bool? includeRelated,
-            List<string> rsmNames)
+            List<string>? rsmNames)
         {
             MessageId = messageId;
             MessageType = messageType;
@@ -66,7 +66,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
 
         public string? MessageType { get; set; }
 
-        public List<string> ProcessTypes { get; set; } = new();
+        public List<string>? ProcessTypes { get; set; } = new();
 
         public string? DateTimeFrom { get; set; }
 
@@ -94,7 +94,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Models
 
         public bool IncludeResultsWithoutContent { get; set; } = false;
 
-        public List<string> RsmNames { get; set; } = new();
+        public List<string>? RsmNames { get; set; } = new();
 
         public DateTimeOffset? DateTimeFromParsed { get; set; }
 

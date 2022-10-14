@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Energinet.DataHub.MessageArchive.Reader.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
@@ -52,6 +53,8 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
 
         private static void ValidateAndUpdateRsmName(SearchCriteria sc)
         {
+            sc.RsmNames ??= new List<string>();
+
             for (var i = 0; i < sc.RsmNames.Count; i++)
             {
 #pragma warning disable CA1308
@@ -62,6 +65,8 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
 
         private static void ValidateAndUpdateProcessTypes(SearchCriteria sc)
         {
+            sc.ProcessTypes ??= new List<string>();
+
             for (var i = 0; i < sc.ProcessTypes.Count; i++)
             {
                 sc.ProcessTypes[i] = sc.ProcessTypes[i].ToUpperInvariant();
