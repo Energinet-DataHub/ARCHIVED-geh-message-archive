@@ -39,6 +39,36 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
         }
 
         [Fact]
+        public void Test_SearchParams_NullRsmNamesCoalescedToList()
+        {
+            // Arrange
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.RsmNames = null;
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+            Assert.NotNull(searchCriteria.RsmNames);
+        }
+
+        [Fact]
+        public void Test_SearchParams_NullProcessTypesCoalescedToList()
+        {
+            // Arrange
+            var searchCriteria = Create_ValidSearchCriteria();
+            searchCriteria.ProcessTypes = null;
+
+            // Act
+            var result = SearchCriteriaValidation.Validate(searchCriteria);
+
+            // Assert
+            Assert.True(result.Valid);
+            Assert.NotNull(searchCriteria.ProcessTypes);
+        }
+
+        [Fact]
         public void Test_SearchParams_DateTimeParseOnlyDate()
         {
             // Arrange
@@ -149,9 +179,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
 
             // Assert
             Assert.True(result.Valid);
-#pragma warning disable CA1308
             Assert.Contains(processTypes.ToUpperInvariant(), searchCriteria.ProcessTypes);
-#pragma warning restore CA1308
         }
 
         [Fact]
@@ -217,8 +245,8 @@ namespace Energinet.DataHub.MessageArchive.Tests.Validation
                 MessageId = "messageId",
                 MessageType = "messageType",
                 BusinessSectorType = "businessSectorType",
-                DateTimeFrom = "2022-01-01",
-                DateTimeTo = "2022-01-31",
+                DateTimeFrom = "2022-09-14T00:00:00Z",
+                DateTimeTo = "2022-10-14T00:00:00Z",
                 FunctionName = "functionName",
                 InvocationId = "invocationId",
                 ProcessTypes = new List<string>() { "processType" },

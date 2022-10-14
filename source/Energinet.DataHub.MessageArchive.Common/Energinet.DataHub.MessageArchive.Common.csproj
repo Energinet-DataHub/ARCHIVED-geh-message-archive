@@ -25,13 +25,13 @@ limitations under the License.
   </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="6.0.4" />
-      <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="6.0.2" />
-      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="7.1.0" />
+      <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="6.1.1" />
+      <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="6.1.0" />
+      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="7.1.1" />
       <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
       <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" />
-      <PackageReference Include="SimpleInjector" Version="5.3.3" />
-      <PackageReference Include="SimpleInjector.Integration.GenericHost" Version="5.3.0" />
+      <PackageReference Include="SimpleInjector" Version="5.4.1" />
+      <PackageReference Include="SimpleInjector.Integration.GenericHost" Version="5.4.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,6 +39,13 @@ limitations under the License.
       <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj" />
       <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj" />
       <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>
