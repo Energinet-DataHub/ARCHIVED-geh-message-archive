@@ -24,7 +24,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageArchive.Client</PackageId>
-    <PackageVersion>2.0.6$(VersionSuffix)</PackageVersion>
+    <PackageVersion>2.0.7$(VersionSuffix)</PackageVersion>
     <Title>MessageArchive client library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
