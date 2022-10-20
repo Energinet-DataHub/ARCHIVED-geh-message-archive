@@ -2,7 +2,7 @@
 
 ## Version 2.0.7
 
-- Updated deployment, no code changes.
+- Updated deployment, update storage package.
 
 ## Version 2.0.6
 
