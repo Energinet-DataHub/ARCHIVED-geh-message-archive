@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
 using Microsoft.Extensions.Logging;
@@ -30,7 +31,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
     public class LogParserTests
     {
         [Fact]
-        public void Parse_XML_MktActivityRecord_TransactionIds()
+        public async Task Parse_XML_MktActivityRecord_TransactionIds()
         {
             // Arrange
             var filename = "assets/requestchangeaccountingpointcharacteristics.xml";
@@ -39,7 +40,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.TransactionRecords);
@@ -48,7 +49,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Parse_XML_Series_TransactionIds()
+        public async Task Parse_XML_Series_TransactionIds()
         {
             // Arrange
             var filename = "assets/test-series-ids.xml";
@@ -57,7 +58,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.TransactionRecords);
@@ -66,7 +67,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Parse_XML_MktActivityRecord_LinkedMessage()
+        public async Task Parse_XML_MktActivityRecord_LinkedMessage()
         {
             // Arrange
             var xml = $"<message><MktActivityRecord><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}>1234</{ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid}></MktActivityRecord></message>";
@@ -74,7 +75,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
             var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
@@ -83,7 +84,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Parse_XML_Series_LinkedMessage()
+        public async Task Parse_XML_Series_LinkedMessage()
         {
             // Arrange
             var xml = $"<message><Series><{ElementNames.MRid}>1234567</{ElementNames.MRid}><{ElementNames.OriginalTransactionIdReferenceSeriesmRid}>1234</{ElementNames.OriginalTransactionIdReferenceSeriesmRid}></Series></message>";
@@ -91,7 +92,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
             var originalTransactionIdReference = (parsed.TransactionRecords ?? throw new InvalidOperationException()).First().OriginalTransactionIdReferenceId;
 
             // Assert
@@ -100,7 +101,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Test_RsmNameParsing()
+        public async Task Test_RsmNameParsing()
         {
             var filename = "assets/notifybillingmasterdata.xml";
             var xml = File.ReadAllText(filename);
@@ -108,7 +109,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.RsmName);
@@ -116,7 +117,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Test_IndexTagsInMetaDataParsing()
+        public async Task Test_IndexTagsInMetaDataParsing()
         {
             var indexTagsCount = 10;
             var indexTags = BuildIndexTagsDic(indexTagsCount);
@@ -127,7 +128,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Data);
@@ -135,7 +136,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Test_IndexTagsInMetaDataParsing_IndexTagsFallBack()
+        public async Task Test_IndexTagsInMetaDataParsing_IndexTagsFallBack()
         {
             var indexTagsCount = 2;
             var indexTags = BuildIndexTagsDic(indexTagsCount);
@@ -144,7 +145,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Data);
@@ -152,20 +153,20 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Test_IndexTagsInMetaDataParsing_IndexTagsNull()
+        public async Task Test_IndexTagsInMetaDataParsing_IndexTagsNull()
         {
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.Null(parsed.Data);
         }
 
         [Fact]
-        public void Test_QueryTagsInMetaDataParsing()
+        public async Task Test_QueryTagsInMetaDataParsing()
         {
             var tagsCount = 10;
             var tags = BuildIndexTagsDic(tagsCount);
@@ -176,7 +177,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Query);
@@ -184,13 +185,13 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Test_QueryTagsInMetaDataParsing_Null()
+        public async Task Test_QueryTagsInMetaDataParsing_Null()
         {
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
             var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Act
-            var parsed = xmlParser.Parse(blobItem);
+            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.Null(parsed.Query);

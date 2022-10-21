@@ -1,0 +1,50 @@
+﻿{
+  "RejectRequestChangeOfSupplier_MarketDocument": {
+    "mRID": "551e7c64-97b4-4ef6-aaf7-e0b990f2b197",
+    "businessSector.type": {
+      "value": "23"
+    },
+    "createdDateTime": "2022-09-05T13:01:05Z",
+    "process.processType": {
+      "value": "E65"
+    },
+    "reason.code": {
+      "value": "A02"
+    },
+    "receiver_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5178861303303"
+    },
+    "receiver_MarketParticipant.marketRole.type": {
+      "value": "DDQ"
+    },
+    "sender_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5790001330552"
+    },
+    "sender_MarketParticipant.marketRole.type": {
+      "value": "DDZ"
+    },
+    "type": {
+      "value": "414"
+    },
+    "MktActivityRecord": [
+      {
+        "mRID": "e95d96a1-6c8c-4dfc-9e2b-9cbdbbd47dea",
+        "marketEvaluationPoint.mRID": {
+          "codingScheme": "A10",
+          "value": "572177126169264213"
+        },
+        "originalTransactionIDReference_MktActivityRecord.mRID": "14760489",
+        "Reason": [
+          {
+            "code": {
+              "value": "E17"
+            },
+            "text": "Startdatoen er ikke modtaget indenfor den korrekte tidsperiode"
+          }
+        ]
+      }
+    ]
+  }
+}
