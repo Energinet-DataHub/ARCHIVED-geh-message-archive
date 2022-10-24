@@ -49,7 +49,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             if (IsJsonContent(contentType, content))
             {
-                return new LogParserJson();
+                return new LogParserJson(logger);
             }
 
             return new LogParserBlobProperties();

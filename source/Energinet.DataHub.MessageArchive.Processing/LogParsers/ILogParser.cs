@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 
@@ -25,6 +26,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         /// <summary>
         /// Parse abstraction
         /// </summary>
-        BaseParsedModel Parse(BlobItemData blobItemData);
+        Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData);
     }
 }

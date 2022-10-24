@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers;
 using Energinet.DataHub.MessageArchive.Processing.Models;
@@ -21,13 +22,13 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
     public class LogParserErrorResponseJson : LogParserBlobProperties
     {
-        public override BaseParsedModel Parse(BlobItemData blobItemData)
+        public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var parsedModel = base.Parse(blobItemData);
+            var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
             parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
-            return parsedModel;
+            return await Task.FromResult(parsedModel).ConfigureAwait(false);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
 
         private async Task ParseAndSaveAsync(ILogParser parser, BlobItemData blobItemData)
         {
-            var parsedModel = parser.Parse(blobItemData);
+            var parsedModel = await parser.ParseAsync(blobItemData).ConfigureAwait(false);
             var cosmosModel = CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
 
             var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);

@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Moq;
 
@@ -32,6 +33,22 @@ namespace Energinet.DataHub.MessageArchive.Tests
                 content,
                 DateTimeOffset.Now,
                 uri);
+        }
+
+        public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null)
+        {
+            var uri = new Uri("https://localhost/TestBlob");
+
+            var blobItem = new BlobItemData(
+                It.IsAny<string>(),
+                new Dictionary<string, string>() { { "contenttype", contentType } },
+                indexTags ?? new Dictionary<string, string>(),
+                string.Empty,
+                DateTimeOffset.Now,
+                uri);
+
+            blobItem.ContentStream = contentStream;
+            return blobItem;
         }
     }
 }

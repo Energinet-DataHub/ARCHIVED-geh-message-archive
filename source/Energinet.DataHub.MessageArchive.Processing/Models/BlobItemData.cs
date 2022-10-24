@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Energinet.DataHub.MessageArchive.Processing.Models
 {
@@ -43,8 +44,17 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
 
         public string Content { get; }
 
+        public Stream? ContentStream { get; set; }
+
         public DateTimeOffset? BlobCreatedOn { get; }
 
         public Uri Uri { get; }
+
+        public bool IsJsonContent()
+        {
+            return MetaData.TryGetValue("contenttype", out var contentTypeValue) &&
+                   !string.IsNullOrWhiteSpace(contentTypeValue) &&
+                   contentTypeValue.Contains("json", StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
@@ -34,11 +35,11 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             _applicationLogging = applicationLogging;
         }
 
-        public override BaseParsedModel Parse(BlobItemData blobItemData)
+        public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var parsedModel = base.Parse(blobItemData);
+            var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
             try
             {
