@@ -1,0 +1,50 @@
+{
+	"RejectRequestValidatedMeasureData_MarketDocument": {
+		"mRID": "25869814",
+		"businessSector.type": {
+			"value": "23"
+		},
+		"createdDateTime": "2001-12-17T09:30:47Z",
+		"process.processType": {
+			"value": "E23"
+		},
+		"reason.code": {
+			"value": "A02"
+		},
+		"receiver_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5799999933318"
+		},
+		"receiver_MarketParticipant.marketRole.type": {
+			"value": "DDQ"
+		},
+		"sender_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5790001330552"
+		},
+		"sender_MarketParticipant.marketRole.type": {
+			"value": "DDZ"
+		},
+		"type": {
+			"value": "ERR"
+		},
+		"Series": [
+			{
+				"mRID": "25869147",
+				"marketEvaluationPoint.mRID": {
+					"codingScheme": "A10",
+					"value": "579999993331812345"
+				},
+				"originalTransactionIDReference_Series.mRID": "25836914",
+				"Reason": [
+					{
+						"code": {
+							"value": "D18"
+						},
+						"text": "Målepunktstype D07 er forkert"
+					}
+				]
+			}
+		]
+	}
+}

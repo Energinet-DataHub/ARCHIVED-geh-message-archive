@@ -149,19 +149,97 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         }
 
         [Fact]
-        public void Parse_JSON_Stream_SeriesTest()
+        public async Task Parse_JSON_Stream_RequestValidatedMeasureData()
         {
             // Arrange
-            //var filePathWithName = "assets/somefile.json";
-            // var parsedModel = ParseJsonFromFileStream(filePathWithName);
-            throw new NotImplementedException();
+            var filePathWithName = "assets/requestValidatedMeasureData.json";
+
+            using var fileStream = File.Open(filePathWithName, FileMode.Open);
+
+            var jsonStreamParser = new LogParserJson(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var blobItem = MockedTypes.BlobItemDataStream("json", fileStream);
+
+            var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+
+            Assert.NotNull(parsedModel);
+            Assert.NotNull(parsedModel.TransactionRecords);
+            Assert.Equal("12345687", parsedModel.MessageId);
+            Assert.Equal("23", parsedModel.BusinessSectorType);
+            Assert.Equal(string.Empty, parsedModel.ReasonCode);
+            Assert.Equal(DateTimeOffset.Parse("2022-12-17T09:30:47Z", CultureInfo.InvariantCulture), parsedModel.CreatedDate);
+            Assert.Equal("E23", parsedModel.ProcessType);
+            Assert.Equal("DGL", parsedModel.ReceiverGlnMarketRoleType);
+            Assert.Equal("5790001330552", parsedModel.ReceiverGln);
+            Assert.Equal("DDQ", parsedModel.SenderGlnMarketRoleType);
+            Assert.Equal("5799999933318", parsedModel.SenderGln);
+            Assert.Equal("E73", parsedModel.MessageType);
+            Assert.Single(parsedModel.TransactionRecords);
+            Assert.Contains(parsedModel.TransactionRecords, r => r.MRid == "1568914" && string.IsNullOrEmpty(r.OriginalTransactionIdReferenceId));
+        }
+
+        [Fact]
+        public async Task Parse_JSON_Stream_NotifyValidatedMeasureData()
+        {
+            // Arrange
+            var filePathWithName = "assets/notifyValidatedMeasureData.json";
+
+            using var fileStream = File.Open(filePathWithName, FileMode.Open);
+
+            var jsonStreamParser = new LogParserJson(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var blobItem = MockedTypes.BlobItemDataStream("json", fileStream);
+
+            var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+
+            Assert.NotNull(parsedModel);
+            Assert.NotNull(parsedModel.TransactionRecords);
+            Assert.Equal("C1876453", parsedModel.MessageId);
+            Assert.Equal("23", parsedModel.BusinessSectorType);
+            Assert.Equal(string.Empty, parsedModel.ReasonCode);
+            Assert.Equal(DateTimeOffset.Parse("2022-12-17T09:30:47Z", CultureInfo.InvariantCulture), parsedModel.CreatedDate);
+            Assert.Equal("E23", parsedModel.ProcessType);
+            Assert.Equal("DGL", parsedModel.ReceiverGlnMarketRoleType);
+            Assert.Equal("5790001330552", parsedModel.ReceiverGln);
+            Assert.Equal("MDR", parsedModel.SenderGlnMarketRoleType);
+            Assert.Equal("5799999933317", parsedModel.SenderGln);
+            Assert.Equal("E66", parsedModel.MessageType);
+            Assert.Single(parsedModel.TransactionRecords);
+            Assert.Contains(parsedModel.TransactionRecords, r => r.MRid == "C1876456" && r.OriginalTransactionIdReferenceId == "C1875000");
+        }
+
+        [Fact]
+        public async Task Parse_JSON_Stream_RejectRequestValidatedMeasureData()
+        {
+            // Arrange
+            var filePathWithName = "assets/rejectRequestValidatedMeasureData.json";
+
+            using var fileStream = File.Open(filePathWithName, FileMode.Open);
+
+            var jsonStreamParser = new LogParserJson(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var blobItem = MockedTypes.BlobItemDataStream("json", fileStream);
+
+            var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+
+            Assert.NotNull(parsedModel);
+            Assert.NotNull(parsedModel.TransactionRecords);
+            Assert.Equal("25869814", parsedModel.MessageId);
+            Assert.Equal("23", parsedModel.BusinessSectorType);
+            Assert.Equal("A02", parsedModel.ReasonCode);
+            Assert.Equal(DateTimeOffset.Parse("2001-12-17T09:30:47Z", CultureInfo.InvariantCulture), parsedModel.CreatedDate);
+            Assert.Equal("E23", parsedModel.ProcessType);
+            Assert.Equal("DDQ", parsedModel.ReceiverGlnMarketRoleType);
+            Assert.Equal("5799999933318", parsedModel.ReceiverGln);
+            Assert.Equal("DDZ", parsedModel.SenderGlnMarketRoleType);
+            Assert.Equal("5790001330552", parsedModel.SenderGln);
+            Assert.Equal("ERR", parsedModel.MessageType);
+            Assert.Single(parsedModel.TransactionRecords);
+            Assert.Contains(parsedModel.TransactionRecords, r => r.MRid == "25869147" && r.OriginalTransactionIdReferenceId == "25836914");
         }
 
         [Fact]
         public async Task Parse_JSON_Stream_ValidationError_Parsing()
         {
             // Arrange
-            var filePathWithName = "assets/multiactivityrecords_confirmrequestchangeofsupplier.json";
+            var filePathWithName = "assets/validation_exception.json";
 
             using var fileStream = File.Open(filePathWithName, FileMode.Open);
 

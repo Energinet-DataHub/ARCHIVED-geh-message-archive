@@ -148,14 +148,31 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 {
                     await ReadMktActivityRecordsAsync(reader, parsedModel).ConfigureAwait(false);
                 }
+
+                // Series
+                if (reader.TokenType == JsonToken.StartArray
+                    && ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.Series"))
+                {
+                    await ReadSeriesRecordsAsync(reader, parsedModel).ConfigureAwait(false);
+                }
             }
         }
 
-        private static async Task ReadMktActivityRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
+        private static Task ReadSeriesRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
+        {
+            return ReadTransactionRecordsAsync(reader, parsedModel, "Series");
+        }
+
+        private static Task ReadMktActivityRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
+        {
+            return ReadTransactionRecordsAsync(reader, parsedModel, "MktActivityRecord");
+        }
+
+        private static async Task ReadTransactionRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel, string recordPathName)
         {
             var transactionRecords = new List<TransactionRecord>();
             var transactionRecordsIndex = 0;
-            var currentActivityRecordPath = $"MktActivityRecord[{transactionRecordsIndex}]";
+            var currentActivityRecordPath = $"{recordPathName}[{transactionRecordsIndex}]";
             var currentTransactionRecord = new TransactionRecord();
 
             while (await reader.ReadAsync().ConfigureAwait(false))
@@ -170,7 +187,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 }
 
                 if (reader.TokenType == JsonToken.PropertyName
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}['originalTransactionIDReference_MktActivityRecord.mRID']"))
+                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}['originalTransactionIDReference_{recordPathName}.mRID']"))
                 {
                     currentTransactionRecord.OriginalTransactionIdReferenceId = await reader.ReadAsStringAsync().ConfigureAwait(false);
                     continue;
@@ -188,15 +205,16 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                         });
                     }
 
-                    currentActivityRecordPath = $"MktActivityRecord[{++transactionRecordsIndex}]";
+                    currentActivityRecordPath = $"{recordPathName}[{++transactionRecordsIndex}]";
                     currentTransactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
                     continue;
                 }
 
-                if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.MktActivityRecord")
+                if (ExpectedPathEndWithFunc(reader.Path, $"_MarketDocument.{recordPathName}")
                     && reader.TokenType == JsonToken.EndArray)
                 {
-                    Debug.WriteLine($"End _MarketDocument.MktActivityRecord");
+                    Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
+
                     parsedModel.TransactionRecords = transactionRecords;
                     break;
                 }

@@ -54,7 +54,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 Query = Utilities.ParseTags.ParseQueryTagsElement(blobItemData),
             };
 
-            if (!string.IsNullOrWhiteSpace(blobItemData.Content) || blobItemData.ContentStream is { Length: > 3 })
+            if (blobItemData.ContentLength is > 0)
             {
                 parsedModel.HaveBodyContent = true;
             }
