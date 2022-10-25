@@ -75,6 +75,13 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
+                if (reader.Depth == 1
+                    && reader.Path.EndsWith("error", StringComparison.OrdinalIgnoreCase)
+                    && reader.TokenType == JsonToken.StartObject)
+                {
+                    await ReadErrorsAsync(reader, parsedModel).ConfigureAwait(false);
+                }
+
                 if (reader.TokenType == JsonToken.PropertyName)
                 {
                     if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.mRID"))
@@ -216,6 +223,66 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
 
                     parsedModel.TransactionRecords = transactionRecords;
+                    break;
+                }
+            }
+        }
+
+        private static async Task ReadErrorsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
+        {
+            while (await reader.ReadAsync().ConfigureAwait(false))
+            {
+                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
+
+                if (reader.TokenType == JsonToken.StartArray
+                    && ExpectedPathEndWithFunc(reader.Path, $"error.details"))
+                {
+                    await ReadErrorDetailsAsync(reader, parsedModel).ConfigureAwait(false);
+                }
+            }
+        }
+
+        private static async Task ReadErrorDetailsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
+        {
+            var errorModels = new List<ParsedErrorModel>();
+            var errorRecordsIndex = 0;
+            var currentActivityRecordPath = $"error.details[{errorRecordsIndex}]";
+            var currentErrorCode = string.Empty;
+            var currentErrorMessage = string.Empty;
+
+            while (await reader.ReadAsync().ConfigureAwait(false))
+            {
+                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
+
+                if (reader.TokenType == JsonToken.PropertyName
+                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.code"))
+                {
+                    currentErrorCode = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (reader.TokenType == JsonToken.PropertyName
+                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.message"))
+                {
+                    currentErrorMessage = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (reader.TokenType == JsonToken.EndObject
+                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}"))
+                {
+                    errorModels.Add(new ParsedErrorModel(currentErrorCode, currentErrorMessage));
+
+                    currentActivityRecordPath = $"error.details[{++errorRecordsIndex}]";
+                    currentErrorCode = string.Empty;
+                    currentErrorMessage = string.Empty;
+                    continue;
+                }
+
+                if (ExpectedPathEndWithFunc(reader.Path, "error.details")
+                    && reader.TokenType == JsonToken.EndArray)
+                {
+                    parsedModel.Errors = errorModels;
                     break;
                 }
             }

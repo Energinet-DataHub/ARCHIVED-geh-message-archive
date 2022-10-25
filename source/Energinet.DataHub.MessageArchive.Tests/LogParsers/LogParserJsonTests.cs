@@ -250,7 +250,9 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
 
             Assert.NotNull(parsedModel);
             Assert.NotNull(parsedModel.Errors);
-            Assert.Single(parsedModel.Errors);
+            Assert.Contains(parsedModel.Errors, r => r.Code == "invalid_UUID" && r.Message == "Bundle Id must have a valid guid.");
+            Assert.Contains(parsedModel.Errors, r => r.Code == "invalid_UUID2" && r.Message == "Bundle Id must have a valid guid.2");
+            Assert.Equal(2, parsedModel.Errors.Count());
         }
 
         private static BaseParsedModel ParseJsonFromFileStream(string filePathWithName)
