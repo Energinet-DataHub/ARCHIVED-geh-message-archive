@@ -18,6 +18,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
@@ -255,7 +257,22 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             Assert.Equal(2, parsedModel.Errors.Count());
         }
 
-        private static BaseParsedModel ParseJsonFromFileStream(string filePathWithName)
+        [Fact]
+        public void Parse_JSON_Stream_Utf8JsonReader()
+        {
+            // Arrange
+            var filePathWithName = "assets/requestchangeofsupplier.json";
+
+            // Act
+            var parsedModel = ParseJsonFromFileStreamUtf8JsonReader(filePathWithName);
+
+            // Assert
+            Assert.Equal("23984918", parsedModel.MessageId);
+            Assert.NotNull(parsedModel.TransactionRecords);
+            Assert.Single(parsedModel.TransactionRecords);
+        }
+
+        private static BaseParsedModel ParseJsonFromFileStreamUtf8JsonReader(string filePathWithName)
         {
             var parsedModel = new BaseParsedModel()
             {
@@ -264,15 +281,137 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
                 ProcessType = string.Empty,
             };
 
-            using var s = File.Open(filePathWithName, FileMode.Open);
-            using var sr = new StreamReader(s);
-            using var reader = new JsonTextReader(sr);
+            var fileBytes = File.ReadAllBytes(filePathWithName);
+            using var memoryStream = new MemoryStream(fileBytes);
 
-            while (reader.Read())
+            var buffer = new byte[256];
+            ReadOnlySpan<byte> utf8Bom = new byte[] { 0xEF, 0xBB, 0xBF };
+
+            var bytesRead = memoryStream.Read(buffer, 0, utf8Bom.Length);
+
+            if (buffer.AsSpan().StartsWith(utf8Bom))
             {
-                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
+                memoryStream.Position = utf8Bom.Length;
+                buffer = new byte[256];
+                bytesRead = memoryStream.Read(buffer);
+            }
 
-                if (reader.Depth == 1
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, state: default);
+            Debug.WriteLine($"String in buffer is: {Encoding.UTF8.GetString(buffer)}");
+
+            for (var currentRun = 0; ; currentRun++)
+            {
+                Debug.WriteLine($"String in buffer is: {Encoding.UTF8.GetString(buffer)}");
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("mRID"))
+                {
+                    reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+                    parsedModel.MessageId = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("businessSector.type"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.BusinessSectorType = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("createdDateTime"))
+                {
+                    reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+                    parsedModel.CreatedDate = reader.GetDateTimeOffset();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("process.processType"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.ProcessType = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("receiver_MarketParticipant.mRID"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.ReceiverGln = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("receiver_MarketParticipant.marketRole.type"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.ReceiverGlnMarketRoleType = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("sender_MarketParticipant.mRID"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.SenderGln = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("sender_MarketParticipant.marketRole.type"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.SenderGlnMarketRoleType = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("type"))
+                {
+                    reader = FindStringValuePropertyInObject(reader, memoryStream, buffer);
+                    parsedModel.MessageType = reader.GetString();
+                }
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("MktActivityRecord"))
+                {
+                    while (reader.TokenType != JsonTokenType.StartArray)
+                    {
+                        reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+                    }
+
+                    reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+
+                    var currentTransactionMrid = string.Empty;
+                    var currentTransactionOriginalReferenceId = string.Empty;
+                    var transactionRecords = new List<TransactionRecord>();
+
+                    while (reader.Read())
+                    {
+                        if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("mRID"))
+                        {
+                            reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+                            currentTransactionMrid = reader.GetString();
+                        }
+
+                        if (reader.TokenType == JsonTokenType.EndObject)
+                        {
+                            if (!string.IsNullOrWhiteSpace(currentTransactionMrid))
+                            {
+                                transactionRecords.Add(new TransactionRecord()
+                                {
+                                    MRid = currentTransactionMrid,
+                                    OriginalTransactionIdReferenceId = currentTransactionOriginalReferenceId,
+                                });
+                            }
+
+                            currentTransactionMrid = string.Empty;
+                            currentTransactionOriginalReferenceId = string.Empty;
+                        }
+
+                        if (reader.TokenType == JsonTokenType.EndArray)
+                        {
+                            parsedModel.TransactionRecords = transactionRecords;
+                            break;
+                        }
+
+                        reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+                    }
+                }
+
+                if (reader.CurrentDepth == 0 && currentRun > 2 && reader.TokenType == JsonTokenType.EndObject)
+                {
+                    // We hit end.
+                    break;
+                }
+
+                reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+
+                /*if (reader.Depth == 1
                     && reader.Path.EndsWith("_MarketDocument", StringComparison.OrdinalIgnoreCase)
                     && reader.TokenType == JsonToken.StartObject)
                 {
@@ -347,10 +486,34 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
                     && ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.MktActivityRecord"))
                 {
                     ReadMktActivityRecords(reader, parsedModel);
-                }
+                }*/
             }
 
             return parsedModel;
+        }
+
+        private static Utf8JsonReader FindStringValuePropertyInObject(Utf8JsonReader reader, MemoryStream memoryStream, byte[] buffer)
+        {
+            while (true)
+            {
+                reader = ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("value")) break;
+                if (reader.TokenType == JsonTokenType.EndObject) break;
+            }
+
+            return ReadAndEnsureDataToRead(reader, memoryStream, buffer);
+        }
+
+        private static Utf8JsonReader ReadAndEnsureDataToRead(Utf8JsonReader utf8JsonReader, MemoryStream memoryStream, byte[] bytes)
+        {
+            if (!utf8JsonReader.Read())
+            {
+                // Not enough of the JSON is in the buffer to complete a read.
+                utf8JsonReader = GetMoreBytesFromStream(memoryStream, bytes, utf8JsonReader);
+            }
+
+            return utf8JsonReader;
         }
 
         private static void ReadMktActivityRecords(JsonTextReader reader, BaseParsedModel parsedModel)
@@ -405,6 +568,32 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
                     break;
                 }
             }
+        }
+
+        private static Utf8JsonReader GetMoreBytesFromStream(
+            MemoryStream stream, byte[] buffer, Utf8JsonReader reader)
+        {
+            int bytesRead;
+            if (reader.BytesConsumed < buffer.Length)
+            {
+                ReadOnlySpan<byte> leftover = buffer.AsSpan((int)reader.BytesConsumed);
+
+                if (leftover.Length == buffer.Length)
+                {
+                    Array.Resize(ref buffer, buffer.Length * 2);
+                    Console.WriteLine($"Increased buffer size to {buffer.Length}");
+                }
+
+                leftover.CopyTo(buffer);
+                bytesRead = stream.Read(buffer.AsSpan(leftover.Length));
+            }
+            else
+            {
+                bytesRead = stream.Read(buffer);
+            }
+
+            Console.WriteLine($"String in buffer is: {Encoding.UTF8.GetString(buffer)}");
+            return new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
         }
 
         private static bool ExpectedPathEndWithFunc(string currentPath, string endsWith) => currentPath.EndsWith(endsWith, StringComparison.OrdinalIgnoreCase);
