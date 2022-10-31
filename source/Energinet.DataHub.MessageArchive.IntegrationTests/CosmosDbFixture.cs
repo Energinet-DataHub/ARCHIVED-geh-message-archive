@@ -22,10 +22,10 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
     {
         public async Task InitializeAsync()
         {
-            using var cosmosClient = new CosmosClient(LocalSettings.ConnectionString);
+            using var cosmosClient = new CosmosClient(LocalSettings.CosmosConnectionString);
 
             var databaseResponse = await cosmosClient
-                .CreateDatabaseIfNotExistsAsync(LocalSettings.DatabaseName)
+                .CreateDatabaseIfNotExistsAsync(LocalSettings.CosmosDatabaseName)
                 .ConfigureAwait(false);
 
             var testDatabase = databaseResponse.Database;

@@ -54,4 +54,51 @@ limitations under the License.
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\confirmrequestchangeofsupplier.json">
+        <Link>Assets\confirmrequestchangeofsupplier.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\multiactivityrecords_confirmrequestchangeofsupplier.json">
+        <Link>Assets\multiactivityrecords_confirmrequestchangeofsupplier.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifybillingmasterdata.xml">
+        <Link>Assets\notifybillingmasterdata.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifyValidatedMeasureData.json">
+        <Link>Assets\notifyValidatedMeasureData.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectrequestchangeofsupplier.json">
+        <Link>Assets\rejectrequestchangeofsupplier.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectRequestValidatedMeasureData.json">
+        <Link>Assets\rejectRequestValidatedMeasureData.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeaccountingpointcharacteristics.xml">
+        <Link>Assets\requestchangeaccountingpointcharacteristics.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeofsupplier.json">
+        <Link>Assets\requestchangeofsupplier.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestValidatedMeasureData.json">
+        <Link>Assets\requestValidatedMeasureData.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\test-series-ids.xml">
+        <Link>Assets\test-series-ids.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\validation_exception.json">
+        <Link>Assets\validation_exception.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

@@ -56,7 +56,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 parsedModel.ParsingSuccess = false;
             }
 
-            // TODO Parse errors from stream - parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
             return parsedModel;
         }
 
@@ -180,7 +179,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             var transactionRecords = new List<TransactionRecord>();
             var transactionRecordsIndex = 0;
             var currentActivityRecordPath = $"{recordPathName}[{transactionRecordsIndex}]";
-            var currentTransactionRecord = new TransactionRecord();
+            var currentTransactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
 
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
