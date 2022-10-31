@@ -148,7 +148,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     }
                 }
 
-                // MarketDocument
+                // MktActivityRecord
                 if (reader.TokenType == JsonToken.StartArray
                     && ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.MktActivityRecord"))
                 {
@@ -183,8 +183,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
-
                 if (reader.TokenType == JsonToken.PropertyName
                     && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.mRID"))
                 {
@@ -219,8 +217,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 if (ExpectedPathEndWithFunc(reader.Path, $"_MarketDocument.{recordPathName}")
                     && reader.TokenType == JsonToken.EndArray)
                 {
-                    Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
-
                     parsedModel.TransactionRecords = transactionRecords;
                     break;
                 }
@@ -231,8 +227,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         {
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
-
                 if (reader.TokenType == JsonToken.StartArray
                     && ExpectedPathEndWithFunc(reader.Path, $"error.details"))
                 {
@@ -251,8 +245,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                Debug.WriteLine($"{reader.Path} - {reader.TokenType}");
-
                 if (reader.TokenType == JsonToken.PropertyName
                     && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.code"))
                 {
