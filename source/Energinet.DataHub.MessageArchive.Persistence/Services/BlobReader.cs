@@ -85,13 +85,39 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
             var name = blobItemToDownload.Name;
 
             var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
-            var response = await blobClient.DownloadAsync().ConfigureAwait(false);
-            using var streamReader = new StreamReader(response.Value.Content, Encoding.UTF8);
-            var downloadedContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            var cleanContent = CleanStringForUtf8Preamble(downloadedContent);
             var createdOnUtc = properties.CreatedOn.GetValueOrDefault().ToUniversalTime();
-            return new BlobItemData(name, metaData, indexTags, cleanContent, createdOnUtc, blobClient.Uri);
+            var contentLength = blobItemToDownload.Properties.ContentLength;
+
+            if (IsJsonContent(metaData))
+            {
+                var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
+                var blobItemDataJson = new BlobItemData(name, metaData, indexTags, string.Empty, createdOnUtc, blobClient.Uri);
+                blobItemDataJson.ContentStream = response.Value.Content;
+                blobItemDataJson.ContentLength = contentLength;
+
+                return blobItemDataJson;
+            }
+            else
+            {
+                var response = await blobClient.DownloadAsync().ConfigureAwait(false);
+                using var streamReader = new StreamReader(response.Value.Content, Encoding.UTF8);
+                var downloadedContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                var cleanContent = CleanStringForUtf8Preamble(downloadedContent);
+
+                var blobItemDataXml = new BlobItemData(name, metaData, indexTags, cleanContent, createdOnUtc, blobClient.Uri);
+                blobItemDataXml.ContentLength = contentLength;
+
+                return blobItemDataXml;
+            }
+        }
+
+#pragma warning disable SA1204
+        private static bool IsJsonContent(IDictionary<string, string> metaData)
+#pragma warning restore SA1204
+        {
+            return metaData.TryGetValue("contenttype", out var contentTypeValue) &&
+                   !string.IsNullOrWhiteSpace(contentTypeValue) &&
+                   contentTypeValue.Contains("json", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private string CleanStringForUtf8Preamble(string content)
