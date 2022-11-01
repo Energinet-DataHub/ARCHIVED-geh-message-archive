@@ -75,6 +75,13 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
             return downloadedBlobData.ToList();
         }
 
+        private static bool IsJsonContent(IDictionary<string, string> metaData)
+        {
+            return metaData.TryGetValue("contenttype", out var contentTypeValue) &&
+                   !string.IsNullOrWhiteSpace(contentTypeValue) &&
+                   contentTypeValue.Contains("json", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         private async Task<BlobItemData> DownloadBlobDataAsync(BlobItem blobItemToDownload)
         {
             Guard.ThrowIfNull(blobItemToDownload, nameof(blobItemToDownload));
@@ -109,15 +116,6 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
 
                 return blobItemDataXml;
             }
-        }
-
-#pragma warning disable SA1204
-        private static bool IsJsonContent(IDictionary<string, string> metaData)
-#pragma warning restore SA1204
-        {
-            return metaData.TryGetValue("contenttype", out var contentTypeValue) &&
-                   !string.IsNullOrWhiteSpace(contentTypeValue) &&
-                   contentTypeValue.Contains("json", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private string CleanStringForUtf8Preamble(string content)

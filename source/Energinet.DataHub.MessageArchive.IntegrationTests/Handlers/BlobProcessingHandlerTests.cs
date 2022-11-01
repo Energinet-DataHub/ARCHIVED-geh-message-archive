@@ -63,26 +63,18 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
             var blobProcessingHandler = scope.GetInstance<IBlobProcessingHandler>();
 
             // -- Write test blob content to Storage
-            await ReadAssetAndWriteToStorageForProcessingAsync("confirmrequestchangeofsupplier.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("requestchangeofsupplier.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("multiactivityrecords_confirmrequestchangeofsupplier.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("notifyValidatedMeasureData.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("rejectrequestchangeofsupplier.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("rejectRequestValidatedMeasureData.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("requestchangeofsupplier.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("requestValidatedMeasureData.json", "json").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("validation_exception.json", "json").ConfigureAwait(false);
+            var assetsFilesWithPath = Directory.EnumerateFiles("Assets").ToList();
 
-            await ReadAssetAndWriteToStorageForProcessingAsync("notifybillingmasterdata.xml", "xml").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("requestchangeaccountingpointcharacteristics.xml", "xml").ConfigureAwait(false);
-            await ReadAssetAndWriteToStorageForProcessingAsync("test-series-ids.xml", "xml").ConfigureAwait(false);
+            foreach (var fileNameWithPath in assetsFilesWithPath)
+            {
+                await ReadAssetAndWriteToStorageForProcessingAsync(fileNameWithPath, fileNameWithPath[fileNameWithPath.LastIndexOf('.')..]).ConfigureAwait(false);
+            }
 
             // Act
             await blobProcessingHandler.HandleAsync().ConfigureAwait(false);
 
             // Assert
-            Assert.NotNull(blobProcessingHandler);
-            Assert.Equal(12, cosmosMemoryStorage.ParsedLogs.Count);
+            Assert.Equal(assetsFilesWithPath.Count, cosmosMemoryStorage.ParsedLogs.Count);
             Assert.True(cosmosMemoryStorage.ParsedLogs.All(r =>
                 r.ParsingSuccess == true &&
                 r.HaveBodyContent == true));
@@ -90,12 +82,11 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
             await startup.DisposeAsync().ConfigureAwait(false);
         }
 
-        private static async Task ReadAssetAndWriteToStorageForProcessingAsync(string assertNameWithExtension, string contentType)
+        private static async Task ReadAssetAndWriteToStorageForProcessingAsync(string assertNameWithPathAndExtension, string contentType)
         {
-            var filePathWithName = $"Assets/{assertNameWithExtension}";
             var logName = Guid.NewGuid().ToString();
 
-            using var fileStream = File.Open(filePathWithName, FileMode.Open);
+            using var fileStream = File.Open(assertNameWithPathAndExtension, FileMode.Open);
 
             var blobServiceClientMarketoplogs = await IntegrationTestHelper
                 .InitTestBlobStorageAsync(

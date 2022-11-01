@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
             parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
-            return await Task.FromResult(parsedModel).ConfigureAwait(false);
+            return parsedModel;
         }
     }
 }
