@@ -12,22 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
 
 namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers;
 
-public class ArchivedParsedBlobItems : IStorageWriter<CosmosRequestResponseLog>
+public class MockedStorageWriter<T> : IStorageWriter<T>
 {
-    public Collection<CosmosRequestResponseLog> ParsedLogs { get; } = new();
+    private List<T> _storage = new();
 
-    public Task WriteAsync(CosmosRequestResponseLog objectToSave)
+    public Task WriteAsync(T objectToSave)
     {
-        ArgumentNullException.ThrowIfNull(objectToSave);
-        ParsedLogs.Add(objectToSave);
+        _storage.Add(objectToSave);
         return Task.CompletedTask;
+    }
+
+    public IEnumerable<T> Storage()
+    {
+        return _storage;
     }
 }

@@ -61,11 +61,11 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
                     await ParseAndSaveAsync(parser, blobItemData).ConfigureAwait(false);
                 }
 #pragma warning disable CA1031
-                catch (Exception e)
+                catch (Exception ex)
 #pragma warning restore CA1031
                 {
-                    _processingLogger.LogError(e, "Error in processing item: {Name}", blobItemData.Name);
-                    await ParseAndSaveAsync(new LogParserBlobProperties(), blobItemData).ConfigureAwait(false);
+                    _parserLogger.LogError(ex, "Parse Error in parser {ParserName}, returning base model, item name: {Name}", nameof(parser), blobItemData.Name);
+                    await ParseWithBaseParserAndSetParsingFailedAndSaveAsync(blobItemData).ConfigureAwait(false);
                 }
             }
         }
@@ -73,9 +73,22 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
         private async Task ParseAndSaveAsync(ILogParser parser, BlobItemData blobItemData)
         {
             var parsedModel = await parser.ParseAsync(blobItemData).ConfigureAwait(false);
-            var cosmosModel = CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
+            await SaveToStorageAndMoveToArchiveAsync(parsedModel, blobItemData).ConfigureAwait(false);
+        }
 
+        private async Task ParseWithBaseParserAndSetParsingFailedAndSaveAsync(BlobItemData blobItemData)
+        {
+            var baseParser = new LogParserBlobProperties();
+            var parsedModel = await baseParser.ParseAsync(blobItemData).ConfigureAwait(false);
+            parsedModel.ParsingSuccess = false;
+            await SaveToStorageAndMoveToArchiveAsync(parsedModel, blobItemData).ConfigureAwait(false);
+        }
+
+        private async Task SaveToStorageAndMoveToArchiveAsync(BaseParsedModel parsedModel, BlobItemData blobItemData)
+        {
             var archiveUri = await _blobArchive.MoveToArchiveAsync(blobItemData).ConfigureAwait(false);
+
+            var cosmosModel = CosmosRequestResponseLogMapper.ToCosmosRequestResponseLog(parsedModel);
             cosmosModel.BlobContentUri = archiveUri.AbsoluteUri;
             await _storageWriter.WriteAsync(cosmosModel).ConfigureAwait(false);
         }

@@ -39,20 +39,10 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            try
+            if (blobItemData.ContentStream != null)
             {
-                if (blobItemData.ContentStream != null)
-                {
-                    await ParseJsonFromStreamAsync(parsedModel, blobItemData.ContentStream).ConfigureAwait(false);
-                    parsedModel.CreatedDate ??= parsedModel.LogCreatedDate;
-                }
-            }
-#pragma warning disable CA1031
-            catch (Exception ex)
-#pragma warning restore CA1031
-            {
-                _applicationLogging.LogError(ex, "Parse Error in LogParserJson, returning base model, name: {Name}", blobItemData.Name);
-                parsedModel.ParsingSuccess = false;
+                await ParseJsonFromStreamAsync(parsedModel, blobItemData.ContentStream).ConfigureAwait(false);
+                parsedModel.CreatedDate ??= parsedModel.LogCreatedDate;
             }
 
             return parsedModel;

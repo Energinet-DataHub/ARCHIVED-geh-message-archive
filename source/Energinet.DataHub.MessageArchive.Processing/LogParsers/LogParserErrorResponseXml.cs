@@ -29,17 +29,8 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             var baseParsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            try
-            {
-                var xmlDocument = XElement.Parse(blobItemData.Content);
-                baseParsedModel.Errors = XmlErrorParser.ParseErrors(xmlDocument);
-            }
-#pragma warning disable CA1031
-            catch
-#pragma warning restore CA1031
-            {
-                baseParsedModel.ParsingSuccess = false;
-            }
+            var xmlDocument = XElement.Parse(blobItemData.Content);
+            baseParsedModel.Errors = XmlErrorParser.ParseErrors(xmlDocument);
 
             return baseParsedModel;
         }

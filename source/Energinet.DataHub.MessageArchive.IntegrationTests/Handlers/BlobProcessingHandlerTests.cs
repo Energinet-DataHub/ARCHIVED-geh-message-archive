@@ -56,7 +56,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
                 x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
 
-            var cosmosMemoryStorage = new ArchivedParsedBlobItems();
+            var cosmosMemoryStorage = new MockedStorageWriter<CosmosRequestResponseLog>();
             startup.Container.Register<IStorageWriter<CosmosRequestResponseLog>>(() => cosmosMemoryStorage);
 
             var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
@@ -73,9 +73,11 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
             // Act
             await blobProcessingHandler.HandleAsync().ConfigureAwait(false);
 
+            var cosmosStorage = cosmosMemoryStorage.Storage().ToList();
+
             // Assert
-            Assert.Equal(assetsFilesWithPath.Count, cosmosMemoryStorage.ParsedLogs.Count);
-            Assert.True(cosmosMemoryStorage.ParsedLogs.All(r =>
+            Assert.Equal(assetsFilesWithPath.Count, cosmosStorage.Count);
+            Assert.True(cosmosStorage.All(r =>
                 r.ParsingSuccess == true &&
                 r.HaveBodyContent == true));
 

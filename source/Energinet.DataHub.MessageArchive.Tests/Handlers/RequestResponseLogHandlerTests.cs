@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -110,6 +111,45 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             Assert.NotNull(storageList.FirstOrDefault(
                 e => e.Errors != null
                      && e.Errors.Any(f => f.Code.Equals("1", StringComparison.Ordinal) && f.Message.Equals("test", StringComparison.Ordinal))));
+        }
+
+        [Fact]
+        public async Task Test_ErrorParsing_WithParsingException()
+        {
+            // Arrange
+            var reader = new Mock<IBlobReader>();
+            var archive = new Mock<IBlobArchive>();
+
+            var storage = new MockedStorageWriter<CosmosRequestResponseLog>();
+            var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
+            var parserLogger = new Mock<ILogger<LogParserBlobProperties>>().Object;
+
+            const string contentString = "{\"error\"-{\"some wrong json\"-\"1\",\"message\":\"test\"}}";
+
+            using var contentStream = new MemoryStream();
+            using var writer = new StreamWriter(contentStream);
+            await writer.WriteAsync(contentString).ConfigureAwait(false);
+            await writer.FlushAsync().ConfigureAwait(false);
+            contentStream.Position = 0;
+
+            var blobItemErrorResponseJson = MockedTypes.BlobItemDataStream("json", contentStream);
+            blobItemErrorResponseJson.MetaData.Add("statuscode", HttpStatusCode.OK.ToString());
+
+            reader
+                .Setup(e => e.GetBlobsReadyForProcessingAsync())
+                .ReturnsAsync(new List<BlobItemData> { blobItemErrorResponseJson });
+
+            archive
+                .Setup(e => e.MoveToArchiveAsync(It.IsAny<BlobItemData>()))
+                .ReturnsAsync(MockedTypes.BlobItemData("json", string.Empty).Uri);
+
+            // Act
+            var handler = new BlobProcessingHandler(reader.Object, archive.Object, storage, logger, parserLogger);
+            await handler.HandleAsync().ConfigureAwait(false);
+
+            // Assert
+            var storageList = storage.Storage().ToList();
+            Assert.True(storageList.All(log => log.ParsingSuccess == false));
         }
 
         [Theory]

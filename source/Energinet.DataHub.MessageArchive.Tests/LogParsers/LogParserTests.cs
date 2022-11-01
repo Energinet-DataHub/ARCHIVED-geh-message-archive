@@ -125,10 +125,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
 
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
             blobItem.MetaData.Add("indextags", indexTagsJson);
-            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = new LogParserBlobProperties();
 
             // Act
-            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var parsed = await parser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Data);
@@ -142,10 +142,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
             var indexTags = BuildIndexTagsDic(indexTagsCount);
 
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty, indexTags);
-            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = new LogParserBlobProperties();
 
             // Act
-            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var parsed = await parser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Data);
@@ -156,10 +156,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         public async Task Test_IndexTagsInMetaDataParsing_IndexTagsNull()
         {
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
-            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = new LogParserBlobProperties();
 
             // Act
-            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var parsed = await parser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.Null(parsed.Data);
@@ -174,10 +174,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
 
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty);
             blobItem.MetaData.Add("querytags", tagsJson);
-            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = new LogParserBlobProperties();
 
             // Act
-            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var parsed = await parser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(parsed.Query);
@@ -188,10 +188,10 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers
         public async Task Test_QueryTagsInMetaDataParsing_Null()
         {
             var blobItem = MockedTypes.BlobItemData("xml", string.Empty, null);
-            var xmlParser = new LogParserXml(new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = new LogParserBlobProperties();
 
             // Act
-            var parsed = await xmlParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var parsed = await parser.ParseAsync(blobItem).ConfigureAwait(false);
 
             // Assert
             Assert.Null(parsed.Query);
