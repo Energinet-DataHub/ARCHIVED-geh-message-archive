@@ -50,7 +50,7 @@ limitations under the License.
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
+    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.48">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
