@@ -46,20 +46,17 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
                 LocalSettings.StorageAccountConnectionString,
                 LocalSettings.MessageArchiveProcessedContainerName).ConfigureAwait(false);
 
-            var startup = new Startup();
+            await using var startup = new Startup();
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables()
-                .Build());
+            serviceCollection.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddEnvironmentVariables().Build());
             startup.ConfigureServices(serviceCollection);
-            serviceCollection.BuildServiceProvider().UseSimpleInjector(
-                startup.Container,
-                x => x.Container.Options.EnableAutoVerification = false);
+            serviceCollection.BuildServiceProvider().UseSimpleInjector(startup.Container, x => x.Container.Options.EnableAutoVerification = false);
             startup.Container.Options.AllowOverridingRegistrations = true;
 
             var cosmosMemoryStorage = new MockedStorageWriter<CosmosRequestResponseLog>();
             startup.Container.Register<IStorageWriter<CosmosRequestResponseLog>>(() => cosmosMemoryStorage);
 
-            var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
+            await using var scope = AsyncScopedLifestyle.BeginScope(startup.Container);
             var blobProcessingHandler = scope.GetInstance<IBlobProcessingHandler>();
 
             // -- Write test blob content to Storage
@@ -80,8 +77,6 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
             Assert.True(cosmosStorage.All(r =>
                 r.ParsingSuccess == true &&
                 r.HaveBodyContent == true));
-
-            await startup.DisposeAsync().ConfigureAwait(false);
         }
 
         private static async Task ReadAssetAndWriteToStorageForProcessingAsync(string assertNameWithPathAndExtension, string contentType)
