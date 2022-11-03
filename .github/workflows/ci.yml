@@ -50,7 +50,7 @@ jobs:
   unit_test:
     needs: changes
     if: ${{ needs.changes.outputs.dotnet == 'true' }}
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci-test.yml@v9
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-postbuild-test.yml@v9
     with:
       TESTS_DLL_FILE_PATH: '\source\Energinet.DataHub.MessageArchive.Tests\bin\Release\net6.0\Energinet.DataHub.MessageArchive.Tests.dll'
       DOWNLOAD_ATTEMPT_LIMIT: 12
@@ -59,7 +59,7 @@ jobs:
   integration_test:
     needs: changes
     if: ${{ needs.changes.outputs.dotnet == 'true' }}
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci-test.yml@v9
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-postbuild-test.yml@v9
     with:
       TESTS_DLL_FILE_PATH: '\source\Energinet.DataHub.MessageArchive.IntegrationTests\bin\Release\net6.0\Energinet.DataHub.MessageArchive.IntegrationTests.dll'
       DOWNLOAD_ATTEMPT_LIMIT: 12
