@@ -27,7 +27,6 @@ namespace PerformanceParserProfiler
     public class JsonParseBenchmark
     {
         private ILogger<LogParserBlobProperties> _logger;
-        private FileStream _fileStream;
 
         public JsonParseBenchmark()
         {
