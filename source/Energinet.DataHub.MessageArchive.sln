@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageAr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energinet.DataHub.MessageArchive.PersistanceModels", "Energinet.DataHub.MessageArchive.PersistanceModels\Energinet.DataHub.MessageArchive.PersistanceModels.csproj", "{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceParserProfiler", "PerformanceParserProfiler\PerformanceParserProfiler.csproj", "{7C146932-B4DA-4C8C-AB72-C586879193F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58C85FC2-5349-4CC4-8C67-ED65A82D35AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C146932-B4DA-4C8C-AB72-C586879193F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C146932-B4DA-4C8C-AB72-C586879193F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C146932-B4DA-4C8C-AB72-C586879193F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C146932-B4DA-4C8C-AB72-C586879193F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0C284C68-2AE1-40A0-A77B-79173767DEF3} = {9FD00820-D6BC-44F4-AE61-8B792E7B77B9}
@@ -115,5 +121,6 @@ Global
 		{D2E470AF-6ED7-4C10-8AE6-0F751C866AC8} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
 		{23BE535F-B4F1-4D3E-A0CA-0BA3A200C149} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
 		{3369FFA9-7C92-40B8-86C1-5D93CCAED059} = {67B4724E-55FD-4C13-9459-A98D889A6DF2}
+		{7C146932-B4DA-4C8C-AB72-C586879193F9} = {9FD00820-D6BC-44F4-AE61-8B792E7B77B9}
 	EndGlobalSection
 EndGlobal
