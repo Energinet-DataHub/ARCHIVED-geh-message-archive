@@ -56,158 +56,136 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
                 if (reader.Depth == 1
-                    && reader.Path.EndsWith("_MarketDocument", StringComparison.OrdinalIgnoreCase)
-                    && reader.TokenType == JsonToken.StartObject)
+                    && reader.Value != null
+                    && (reader.Value as string)!.EndsWith("_MarketDocument", StringComparison.OrdinalIgnoreCase))
                 {
-                    parsedModel.RsmName = ReadRsmName(reader.Path);
+                    parsedModel.RsmName = ReadRsmName((reader.Value as string)!);
                     continue;
                 }
 
                 if (reader.Depth == 1
-                    && reader.Path.EndsWith("error", StringComparison.OrdinalIgnoreCase)
-                    && reader.TokenType == JsonToken.StartObject)
+                    && reader.TokenType == JsonToken.PropertyName
+                    && reader.Value != null
+                    && (reader.Value as string)!.EndsWith("error", StringComparison.OrdinalIgnoreCase))
                 {
                     await ReadErrorsAsync(reader, parsedModel).ConfigureAwait(false);
                 }
 
                 if (reader.TokenType == JsonToken.PropertyName)
                 {
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.mRID"))
+                    switch (reader.Value)
                     {
-                        parsedModel.MessageId = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.type.value"))
-                    {
-                        parsedModel.MessageType = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['businessSector.type'].value"))
-                    {
-                        parsedModel.BusinessSectorType = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['reason.code'].value"))
-                    {
-                        parsedModel.ReasonCode = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.createdDateTime"))
-                    {
-                        var createdAsString = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        if (DateTimeOffset.TryParse(createdAsString, out var parsedDateTimeOffSet))
-                        {
-                            parsedModel.CreatedDate = parsedDateTimeOffSet;
+                        case "mRID":
+                            parsedModel.MessageId = await reader.ReadAsStringAsync().ConfigureAwait(false);
                             continue;
-                        }
+                        case "type":
+                            parsedModel.MessageType = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "reason.code":
+                            parsedModel.ReasonCode = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "process.processType":
+                            parsedModel.ProcessType = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "businessSector.type":
+                            parsedModel.BusinessSectorType = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+
+                        case "sender_MarketParticipant.mRID":
+                            parsedModel.SenderGln = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "sender_MarketParticipant.marketRole.type":
+                            parsedModel.SenderGlnMarketRoleType = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "receiver_MarketParticipant.mRID":
+                            parsedModel.ReceiverGln = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+                        case "receiver_MarketParticipant.marketRole.type":
+                            parsedModel.ReceiverGlnMarketRoleType = await ReadValueFromObjectAsync(reader).ConfigureAwait(false);
+                            continue;
+
+                        case "createdDateTime":
+                            var createdAsString = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                            if (DateTimeOffset.TryParse(createdAsString, out var parsedDateTimeOffSet))
+                            {
+                                parsedModel.CreatedDate = parsedDateTimeOffSet;
+                            }
+
+                            continue;
+
+                        case "MktActivityRecord":
+                        case "Series":
+                            await ReadTransactionRecordsAsync(reader, parsedModel).ConfigureAwait(false);
+                            continue;
                     }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['process.processType'].value"))
-                    {
-                        parsedModel.ProcessType = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['receiver_MarketParticipant.mRID'].value"))
-                    {
-                        parsedModel.ReceiverGln = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['receiver_MarketParticipant.marketRole.type'].value"))
-                    {
-                        parsedModel.ReceiverGlnMarketRoleType = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['sender_MarketParticipant.mRID'].value"))
-                    {
-                        parsedModel.SenderGln = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (ExpectedPathEndWithFunc(reader.Path, "_MarketDocument['sender_MarketParticipant.marketRole.type'].value"))
-                    {
-                        parsedModel.SenderGlnMarketRoleType = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                        continue;
-                    }
-                }
-
-                // MktActivityRecord
-                if (reader.TokenType == JsonToken.StartArray
-                    && ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.MktActivityRecord"))
-                {
-                    await ReadMktActivityRecordsAsync(reader, parsedModel).ConfigureAwait(false);
-                }
-
-                // Series
-                if (reader.TokenType == JsonToken.StartArray
-                    && ExpectedPathEndWithFunc(reader.Path, "_MarketDocument.Series"))
-                {
-                    await ReadSeriesRecordsAsync(reader, parsedModel).ConfigureAwait(false);
                 }
             }
         }
 
-        private static Task ReadSeriesRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
-        {
-            return ReadTransactionRecordsAsync(reader, parsedModel, "Series");
-        }
-
-        private static Task ReadMktActivityRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
-        {
-            return ReadTransactionRecordsAsync(reader, parsedModel, "MktActivityRecord");
-        }
-
-        private static async Task ReadTransactionRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel, string recordPathName)
+        private static async Task ReadTransactionRecordsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
         {
             var transactionRecords = new List<TransactionRecord>();
-            var transactionRecordsIndex = 0;
-            var currentActivityRecordPath = $"{recordPathName}[{transactionRecordsIndex}]";
             var currentTransactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
+
+            var transactionsCurrentArrayDepth = 0;
+            var transactionsCurrentObjectDepth = 0;
 
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                if (reader.TokenType == JsonToken.PropertyName
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.mRID"))
+                switch (reader.TokenType)
                 {
-                    currentTransactionRecord.MRid = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                    continue;
-                }
+                    case JsonToken.StartArray:
+                        ++transactionsCurrentArrayDepth;
+                        continue;
 
-                if (reader.TokenType == JsonToken.PropertyName
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}['originalTransactionIDReference_{recordPathName}.mRID']"))
-                {
-                    currentTransactionRecord.OriginalTransactionIdReferenceId = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                    continue;
-                }
-
-                if (reader.TokenType == JsonToken.EndObject
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}"))
-                {
-                    if (!string.IsNullOrWhiteSpace(currentTransactionRecord.MRid))
-                    {
-                        transactionRecords.Add(new TransactionRecord()
+                    case JsonToken.EndArray:
+                        --transactionsCurrentArrayDepth;
+                        if (transactionsCurrentArrayDepth == 0)
                         {
-                            MRid = currentTransactionRecord.MRid,
-                            OriginalTransactionIdReferenceId = currentTransactionRecord.OriginalTransactionIdReferenceId,
-                        });
-                    }
+                            parsedModel.TransactionRecords = transactionRecords;
+                            return;
+                        }
 
-                    currentActivityRecordPath = $"{recordPathName}[{++transactionRecordsIndex}]";
-                    currentTransactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
-                    continue;
-                }
+                        continue;
 
-                if (ExpectedPathEndWithFunc(reader.Path, $"_MarketDocument.{recordPathName}")
-                    && reader.TokenType == JsonToken.EndArray)
-                {
-                    parsedModel.TransactionRecords = transactionRecords;
-                    break;
+                    case JsonToken.StartObject:
+                        ++transactionsCurrentObjectDepth;
+                        continue;
+                    case JsonToken.EndObject:
+                        --transactionsCurrentObjectDepth;
+                        if (transactionsCurrentObjectDepth == 0)
+                        {
+                            if (!string.IsNullOrWhiteSpace(currentTransactionRecord.MRid))
+                            {
+                                transactionRecords.Add(new TransactionRecord()
+                                {
+                                    MRid = currentTransactionRecord.MRid,
+                                    OriginalTransactionIdReferenceId = currentTransactionRecord.OriginalTransactionIdReferenceId,
+                                });
+                            }
+
+                            currentTransactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
+                        }
+
+                        continue;
+
+                    case JsonToken.PropertyName when transactionsCurrentObjectDepth == 1:
+
+                        switch (reader.Value)
+                        {
+                            case "mRID":
+                                currentTransactionRecord.MRid = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                                continue;
+                            case "originalTransactionIDReference_MktActivityRecord.mRID":
+                            case "originalTransactionIDReference_Series.mRID":
+                                currentTransactionRecord.OriginalTransactionIdReferenceId = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                                continue;
+                        }
+
+                        continue;
+
+                    default:
+                        continue;
                 }
             }
         }
@@ -216,8 +194,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         {
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                if (reader.TokenType == JsonToken.StartArray
-                    && ExpectedPathEndWithFunc(reader.Path, $"error.details"))
+                if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "details")
                 {
                     await ReadErrorDetailsAsync(reader, parsedModel).ConfigureAwait(false);
                 }
@@ -227,48 +204,80 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         private static async Task ReadErrorDetailsAsync(JsonTextReader reader, BaseParsedModel parsedModel)
         {
             var errorModels = new List<ParsedErrorModel>();
-            var errorRecordsIndex = 0;
-            var currentActivityRecordPath = $"error.details[{errorRecordsIndex}]";
             var currentErrorCode = string.Empty;
             var currentErrorMessage = string.Empty;
+            var transactionsCurrentArrayDepth = 0;
+            var transactionsCurrentObjectDepth = 0;
 
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                if (reader.TokenType == JsonToken.PropertyName
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.code"))
+                switch (reader.TokenType)
                 {
-                    currentErrorCode = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                    continue;
-                }
+                    case JsonToken.StartArray:
+                        ++transactionsCurrentArrayDepth;
+                        continue;
 
-                if (reader.TokenType == JsonToken.PropertyName
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}.message"))
-                {
-                    currentErrorMessage = await reader.ReadAsStringAsync().ConfigureAwait(false);
-                    continue;
-                }
+                    case JsonToken.EndArray:
+                        --transactionsCurrentArrayDepth;
+                        if (transactionsCurrentArrayDepth == 0)
+                        {
+                            parsedModel.Errors = errorModels;
+                            return;
+                        }
 
-                if (reader.TokenType == JsonToken.EndObject
-                    && ExpectedPathEndWithFunc(reader.Path, $"{currentActivityRecordPath}"))
-                {
-                    errorModels.Add(new ParsedErrorModel(currentErrorCode, currentErrorMessage));
+                        continue;
 
-                    currentActivityRecordPath = $"error.details[{++errorRecordsIndex}]";
-                    currentErrorCode = string.Empty;
-                    currentErrorMessage = string.Empty;
-                    continue;
-                }
+                    case JsonToken.StartObject:
+                        ++transactionsCurrentObjectDepth;
+                        continue;
+                    case JsonToken.EndObject:
+                        --transactionsCurrentObjectDepth;
+                        if (transactionsCurrentObjectDepth == 0)
+                        {
+                            if (!string.IsNullOrWhiteSpace(currentErrorCode))
+                            {
+                                errorModels.Add(new ParsedErrorModel(currentErrorCode, currentErrorMessage));
+                            }
 
-                if (ExpectedPathEndWithFunc(reader.Path, "error.details")
-                    && reader.TokenType == JsonToken.EndArray)
-                {
-                    parsedModel.Errors = errorModels;
-                    break;
+                            currentErrorCode = string.Empty;
+                            currentErrorMessage = string.Empty;
+                        }
+
+                        continue;
+
+                    case JsonToken.PropertyName when transactionsCurrentObjectDepth == 1:
+
+                        switch (reader.Value)
+                        {
+                            case "code":
+                                currentErrorCode = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                                continue;
+                            case "message":
+                                currentErrorMessage = await reader.ReadAsStringAsync().ConfigureAwait(false);
+                                continue;
+                        }
+
+                        continue;
+
+                    default:
+                        continue;
                 }
             }
         }
 
-        private static bool ExpectedPathEndWithFunc(string currentPath, string endsWith) => currentPath.EndsWith(endsWith, StringComparison.OrdinalIgnoreCase);
+        private static async Task<string> ReadValueFromObjectAsync(JsonTextReader reader)
+        {
+            while (await reader.ReadAsync().ConfigureAwait(false))
+            {
+                switch (reader.Value)
+                {
+                    case "value":
+                        return await reader.ReadAsStringAsync().ConfigureAwait(false);
+                }
+            }
+
+            return string.Empty;
+        }
 
         private static string ReadRsmName(string documentName)
         {

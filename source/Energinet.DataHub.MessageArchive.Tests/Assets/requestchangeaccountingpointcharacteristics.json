@@ -130,15 +130,15 @@
         }
       },
       {
-        "MRid": "25361487-custom-for-test1",
+        "mRID": "25361487-custom-for-test1",
         "OriginalTransactionIdReferenceId": ""
       },
       {
-        "MRid": "25361487-custom-for-test2",
+        "mRID": "25361487-custom-for-test2",
         "OriginalTransactionIdReferenceId": ""
       },
       {
-        "MRid": "25361487-custom-for-test3",
+        "mRID": "25361487-custom-for-test3",
         "OriginalTransactionIdReferenceId": ""
       }
     ]
