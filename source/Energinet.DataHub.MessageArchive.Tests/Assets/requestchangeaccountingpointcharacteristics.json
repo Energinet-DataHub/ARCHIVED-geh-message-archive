@@ -1,0 +1,146 @@
+{
+  "RequestChangeAccountingPointCharacteristics_MarketDocument": {
+    "mRID": "253698245",
+    "businessSector.type": {
+      "value": "23"
+    },
+    "createdDateTime": "2022-12-17T09:30:47Z",
+    "process.processType": {
+      "value": "E02"
+    },
+    "receiver_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5790001330552"
+    },
+    "receiver_MarketParticipant.marketRole.type": {
+      "value": "DDZ"
+    },
+    "sender_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5799999933318"
+    },
+    "sender_MarketParticipant.marketRole.type": {
+      "value": "DDM"
+    },
+    "type": {
+      "value": "E58"
+    },
+    "MktActivityRecord": [
+      {
+        "mRID": "25361487",
+        "validityStart_DateAndOrTime.dateTime": "2022-12-17T23:00:00Z",
+        "MarketEvaluationPoint": {
+          "mRID": {
+            "codingScheme": "A10",
+            "value": "579999993331812345"
+          },
+          "asset_MktPSRType.psrType": {
+            "value": "D12"
+          },
+          "connectionState": {
+            "value": "D03"
+          },
+          "contractedConnectionCapacity": {
+            "unit": "KWT",
+            "value": "230"
+          },
+          "description": "3. bygning til venstre",
+          "disconnectionMethod": {
+            "value": "D01"
+          },
+          "inMeteringGridArea_Domain.mRID": {
+            "codingScheme": "NDK",
+            "value": "031"
+          },
+          "linked_MarketEvaluationPoint.mRID": {
+            "codingScheme": "A10",
+            "value": "579999993331812327"
+          },
+          "mPConnectionType": {
+            "value": "D01"
+          },
+          "meter.mRID": {
+            "value": "2536258974"
+          },
+          "meteringGridArea_Domain.mRID": {
+            "codingScheme": "NDK",
+            "value": "244"
+          },
+          "meteringMethod": {
+            "value": "D01"
+          },
+          "netSettlementGroup": "6",
+          "nextReadingDate": "--12-17",
+          "outMeteringGridArea_Domain.mRID": {
+            "codingScheme": "NDK",
+            "value": "244"
+          },
+          "parent_MarketEvaluationPoint.mRID": {
+            "codingScheme": "A10",
+            "value": "579999993331812345"
+          },
+          "physicalConnectionCapacity": {
+            "unit": "A59",
+            "value": "String"
+          },
+          "productionObligation": true,
+          "ratedCurrent": {
+            "unit": "AMP",
+            "value": "32"
+          },
+          "readCycle": "PT1H",
+          "settlementMethod": {
+            "value": "E02"
+          },
+          "type": {
+            "value": "E17"
+          },
+          "usagePointLocation.actualAddressIndicator": true,
+          "usagePointLocation.geoInfoReference": {
+            "value": "0a3f50b9-b942-32b8-e044-0003ba298018"
+          },
+          "usagePointLocation.mainAddress": {
+            "streetDetail": {
+              "number": "10",
+              "name": "Vestergade",
+              "code": "0405",
+              "suiteNumber": "12",
+              "floorIdentification": "1"
+            },
+            "townDetail": {
+              "code": "0625",
+              "section": "Strib",
+              "name": "Middelfart",
+              "country": {
+                "value": "DK"
+              }
+            },
+            "postalCode": "5500"
+          },
+          "Series": [
+            {
+              "product": {
+                "value": "8716867000030"
+              },
+              "quantity_Measure_Unit.name": {
+                "value": "KWH"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "mRID": "25361487-custom-for-test1",
+        "OriginalTransactionIdReferenceId": ""
+      },
+      {
+        "mRID": "25361487-custom-for-test2",
+        "OriginalTransactionIdReferenceId": ""
+      },
+      {
+        "mRID": "25361487-custom-for-test3",
+        "OriginalTransactionIdReferenceId": ""
+      }
+    ]
+  }
+}

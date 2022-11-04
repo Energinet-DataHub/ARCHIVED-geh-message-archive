@@ -1,0 +1,30 @@
+{
+  "MessageId": "98653214",
+  "MessageType": "D07",
+  "ProcessType": "E01",
+  "BusinessSectorType": "23",
+  "ReasonCode": "",
+  "CreatedDate": "2022-12-17T23:00:47+00:00",
+  "SenderGln": "5790001330552",
+  "SenderGlnMarketRoleType": "DDZ",
+  "ReceiverGln": "5799999933318",
+  "ReceiverGlnMarketRoleType": "DDQ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "25361487",
+      "OriginalTransactionIdReferenceId": "98147565"
+    }
+  ],
+  "RsmName": "notifybillingmasterdata",
+  "HaveBodyContent": false,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}

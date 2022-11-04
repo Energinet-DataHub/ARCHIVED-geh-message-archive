@@ -1,0 +1,42 @@
+﻿{
+  "ConfirmRequestChangeOfSupplier_MarketDocument": {
+    "mRID": "c62ff0ac-e56e-4b26-90bd-e96faa5a4089",
+    "businessSector.type": {
+      "value": "23"
+    },
+    "createdDateTime": "2022-09-05T12:54:57Z",
+    "process.processType": {
+      "value": "E65"
+    },
+    "reason.code": {
+      "value": "A01"
+    },
+    "receiver_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5178861303303"
+    },
+    "receiver_MarketParticipant.marketRole.type": {
+      "value": "DDQ"
+    },
+    "sender_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5790001330552"
+    },
+    "sender_MarketParticipant.marketRole.type": {
+      "value": "DDZ"
+    },
+    "type": {
+      "value": "414"
+    },
+    "MktActivityRecord": [
+      {
+        "mRID": "b860ada2-16e5-4942-a513-3dbd414fc344",
+        "marketEvaluationPoint.mRID": {
+          "codingScheme": "A10",
+          "value": "575742498763149890"
+        },
+        "originalTransactionIDReference_MktActivityRecord.mRID": "12460889"
+      }
+    ]
+  }
+}

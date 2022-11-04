@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Utilities;
@@ -25,7 +26,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         /// </summary>
         /// <param name="blobItemData"></param>
         /// <returns>Parsed blob data</returns>
-        public virtual BaseParsedModel Parse(BlobItemData blobItemData)
+        public virtual Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
@@ -49,12 +50,16 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 TraceId = blobItemData.MetaData.TryGetValue("traceid", out var traceid) ? traceid : string.Empty,
                 TraceParent = blobItemData.MetaData.TryGetValue("traceparent", out var traceparent) ? traceparent : string.Empty,
                 ResponseStatus = blobItemData.MetaData.TryGetValue("statuscode", out var statuscode) ? statuscode : string.Empty,
-                HaveBodyContent = !string.IsNullOrWhiteSpace(blobItemData.Content),
                 Data = Utilities.ParseTags.ParseIndexTagsElement(blobItemData),
                 Query = Utilities.ParseTags.ParseQueryTagsElement(blobItemData),
             };
 
-            return parsedModel;
+            if (blobItemData.ContentLength is > 0)
+            {
+                parsedModel.HaveBodyContent = true;
+            }
+
+            return Task.FromResult(parsedModel);
         }
     }
 }

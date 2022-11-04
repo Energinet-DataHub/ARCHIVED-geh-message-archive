@@ -1,0 +1,56 @@
+{
+  "NotifyBillingMasterData_MarketDocument": {
+    "mRID": "98653214",
+    "businessSector.type": {
+      "value": "23"
+    },
+    "createdDateTime": "2022-12-17T23:00:47Z",
+    "process.processType": {
+      "value": "E01"
+    },
+    "receiver_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5799999933318"
+    },
+    "receiver_MarketParticipant.marketRole.type": {
+      "value": "DDQ"
+    },
+    "sender_MarketParticipant.mRID": {
+      "codingScheme": "A10",
+      "value": "5790001330552"
+    },
+    "sender_MarketParticipant.marketRole.type": {
+      "value": "DDZ"
+    },
+    "type": {
+      "value": "D07"
+    },
+    "MktActivityRecord": [
+      {
+        "mRID": "25361487",
+        "marketEvaluationPoint.mRID": {
+          "codingScheme": "A10",
+          "value": "579999993331812345"
+        },
+        "originalTransactionIDReference_MktActivityRecord.mRID": "98147565",
+        "ChargeGroup": {
+          "ChargeType": [
+            {
+              "mRID": "2536ab",
+              "chargeTypeOwner_MarketParticipant.mRID": {
+                "codingScheme": "A10",
+                "value": "5799999933318"
+              },
+              "effectiveDate": "2022-12-17T23:00:00Z",
+              "factor": "1",
+              "terminationDate": "2022-12-17T23:00:00Z",
+              "type": {
+                "value": "D03"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

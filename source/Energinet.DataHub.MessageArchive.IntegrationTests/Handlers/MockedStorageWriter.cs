@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageArchive.PersistenceModels;
-using Energinet.DataHub.MessageArchive.Processing.Models;
+using Energinet.DataHub.MessageArchive.Processing;
 
-namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
+namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers;
+
+public class MockedStorageWriter<T> : IStorageWriter<T>
 {
-    /// <summary>
-    /// Log parser interface
-    /// </summary>
-    public interface ILogParser
+    private List<T> _storage = new();
+
+    public Task WriteAsync(T objectToSave)
     {
-        /// <summary>
-        /// Parse abstraction
-        /// </summary>
-        Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData);
+        _storage.Add(objectToSave);
+        return Task.CompletedTask;
+    }
+
+    public IEnumerable<T> Storage()
+    {
+        return _storage;
     }
 }

@@ -32,12 +32,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
                     var json = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllBytes(localSettingsPath))!;
                     if (json.TryGetValue("connectionString", out var cosmosConnectionString))
                     {
-                        ConnectionString = cosmosConnectionString;
+                        CosmosConnectionString = cosmosConnectionString;
                     }
 
                     if (json.TryGetValue("databaseName", out var databaseName))
                     {
-                        DatabaseName = databaseName;
+                        CosmosDatabaseName = databaseName;
                     }
 
                     if (json.TryGetValue("disableAzurite", out var disableAzuriteStr) &&
@@ -54,12 +54,22 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
                 // ignore
             }
 
-            Environment.SetEnvironmentVariable("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING", ConnectionString);
+            Environment.SetEnvironmentVariable("COSMOS_MESSAGE_ARCHIVE_CONNECTION_STRING", CosmosConnectionString);
+
+            Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING", StorageAccountConnectionString);
+            Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME", MessageArchiveContainerName);
+            Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME", MessageArchiveProcessedContainerName);
         }
 
-        internal static string ConnectionString { get; } = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+        internal static string CosmosConnectionString { get; } = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
 
-        internal static string DatabaseName { get; } = "message-archive";
+        internal static string StorageAccountConnectionString { get; } = "UseDevelopmentStorage=true;";
+
+        internal static string CosmosDatabaseName { get; } = "message-archive";
+
+        internal static string MessageArchiveContainerName { get; } = "marketoplog";
+
+        internal static string MessageArchiveProcessedContainerName { get; } = "marketoplogs-archive";
 
         internal static bool DisableAzurite { get; }
     }

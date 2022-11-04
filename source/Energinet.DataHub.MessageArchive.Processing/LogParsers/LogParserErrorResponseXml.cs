@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers;
@@ -22,25 +23,16 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
     public class LogParserErrorResponseXml : LogParserBlobProperties
     {
-        public override BaseParsedModel Parse(BlobItemData blobItemData)
+        public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var nocontentParse = base.Parse(blobItemData);
+            var baseParsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            try
-            {
-                var xmlDocument = XElement.Parse(blobItemData.Content);
-                nocontentParse.Errors = XmlErrorParser.ParseErrors(xmlDocument);
-            }
-#pragma warning disable CA1031
-            catch
-#pragma warning restore CA1031
-            {
-                nocontentParse.ParsingSuccess = false;
-            }
+            var xmlDocument = XElement.Parse(blobItemData.Content);
+            baseParsedModel.Errors = XmlErrorParser.ParseErrors(xmlDocument);
 
-            return nocontentParse;
+            return baseParsedModel;
         }
     }
 }

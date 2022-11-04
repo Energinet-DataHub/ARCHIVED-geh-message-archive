@@ -1,0 +1,104 @@
+{
+	"NotifyValidatedMeasureData_MarketDocument": {
+		"mRID": "C1876453",
+		"businessSector.type": {
+			"value": "23"
+		},
+		"createdDateTime": "2022-12-17T09:30:47Z",
+		"process.processType": {
+			"value": "E23"
+		},
+		"receiver_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5790001330552"
+		},
+		"receiver_MarketParticipant.marketRole.type": {
+			"value": "DGL"
+		},
+		"sender_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5799999933317"
+		},
+		"sender_MarketParticipant.marketRole.type": {
+			"value": "MDR"
+		},
+		"type": {
+			"value": "E66"
+		},
+		"Series": [
+			{
+				"mRID": "C1876456",
+				"marketEvaluationPoint.mRID": {
+					"codingScheme": "A10",
+					"value": "579999993331812345"
+				},
+				"marketEvaluationPoint.type": {
+					"value": "E17"
+				},
+				"originalTransactionIDReference_Series.mRID": "C1875000",
+				"product": "8716867000030",
+				"quantity_Measure_Unit.name": {
+					"value": "KWH"
+				},
+				"registration_DateAndOrTime.dateTime": "2022-12-17T07:30:00Z",
+				"Period": {
+					"resolution": "PT1H",
+					"timeInterval": {
+						"start": {
+							"value": "2022-08-15T22:00Z"
+						},
+						"end": {
+							"value": "2022-08-15T04:00Z"
+						}
+					},
+					"Point": [
+						{
+							"position": {
+								"value": 1
+							},
+							"quality": {
+								"value": "A03"
+							},
+							"quantity": 242
+						},
+						{
+							"position": {
+								"value": 2
+							},
+							"quantity": 242
+						},
+						{
+							"position": {
+								"value": 3
+							},
+							"quantity": 222
+						},
+						{
+							"position": {
+								"value": 4
+							},
+							"quantity": 202
+						},
+						{
+							"position": {
+								"value": 5
+							},
+							"quality": {
+								"value": "A05"
+							},
+							"quantity": 191
+						},
+						{
+							"position": {
+								"value": 6
+							},
+							"quality": {
+								"value": "A02"
+							}
+						}
+					]
+				}
+			}
+		]
+	}
+}
