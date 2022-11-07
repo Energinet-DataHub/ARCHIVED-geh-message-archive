@@ -1,0 +1,42 @@
+{
+  "MessageId": "253698245",
+  "MessageType": "E58",
+  "ProcessType": "E02",
+  "BusinessSectorType": "23",
+  "ReasonCode": "",
+  "CreatedDate": "2022-12-17T09:30:47+00:00",
+  "SenderGln": "5799999933318",
+  "SenderGlnMarketRoleType": "DDM",
+  "ReceiverGln": "5790001330552",
+  "ReceiverGlnMarketRoleType": "DDZ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "25361487",
+      "OriginalTransactionIdReferenceId": ""
+    },
+    {
+      "MRid": "25361487-custom-for-test1",
+      "OriginalTransactionIdReferenceId": ""
+    },
+    {
+      "MRid": "25361487-custom-for-test2",
+      "OriginalTransactionIdReferenceId": ""
+    },
+    {
+      "MRid": "25361487-custom-for-test3",
+      "OriginalTransactionIdReferenceId": ""
+    }
+  ],
+  "RsmName": "requestchangeaccountingpointcharacteristics",
+  "HaveBodyContent": false,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}

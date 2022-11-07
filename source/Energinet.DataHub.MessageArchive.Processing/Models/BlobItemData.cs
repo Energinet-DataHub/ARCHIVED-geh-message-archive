@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Energinet.DataHub.MessageArchive.Processing.Models
 {
@@ -42,6 +43,10 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
         public IDictionary<string, string> IndexTags { get; }
 
         public string Content { get; }
+
+        public Stream? ContentStream { get; set; }
+
+        public long? ContentLength { get; set; }
 
         public DateTimeOffset? BlobCreatedOn { get; }
 

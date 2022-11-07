@@ -1,0 +1,18 @@
+﻿{
+  "error": {
+    "code":"VALIDATION_EXCEPTION",
+    "message":"See details",
+    "details":[
+      {
+        "code":"invalid_UUID",
+        "message":"Bundle Id must have a valid guid.",
+        "target":"BundleId"
+      },
+      {
+        "code":"invalid_UUID2",
+        "message":"Bundle Id must have a valid guid.2",
+        "target":"BundleId"
+      }
+    ]
+  }
+}

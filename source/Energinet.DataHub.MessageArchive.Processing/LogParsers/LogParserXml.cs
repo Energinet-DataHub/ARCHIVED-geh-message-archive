@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
@@ -34,53 +35,43 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             _applicationLogging = applicationLogging;
         }
 
-        public override BaseParsedModel Parse(BlobItemData blobItemData)
+        public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
             Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            var parsedModel = base.Parse(blobItemData);
+            var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            try
-            {
-                var xmlDocument = XElement.Parse(blobItemData.Content);
-                XNamespace ns = xmlDocument.Name.Namespace;
+            var xmlDocument = XElement.Parse(blobItemData.Content);
+            XNamespace ns = xmlDocument.Name.Namespace;
 
-                var mridValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
-                var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
-                var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
-                var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
-                var reasonCodeTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReasonCode}");
-                var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
-                var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
-                var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
-                var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
-                var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
+            var mridValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
+            var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
+            var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
+            var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
+            var reasonCodeTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReasonCode}");
+            var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
+            var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
+            var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
+            var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
+            var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
 
-                var rsmName = ReadRsmName(xmlDocument);
-                var activityRecords = ParseTransactionRecords(xmlDocument, ns);
+            var rsmName = ReadRsmName(xmlDocument);
+            var activityRecords = ParseTransactionRecords(xmlDocument, ns);
 
-                parsedModel.MessageId = mridValue;
-                parsedModel.MessageType = typeValue;
-                parsedModel.ProcessType = processTypeValue;
-                parsedModel.BusinessSectorType = businessSectorTypeValue;
-                parsedModel.ReasonCode = reasonCodeTypeValue;
-                parsedModel.SenderGln = senderGlnValue;
-                parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
-                parsedModel.ReceiverGln = receiverGlnValue;
-                parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
-                parsedModel.TransactionRecords = activityRecords;
-                parsedModel.RsmName = rsmName;
+            parsedModel.MessageId = mridValue;
+            parsedModel.MessageType = typeValue;
+            parsedModel.ProcessType = processTypeValue;
+            parsedModel.BusinessSectorType = businessSectorTypeValue;
+            parsedModel.ReasonCode = reasonCodeTypeValue;
+            parsedModel.SenderGln = senderGlnValue;
+            parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
+            parsedModel.ReceiverGln = receiverGlnValue;
+            parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
+            parsedModel.TransactionRecords = activityRecords;
+            parsedModel.RsmName = rsmName;
 
-                var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
-                parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : parsedModel.LogCreatedDate;
-            }
-#pragma warning disable CA1031
-            catch (Exception ex)
-#pragma warning restore CA1031
-            {
-                _applicationLogging.LogError(ex, "Parse Error in LogParserXml, returning base model, name: {Name}", blobItemData.Name);
-                parsedModel.ParsingSuccess = false;
-            }
+            var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
+            parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : parsedModel.LogCreatedDate;
 
             return parsedModel;
         }
