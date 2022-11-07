@@ -24,8 +24,8 @@ limitations under the License.
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
@@ -49,10 +49,5 @@ limitations under the License.
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+
 </Project>
