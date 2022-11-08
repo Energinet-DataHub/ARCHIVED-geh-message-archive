@@ -194,7 +194,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         {
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "details")
+                if (reader.TokenType == JsonToken.PropertyName && (string?)reader.Value == "details")
                 {
                     await ReadErrorDetailsAsync(reader, parsedModel).ConfigureAwait(false);
                 }
@@ -236,7 +236,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                         {
                             if (!string.IsNullOrWhiteSpace(currentErrorCode))
                             {
-                                errorModels.Add(new ParsedErrorModel(currentErrorCode, currentErrorMessage));
+                                errorModels.Add(new ParsedErrorModel(currentErrorCode, currentErrorMessage ?? "No message"));
                             }
 
                             currentErrorCode = string.Empty;
@@ -272,7 +272,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 switch (reader.Value)
                 {
                     case "value":
-                        return await reader.ReadAsStringAsync().ConfigureAwait(false);
+                        return await reader.ReadAsStringAsync().ConfigureAwait(false) ?? string.Empty;
                 }
             }
 
