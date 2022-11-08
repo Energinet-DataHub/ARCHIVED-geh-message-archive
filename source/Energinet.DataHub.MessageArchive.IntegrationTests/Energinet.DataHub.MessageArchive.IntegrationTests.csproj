@@ -15,90 +15,82 @@ limitations under the License.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-        <RootNamespace>Energinet.DataHub.MessageArchive.IntegrationTests</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RootNamespace>Energinet.DataHub.MessageArchive.IntegrationTests</RootNamespace>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Energinet.DataHub.Core.FunctionApp.TestCommon" Version="3.5.1" />
-        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-        <PackageReference Include="Moq" Version="4.18.2" />
-        <PackageReference Include="coverlet.collector" Version="3.1.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="xunit" Version="2.4.2" />
-        <PackageReference Include="xunit.categories" Version="2.0.6" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Energinet.DataHub.Core.FunctionApp.TestCommon" Version="3.5.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.categories" Version="2.0.6" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint.WebApi\Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj" />
-      <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint\Energinet.DataHub.MessageArchive.EntryPoint.csproj" />
-      <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint.WebApi\Energinet.DataHub.MessageArchive.EntryPoint.WebApi.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.EntryPoint\Energinet.DataHub.MessageArchive.EntryPoint.csproj" />
+    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Reader\Energinet.DataHub.MessageArchive.Reader.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\confirmrequestchangeofsupplier.json">
-        <Link>Assets\confirmrequestchangeofsupplier.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\multiactivityrecords_confirmrequestchangeofsupplier.json">
-        <Link>Assets\multiactivityrecords_confirmrequestchangeofsupplier.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifybillingmasterdata.xml">
-        <Link>Assets\notifybillingmasterdata.xml</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifyValidatedMeasureData.json">
-        <Link>Assets\notifyValidatedMeasureData.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectrequestchangeofsupplier.json">
-        <Link>Assets\rejectrequestchangeofsupplier.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectRequestValidatedMeasureData.json">
-        <Link>Assets\rejectRequestValidatedMeasureData.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeaccountingpointcharacteristics.xml">
-        <Link>Assets\requestchangeaccountingpointcharacteristics.xml</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeofsupplier.json">
-        <Link>Assets\requestchangeofsupplier.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestValidatedMeasureData.json">
-        <Link>Assets\requestValidatedMeasureData.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\test-series-ids.xml">
-        <Link>Assets\test-series-ids.xml</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\validation_exception.json">
-        <Link>Assets\validation_exception.json</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\confirmrequestchangeofsupplier.json">
+      <Link>Assets\confirmrequestchangeofsupplier.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\multiactivityrecords_confirmrequestchangeofsupplier.json">
+      <Link>Assets\multiactivityrecords_confirmrequestchangeofsupplier.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifybillingmasterdata.xml">
+      <Link>Assets\notifybillingmasterdata.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\notifyValidatedMeasureData.json">
+      <Link>Assets\notifyValidatedMeasureData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectrequestchangeofsupplier.json">
+      <Link>Assets\rejectrequestchangeofsupplier.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\rejectRequestValidatedMeasureData.json">
+      <Link>Assets\rejectRequestValidatedMeasureData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeaccountingpointcharacteristics.xml">
+      <Link>Assets\requestchangeaccountingpointcharacteristics.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestchangeofsupplier.json">
+      <Link>Assets\requestchangeofsupplier.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\requestValidatedMeasureData.json">
+      <Link>Assets\requestValidatedMeasureData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\test-series-ids.xml">
+      <Link>Assets\test-series-ids.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Energinet.DataHub.MessageArchive.Tests\Assets\validation_exception.json">
+      <Link>Assets\validation_exception.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>
