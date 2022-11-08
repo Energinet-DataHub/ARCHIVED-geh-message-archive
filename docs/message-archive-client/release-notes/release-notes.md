@@ -1,5 +1,9 @@
 # MessageArchive.Client Release notes
 
+## Version 2.0.8
+
+- Updated packages.
+
 ## Version 2.0.7
 
 - Updated deployment, update storage package.
