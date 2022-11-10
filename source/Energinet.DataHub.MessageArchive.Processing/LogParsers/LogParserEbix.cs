@@ -142,7 +142,11 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (readPayload)
             {
-                if (xmlReader.Depth > 2) readPayload = await xmlReader.ReadAsync().ConfigureAwait(false);
+                if (xmlReader.Depth > 2)
+                {
+                    readPayload = await xmlReader.ReadAsync().ConfigureAwait(false);
+                    continue;
+                }
 
                 if (xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                 {

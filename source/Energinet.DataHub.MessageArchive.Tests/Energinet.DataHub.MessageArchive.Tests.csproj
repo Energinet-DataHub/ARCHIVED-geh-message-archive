@@ -111,10 +111,12 @@ limitations under the License.
       <None Update="Assets\ExpectedParseResults\EbIX\DK_RequestEndOfSupply-3_result.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Assets\EbIX" />
+      <None Update="Assets\ExpectedParseResults\EbIX\DK_MeteredDataTimeSeries-1_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\EbIX\DK_MeteredDataTimeSeries-1.ebix.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

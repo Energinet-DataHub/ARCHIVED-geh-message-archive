@@ -1,0 +1,30 @@
+﻿{
+  "MessageId": "MES0773",
+  "MessageType": "E66",
+  "ProcessType": "E23",
+  "BusinessSectorType": "23",
+  "ReasonCode": "",
+  "CreatedDate": "2011-11-04T08:59:07+00:00",
+  "SenderGln": "5799999911118",
+  "SenderGlnMarketRoleType": "DEA",
+  "ReceiverGln": "5799999933318",
+  "ReceiverGlnMarketRoleType": "DDQ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "DK3245R14",
+      "OriginalTransactionIdReferenceId": ""
+    }
+  ],
+  "RsmName": "metereddatatimeseries",
+  "HaveBodyContent": true,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}
