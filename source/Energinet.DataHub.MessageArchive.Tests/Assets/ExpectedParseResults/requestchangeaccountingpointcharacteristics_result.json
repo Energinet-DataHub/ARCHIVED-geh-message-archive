@@ -34,7 +34,7 @@
     }
   ],
   "RsmName": "requestchangeaccountingpointcharacteristics",
-  "HaveBodyContent": false,
+  "HaveBodyContent": true,
   "ParsingSuccess": true,
   "Data": null,
   "Query": null,

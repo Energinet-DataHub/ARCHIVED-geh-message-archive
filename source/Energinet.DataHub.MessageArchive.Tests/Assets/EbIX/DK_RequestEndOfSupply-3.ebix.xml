@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================================
+  
+  RSM-005 Change of supplier (Start af leverance)
+  ================================= 
+ 
+  Semantically identical to EDIFACT example §1.4 
+  UTILMD 432-E20 (Request Move-out for one metering point)
+  
+  Copyright (c) 2011 by Energinet.dk
+  For all questions, please contact datahub@energinet.dk
+========================================================================== -->
+<DK_RequestEndOfSupply 
+  xmlns:tns="un:unece:260:data:EEM" 
+  xmlns:ccts="urn:un:unece:uncefact:documentation:common:3:standard:CoreComponentsTechnicalSpecification:3" 
+  xmlns:xbt="urn:un:unece:uncefact:data:common:1:draft" 
+  xmlns="un:unece:260:data:EEM-DK_RequestEndOfSupply:v1" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="un:unece:260:data:EEM-DK_RequestEndOfSupply:v1 ../Staging/document/DK_RequestEndOfSupply/ebIX_DK_RequestEndOfSupply-1.xsd">
+	<HeaderEnergyDocument>
+		<Identification>MES033</Identification>
+    <!-- MessageIdentification, a unique (business related) reference for the message over time -->
+		<DocumentType>432</DocumentType>
+    <!-- 432="Notification to grid operator of contract termination" -->
+		<Creation>2002-07-11T12:03:00Z</Creation>
+    <!-- Date and time for the composition of the message -->
+		<SenderEnergyParty>
+			<Identification schemeAgencyIdentifier="9">5799999933318</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDQ</Role>
+      <!-- Sender Role : Balance supplier -->
+		</SenderEnergyParty>
+		<RecipientEnergyParty>
+			<Identification schemeAgencyIdentifier="9">5799999911118</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDZ</Role>
+      <!-- Recipient Role : Metering point administrator -->
+		</RecipientEnergyParty>
+	</HeaderEnergyDocument>
+	<ProcessEnergyContext>
+    <EnergyBusinessProcess listAgencyIdentifier="260">E20</EnergyBusinessProcess>
+    <!-- 260="ebIX", E20="End of supply" -->
+		<EnergyIndustryClassification>23</EnergyIndustryClassification>
+    <!-- Must be 23 for the electricity market -->
+	</ProcessEnergyContext>
+	<PayloadMPEvent>
+		<Identification>TrID33</Identification>
+    <!-- TransactionIdentification, Unique transaction id -->
+		<EndOfOccurrence>2011-11-30T23:00:00Z</EndOfOccurrence>
+    <!-- Requested end-date-->
+		<MeteringPointDomainLocation>
+			<Identification schemeAgencyIdentifier="9">571313199988888819</Identification>
+      <!-- 9=GS1, MeteringPointIdentification -->
+		</MeteringPointDomainLocation>
+    <ConsumerConsumerParty>
+      <Name>Jens Jensen</Name>
+      <ConsumerAddressLocationAddress>
+        <StreetName>Jensensvej</StreetName>
+        <BuildingNumber>5</BuildingNumber>
+        <Postcode>7000</Postcode>
+        <CityName>Fredericia</CityName>
+        <CountryName>DK</CountryName>
+      </ConsumerAddressLocationAddress>
+    </ConsumerConsumerParty>
+	</PayloadMPEvent>
+</DK_RequestEndOfSupply>
