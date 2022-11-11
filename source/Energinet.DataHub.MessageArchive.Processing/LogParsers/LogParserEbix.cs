@@ -148,13 +148,15 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.MRid = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.LocalName.Equals("OriginalBusinessDocumentReferenceIdentity", StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals("OriginalBusinessDocumentReferenceIdentity", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.OriginalTransactionIdReferenceId = await ReadOriginalBusinessDocumentReferenceIdentityAsync(xmlReader).ConfigureAwait(false);
                     continue;
