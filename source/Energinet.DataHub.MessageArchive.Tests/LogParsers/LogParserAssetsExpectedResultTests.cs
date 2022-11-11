@@ -51,6 +51,10 @@ public class LogParserAssetsExpectedResultTests
     [InlineData("EbIX/DK_RequestEndOfSupply-2")]
     [InlineData("EbIX/DK_RequestEndOfSupply-3")]
     [InlineData("EbIX/DK_MeteredDataTimeSeries-1")]
+    [InlineData("EbIX/DK_Acknowledgment-1")]
+    [InlineData("EbIX/DK_ConfirmChangeOfSupplier-1")]
+    [InlineData("EbIX/DK_NotifyChangeOfSupplier-1")]
+    [InlineData("EbIX/DK_RequestChangeOfSupplier-1")]
     public async Task Parse_CompareWithExpectedResult_Ebix(string assetsFileName)
     {
         await Parse_CompareWithJsonExpectedResult(assetsFileName, "ebix.xml").ConfigureAwait(false);

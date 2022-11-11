@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================================
+  
+  RSM-005 End of Supply (Ophør af leverance)
+  ========================================== 
+ 
+  Semantically identical to EDIFACT example §1.4 
+  UTILMD E44-E01 (Notify Change of Supplier for one metering point)
+  
+  Copyright (c) 2011 by Energinet.dk
+  For all questions, please contact datahub@energinet.dk
+========================================================================== -->
+<DK_NotifyChangeOfSupplier
+  xmlns="un:unece:260:data:EEM-DK_NotifyChangeOfSupplier:v1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="un:unece:260:data:EEM-DK_NotifyChangeOfSupplier:v1 ..\Staging\document\DK_NotifyChangeOfSupplier\ebIX_DK_NotifyChangeOfSupplier-1.xsd">
+  <HeaderEnergyDocument>
+    <Identification>MES021</Identification>
+    <!-- MessageIdentification, a unique (business related) reference for the message over time -->
+    <DocumentType listAgencyIdentifier="260">E44</DocumentType>
+    <!-- 260="ebIX", E44="Notification to supplier of contract termination" -->
+    <Creation>2011-10-07T12:00:00Z</Creation>
+    <!-- Date and time for the composition of the message -->
+    <SenderEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999911118</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDZ</Role>
+      <!-- Sender Role : Metering point administrator -->
+    </SenderEnergyParty>
+    <RecipientEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999933318</Identification>
+      <!-- 9=GS1, GLN of receiving party -->
+      <Role>DDQ</Role>
+      <!-- Recipient Role : Balance supplier -->
+    </RecipientEnergyParty>
+  </HeaderEnergyDocument>
+  <ProcessEnergyContext>
+    <EnergyBusinessProcess listAgencyIdentifier="260">E01</EnergyBusinessProcess>
+    <!-- 260="ebIX", E01="Move; change of party connected to grid" -->
+    <EnergyIndustryClassification>23</EnergyIndustryClassification>
+    <!-- Must be 23 for the electricity market -->
+  </ProcessEnergyContext>
+  <PayloadMPEvent>
+    <Identification>TrID21</Identification>
+    <!-- TransactionIdentification, Unique transaction id -->
+    <EndOfOccurrence>2011-10-31T23:00:00Z</EndOfOccurrence>
+    <!-- Moveout-date-->
+    <MeteringPointDomainLocation>
+      <Identification schemeAgencyIdentifier="9">571313199988888819</Identification>
+      <!-- 9=GS1, MeteringPointIdentification -->
+    </MeteringPointDomainLocation>
+  </PayloadMPEvent>
+</DK_NotifyChangeOfSupplier>

@@ -16,6 +16,7 @@ using System.IO;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace PerformanceParserProfiler
@@ -23,10 +24,12 @@ namespace PerformanceParserProfiler
     [MemoryDiagnoser]
     public class EbixParseBenchmark
     {
+        private readonly IConfigurationRoot _config;
         private ILogger<LogParserBlobProperties> _logger;
 
-        public EbixParseBenchmark()
+        public EbixParseBenchmark(IConfigurationRoot config)
         {
+            _config = config;
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder
@@ -41,7 +44,7 @@ namespace PerformanceParserProfiler
         [Benchmark]
         public async Task ParseBenchmarkAsync()
         {
-            var filePathToTest = string.Empty;
+            var filePathToTest = _config["EbixFilePath"];
             using var fileStream = new FileStream(filePathToTest, FileMode.Open);
             var ebixStreamParser = new LogParserEbix(_logger);
             var blobItem = BlobItemHelper.BlobItemDataStream("ebix", fileStream);

@@ -117,6 +117,21 @@ limitations under the License.
       <None Update="Assets\EbIX\DK_MeteredDataTimeSeries-1.ebix.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Assets\EbIX\DK_Acknowledgment-1.ebix.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\EbIX\DK_ConfirmChangeOfSupplier-1.ebix.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\EbIX\DK_NotifyChangeOfSupplier-1.ebix.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\EbIX\DK_RequestChangeOfSupplier-1.ebix.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\ExpectedParseResults\EbIX\DK_Acknowledgment-1_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
