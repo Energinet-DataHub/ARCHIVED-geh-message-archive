@@ -116,7 +116,8 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     while (continueRead);
                 }
 
-                if (xmlReader.LocalName.Equals("ProcessEnergyContext", StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals("ProcessEnergyContext", StringComparison.OrdinalIgnoreCase))
                 {
                     var energyContext = await ReadProcessEnergyContextAsync(xmlReader).ConfigureAwait(false);
                     parsedModel.ProcessType = energyContext.ProcessType;
@@ -124,7 +125,8 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.LocalName.StartsWith("Payload", StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.StartsWith("Payload", StringComparison.OrdinalIgnoreCase))
                 {
                     var transactionRecord = await ReadPayloadAsync(xmlReader).ConfigureAwait(false);
                     tempTransactionRecords.Add(transactionRecord);
