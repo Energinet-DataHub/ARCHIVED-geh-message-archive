@@ -36,7 +36,7 @@ namespace PerformanceParserProfiler
             }
             else if (args.Contains("dotmemory-cim"))
             {
-                var p = new JsonParseBenchmark();
+                var p = new CimXmlParseBenchmark();
                 await p.ParseBenchmarkAsync().ConfigureAwait(false);
             }
             else
