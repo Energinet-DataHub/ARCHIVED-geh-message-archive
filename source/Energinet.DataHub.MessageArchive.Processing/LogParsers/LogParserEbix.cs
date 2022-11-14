@@ -50,8 +50,6 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (await xmlReader.ReadAsync().ConfigureAwait(false))
             {
-                Debug.WriteLine($"{xmlReader.Depth} - {xmlReader.NodeType} - {xmlReader.LocalName} - {xmlReader.Name}");
-
                 if (xmlReader.NodeType == XmlNodeType.Element
                     && xmlReader.LocalName.StartsWith("DK_", StringComparison.OrdinalIgnoreCase))
                 {

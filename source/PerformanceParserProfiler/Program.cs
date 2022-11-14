@@ -48,11 +48,11 @@ namespace PerformanceParserProfiler
             }
             else
             {
-                if (args.Contains("ebix"))
+                if (args.Contains("benchmark-ebix"))
                 {
                     var summary = BenchmarkRunner.Run<EbixParseBenchmark>();
                 }
-                else if (args.Contains("json"))
+                else if (args.Contains("benchmark-json"))
                 {
                     var summary = BenchmarkRunner.Run<JsonParseBenchmark>();
                 }
