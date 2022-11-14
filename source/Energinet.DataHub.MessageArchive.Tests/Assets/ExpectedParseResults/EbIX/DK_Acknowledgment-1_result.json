@@ -3,7 +3,7 @@
   "MessageType": "294",
   "ProcessType": "E03",
   "BusinessSectorType": "23",
-  "ReasonCode": "",
+  "ReasonCode": "41",
   "CreatedDate": "2011-10-01T14:32:00+00:00",
   "SenderGln": "5799999933318",
   "SenderGlnMarketRoleType": "DDQ",

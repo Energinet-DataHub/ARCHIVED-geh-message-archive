@@ -34,6 +34,11 @@ namespace PerformanceParserProfiler
                 var p = new JsonParseBenchmark();
                 await p.ParseBenchmarkAsync().ConfigureAwait(false);
             }
+            else if (args.Contains("dotmemory-cim"))
+            {
+                var p = new JsonParseBenchmark();
+                await p.ParseBenchmarkAsync().ConfigureAwait(false);
+            }
             else
             {
                 if (args.Contains("benchmark-ebix"))
@@ -43,6 +48,10 @@ namespace PerformanceParserProfiler
                 else if (args.Contains("benchmark-json"))
                 {
                     var summary = BenchmarkRunner.Run<JsonParseBenchmark>();
+                }
+                else if (args.Contains("benchmark-cim"))
+                {
+                    var summary = BenchmarkRunner.Run<CimXmlParseBenchmark>();
                 }
                 else
                 {
@@ -55,7 +64,7 @@ namespace PerformanceParserProfiler
 #if DEBUG
         private static async Task Main(string[] args)
         {
-            var p = new EbixParseBenchmark();
+            var p = new CimXmlParseBenchmark();
             await p.ParseBenchmarkAsync().ConfigureAwait(false);
         }
 #endif

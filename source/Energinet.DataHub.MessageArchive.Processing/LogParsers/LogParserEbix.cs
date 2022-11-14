@@ -1,6 +1,19 @@
-﻿using System;
+﻿// Copyright 2020 Energinet DataHub A/S
+//
+// Licensed under the Apache License, Version 2.0 (the "License2");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.using System;
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
@@ -46,7 +59,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         {
             using var xmlReader = XmlReader.Create(contentStream, _xmlReaderSettings);
 
-            var tempTransactionRecords = new List<TransactionRecord>();
+            var tempTransactionRecords = new List<TransactionRecordEbix>();
 
             while (await xmlReader.ReadAsync().ConfigureAwait(false))
             {
@@ -131,13 +144,17 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 }
             }
 
-            parsedModel.TransactionRecords = tempTransactionRecords.Count > 0 ? tempTransactionRecords : null;
+            if (tempTransactionRecords.Count > 0)
+            {
+                parsedModel.TransactionRecords = tempTransactionRecords;
+                parsedModel.ReasonCode = tempTransactionRecords[0].StatusType ?? string.Empty;
+            }
         }
 
-        private static async Task<TransactionRecord> ReadPayloadAsync(XmlReader xmlReader)
+        private static async Task<TransactionRecordEbix> ReadPayloadAsync(XmlReader xmlReader)
         {
             var payloadElementName = xmlReader.LocalName;
-            var transactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
+            var transactionRecord = new TransactionRecordEbix() { OriginalTransactionIdReferenceId = string.Empty, StatusType = string.Empty };
             var readPayload = true;
 
             while (readPayload)
@@ -152,6 +169,13 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     && xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.MRid = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals("StatusType", StringComparison.OrdinalIgnoreCase))
+                {
+                    transactionRecord.StatusType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
