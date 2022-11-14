@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Running;
@@ -23,14 +24,39 @@ namespace PerformanceParserProfiler
 #if !DEBUG
         private static async Task Main(string[] args)
         {
-            if (args.Contains("dotmemory"))
+            if (args.Contains("dotmemory-ebix"))
+            {
+                var p = new EbixParseBenchmark();
+                await p.ParseBenchmarkAsync().ConfigureAwait(false);
+            }
+            else if (args.Contains("dotmemory-json"))
             {
                 var p = new JsonParseBenchmark();
                 await p.ParseBenchmarkAsync().ConfigureAwait(false);
             }
+            else if (args.Contains("dotmemory-cim"))
+            {
+                var p = new CimXmlParseBenchmark();
+                await p.ParseBenchmarkAsync().ConfigureAwait(false);
+            }
             else
             {
-                var summary = BenchmarkRunner.Run<JsonParseBenchmark>();
+                if (args.Contains("benchmark-ebix"))
+                {
+                    var summary = BenchmarkRunner.Run<EbixParseBenchmark>();
+                }
+                else if (args.Contains("benchmark-json"))
+                {
+                    var summary = BenchmarkRunner.Run<JsonParseBenchmark>();
+                }
+                else if (args.Contains("benchmark-cim"))
+                {
+                    var summary = BenchmarkRunner.Run<CimXmlParseBenchmark>();
+                }
+                else
+                {
+                    throw new ArgumentException("Choose parser to benchmark");
+                }
             }
         }
 #endif
@@ -38,7 +64,7 @@ namespace PerformanceParserProfiler
 #if DEBUG
         private static async Task Main(string[] args)
         {
-            var p = new JsonParseBenchmark();
+            var p = new CimXmlParseBenchmark();
             await p.ParseBenchmarkAsync().ConfigureAwait(false);
         }
 #endif

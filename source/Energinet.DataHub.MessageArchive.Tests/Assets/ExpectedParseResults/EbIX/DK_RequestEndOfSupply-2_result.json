@@ -1,0 +1,34 @@
+﻿{
+  "MessageId": "MES032",
+  "MessageType": "432",
+  "ProcessType": "E20",
+  "BusinessSectorType": "23",
+  "ReasonCode": "",
+  "CreatedDate": "2002-07-11T12:01:00+00:00",
+  "SenderGln": "5799999933318",
+  "SenderGlnMarketRoleType": "DDQ",
+  "ReceiverGln": "5799999911118",
+  "ReceiverGlnMarketRoleType": "DDZ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "TrID32",
+      "OriginalTransactionIdReferenceId": ""
+    },
+    {
+      "MRid": "TrID33",
+      "OriginalTransactionIdReferenceId": ""
+    }
+  ],
+  "RsmName": "requestendofsupply",
+  "HaveBodyContent": true,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}

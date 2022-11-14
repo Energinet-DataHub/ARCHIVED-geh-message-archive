@@ -42,6 +42,11 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 return new LogParserBlobProperties();
             }
 
+            if (IsEbix(contentType))
+            {
+                return new LogParserEbix(logger);
+            }
+
             if (IsXmlWithContent(contentType, content))
             {
                 return new LogParserXml(logger);
@@ -53,6 +58,11 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             }
 
             return new LogParserBlobProperties();
+        }
+
+        private static bool IsEbix(string contentType)
+        {
+            return contentType.Contains("ebix", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static bool IsXmlWithContent(string contentType, string content)

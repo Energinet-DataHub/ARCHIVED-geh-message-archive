@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================================
+  
+  RSM-012 Consumption for Metering Point, non-profiled
+  ==================================================== 
+ 
+  Semantically identical to EDIFACT example §1.9 
+  UTILTS E66-E23 Consumption data from MPA to Supplier
+  
+  Copyright (c) 2011 by Energinet.dk
+  For all questions, please contact datahub@energinet.dk
+========================================================================== -->
+<DK_MeteredDataTimeSeries
+    xmlns="un:unece:260:data:EEM-DK_MeteredDataTimeSeries:v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="un:unece:260:data:EEM-DK_MeteredDataTimeSeries:v1 ..\Staging\document\DK_MeteredDataTimeSeries\ebIX_DK_MeteredDataTimeSeries-1.xsd">
+  <HeaderEnergyDocument>
+    <Identification>MES0773</Identification>
+    <!-- MessageIdentification, a unique (business related) reference for the message over time -->
+    <DocumentType listAgencyIdentifier="260">E66</DocumentType>
+    <!-- 260="ebIX", E66="Customer move-out" -->
+    <Creation>2011-11-04T08:59:07.00Z</Creation>
+    <!-- Date and time for the composition of the message -->
+    <SenderEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999911118</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DEA</Role>
+      <!-- Sender Role : Metered data aggregator -->
+    </SenderEnergyParty>
+    <RecipientEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999933318</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDQ</Role>
+      <!-- Recipient Role : Balance supplier -->
+    </RecipientEnergyParty>
+  </HeaderEnergyDocument>
+  <ProcessEnergyContext>
+    <EnergyBusinessProcess listAgencyIdentifier="260">E23</EnergyBusinessProcess>
+    <!-- 260="ebIX", E23="Periodic metering" -->
+    <EnergyIndustryClassification>23</EnergyIndustryClassification>
+    <!-- Must be 23 for the electricity market -->
+  </ProcessEnergyContext>
+  <PayloadEnergyTimeSeries>
+    <Identification>DK3245R14</Identification>
+    <!-- TimeseriesIdentification, Unique transaction id -->
+    <Function>9</Function>
+    <!-- EnergyTimeSeriesfunction, 9="Original" -->
+    <ObservationTimeSeriesPeriod>
+      <ResolutionDuration>PT1H</ResolutionDuration>
+      <!-- PT1H = Hourly read-->
+      <Start>2011-11-02T23:00:00.00Z</Start>
+      <!-- Start of consumption -->
+      <End>2011-11-03T23:00:00.00Z</End>
+      <!-- End of consumption -->
+    </ObservationTimeSeriesPeriod>
+    <IncludedProductCharacteristic>
+      <Identification listAgencyIdentifier="9">8716867000030</Identification>
+      <!-- 9=GS1, 8716867000030="Energy Active" -->
+      <UnitType>KWH</UnitType>
+    </IncludedProductCharacteristic>
+    <DetailMeasurementMeteringPointCharacteristic>
+      <TypeOfMeteringPoint listAgencyIdentifier="260">E17</TypeOfMeteringPoint>
+      <!-- 260="ebIX", E17="Consumption"-->
+      <SettlementMethod listAgencyIdentifier="260">E02</SettlementMethod>
+      <!-- E02=Non Profiled -->
+    </DetailMeasurementMeteringPointCharacteristic>
+    <MeteringPointUsedDomainLocation>
+      <Identification schemeAgencyIdentifier="9">571313199988888819</Identification>
+      <!-- 9=GS1, MeteringPointIdentification -->
+    </MeteringPointUsedDomainLocation>
+    <IntervalEnergyObservation>
+      <Position>1</Position>
+      <EnergyQuantity>1000</EnergyQuantity>
+      <QuantityQuality>56</QuantityQuality>
+      <!-- 56="Estimated"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>2</Position>
+      <EnergyQuantity>1200</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>3</Position>
+      <EnergyQuantity>800</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>4</Position>
+      <QuantityMissing>true</QuantityMissing>
+      <!-- Missing value-->
+      <QuantityQuality>E01</QuantityQuality>
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>5</Position>
+      <EnergyQuantity>1000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>6</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>7</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>8</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>9</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>10</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>11</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>12</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>13</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>14</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>15</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>16</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>17</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>18</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>19</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>20</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>21</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>22</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>23</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+    <IntervalEnergyObservation>
+      <Position>24</Position>
+      <EnergyQuantity>2000</EnergyQuantity>
+      <QuantityQuality listAgencyIdentifier="260">E01</QuantityQuality>
+      <!-- 260="ebIX", E01="As read"-->
+    </IntervalEnergyObservation>
+  </PayloadEnergyTimeSeries>
+</DK_MeteredDataTimeSeries>
