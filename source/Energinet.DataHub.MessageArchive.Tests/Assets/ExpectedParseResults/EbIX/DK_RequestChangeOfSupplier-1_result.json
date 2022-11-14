@@ -1,0 +1,30 @@
+﻿{
+  "MessageId": "MES001",
+  "MessageType": "392",
+  "ProcessType": "E03",
+  "BusinessSectorType": "23",
+  "ReasonCode": "",
+  "CreatedDate": "2011-10-01T12:00:00+00:00",
+  "SenderGln": "5799999933318",
+  "SenderGlnMarketRoleType": "DDQ",
+  "ReceiverGln": "5799999911118",
+  "ReceiverGlnMarketRoleType": "DDZ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "TrID01",
+      "OriginalTransactionIdReferenceId": ""
+    }
+  ],
+  "RsmName": "requestchangeofsupplier",
+  "HaveBodyContent": true,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}

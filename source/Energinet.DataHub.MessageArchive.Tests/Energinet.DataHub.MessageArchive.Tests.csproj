@@ -132,6 +132,15 @@ limitations under the License.
       <None Update="Assets\ExpectedParseResults\EbIX\DK_Acknowledgment-1_result.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Assets\ExpectedParseResults\EbIX\DK_ConfirmChangeOfSupplier-1_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\ExpectedParseResults\EbIX\DK_NotifyChangeOfSupplier-1_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\ExpectedParseResults\EbIX\DK_RequestChangeOfSupplier-1_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
