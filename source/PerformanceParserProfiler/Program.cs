@@ -16,34 +16,22 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Running;
-using Microsoft.Extensions.Configuration;
 
 namespace PerformanceParserProfiler
 {
     public static class Program
     {
-        private static IConfigurationRoot SetUpConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddJsonFile($"appsettings.json", true, true)
-                .AddEnvironmentVariables();
-
-            return configurationBuilder.Build();
-        }
-
 #if !DEBUG
         private static async Task Main(string[] args)
         {
-            var config = SetUpConfiguration();
-
             if (args.Contains("dotmemory-ebix"))
             {
-                var p = new EbixParseBenchmark(config);
+                var p = new EbixParseBenchmark();
                 await p.ParseBenchmarkAsync().ConfigureAwait(false);
             }
             else if (args.Contains("dotmemory-json"))
             {
-                var p = new JsonParseBenchmark(config);
+                var p = new JsonParseBenchmark();
                 await p.ParseBenchmarkAsync().ConfigureAwait(false);
             }
             else
@@ -67,9 +55,7 @@ namespace PerformanceParserProfiler
 #if DEBUG
         private static async Task Main(string[] args)
         {
-            var config = SetUpConfiguration();
-
-            var p = new EbixParseBenchmark(config);
+            var p = new EbixParseBenchmark();
             await p.ParseBenchmarkAsync().ConfigureAwait(false);
         }
 #endif

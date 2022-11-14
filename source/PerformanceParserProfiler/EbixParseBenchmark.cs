@@ -27,9 +27,9 @@ namespace PerformanceParserProfiler
         private readonly IConfigurationRoot _config;
         private ILogger<LogParserBlobProperties> _logger;
 
-        public EbixParseBenchmark(IConfigurationRoot config)
+        public EbixParseBenchmark()
         {
-            _config = config;
+            _config = BuildConfig();
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder
@@ -49,6 +49,15 @@ namespace PerformanceParserProfiler
             var ebixStreamParser = new LogParserEbix(_logger);
             var blobItem = BlobItemHelper.BlobItemDataStream("ebix", fileStream);
             var parsedModel = await ebixStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+        }
+
+        private static IConfigurationRoot BuildConfig()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json", true, true)
+                .AddEnvironmentVariables();
+
+            return configurationBuilder.Build();
         }
     }
 }

@@ -27,9 +27,9 @@ namespace PerformanceParserProfiler
         private readonly IConfigurationRoot _config;
         private ILogger<LogParserBlobProperties> _logger;
 
-        public JsonParseBenchmark(IConfigurationRoot configurationRoot)
+        public JsonParseBenchmark()
         {
-            _config = configurationRoot;
+            _config = BuildConfig();
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder
@@ -49,6 +49,15 @@ namespace PerformanceParserProfiler
             var jsonStreamParser = new LogParserJson(_logger);
             var blobItem = BlobItemHelper.BlobItemDataStream("json", fileStream);
             var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+        }
+
+        private static IConfigurationRoot BuildConfig()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json", true, true)
+                .AddEnvironmentVariables();
+
+            return configurationBuilder.Build();
         }
     }
 }
