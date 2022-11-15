@@ -22,22 +22,13 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers
     {
         public static IEnumerable<ParsedErrorModel>? ParseErrors(string jsonString)
         {
-            try
+            var jsonDocument = JsonDocument.Parse(jsonString);
+            var errorPropParsed = jsonDocument.RootElement.TryGetProperty("error", out var errorProp);
+            var code = errorProp.GetProperty("code").GetString();
+            var message = errorProp.GetProperty("message").GetString();
+            if (errorPropParsed)
             {
-                var jsonDocument = JsonDocument.Parse(jsonString);
-                var errorPropParsed = jsonDocument.RootElement.TryGetProperty("error", out var errorProp);
-                var code = errorProp.GetProperty("code").GetString();
-                var message = errorProp.GetProperty("message").GetString();
-                if (errorPropParsed)
-                {
-                    return new List<ParsedErrorModel> { new(code ?? string.Empty, message ?? string.Empty) };
-                }
-            }
-#pragma warning disable CA1031
-            catch
-#pragma warning restore CA1031
-            {
-                // ignored
+                return new List<ParsedErrorModel> { new(code ?? string.Empty, message ?? string.Empty) };
             }
 
             return null;

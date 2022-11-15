@@ -14,13 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Xml;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
 using Energinet.DataHub.MessageArchive.Processing.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
@@ -28,122 +27,194 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
     public class LogParserXml : LogParserBlobProperties
     {
         private const string RsmNameSeparator = "_";
+        private static XmlReaderSettings? _xmlReaderSettings;
         private readonly ILogger<LogParserBlobProperties> _applicationLogging;
 
         public LogParserXml(ILogger<LogParserBlobProperties> applicationLogging)
         {
             _applicationLogging = applicationLogging;
+            _xmlReaderSettings = new XmlReaderSettings()
+            {
+                Async = true,
+                IgnoreWhitespace = true,
+                IgnoreComments = true,
+            };
         }
 
         public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
-            Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+            ArgumentNullException.ThrowIfNull(blobItemData, nameof(blobItemData));
 
             var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            var xmlDocument = XElement.Parse(blobItemData.Content);
-            XNamespace ns = xmlDocument.Name.Namespace;
-
-            var mridValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.MRid}");
-            var typeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.Type}");
-            var processTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ProcessProcessType}");
-            var businessSectorTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.BusinessSectorType}");
-            var reasonCodeTypeValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReasonCode}");
-            var senderGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmRid}");
-            var senderMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.SenderMarketParticipantmarketRoletype}");
-            var receiverGlnValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmRid}");
-            var receiverMarketRoleValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.ReceiverMarketParticipantmarketRoletype}");
-            var createdDataValue = ReadValueOrEmptyString(xmlDocument, $"{ns + ElementNames.CreatedDateTime}");
-
-            var rsmName = ReadRsmName(xmlDocument);
-            var activityRecords = ParseTransactionRecords(xmlDocument, ns);
-
-            parsedModel.MessageId = mridValue;
-            parsedModel.MessageType = typeValue;
-            parsedModel.ProcessType = processTypeValue;
-            parsedModel.BusinessSectorType = businessSectorTypeValue;
-            parsedModel.ReasonCode = reasonCodeTypeValue;
-            parsedModel.SenderGln = senderGlnValue;
-            parsedModel.SenderGlnMarketRoleType = senderMarketRoleValue;
-            parsedModel.ReceiverGln = receiverGlnValue;
-            parsedModel.ReceiverGlnMarketRoleType = receiverMarketRoleValue;
-            parsedModel.TransactionRecords = activityRecords;
-            parsedModel.RsmName = rsmName;
-
-            var createdDateParsed = DateTimeOffset.TryParse(createdDataValue, out var createdDataValueParsed);
-            parsedModel.CreatedDate = createdDateParsed ? createdDataValueParsed : parsedModel.LogCreatedDate;
+            if (blobItemData.ContentLength > 0)
+            {
+                await ParseCimXmlFromStreamAsync(parsedModel, blobItemData.ContentStream).ConfigureAwait(false);
+                parsedModel.CreatedDate ??= parsedModel.LogCreatedDate;
+            }
 
             return parsedModel;
         }
 
-        private static string ReadValueOrEmptyString(XElement xmlDocument, string name)
+        private static async Task ParseCimXmlFromStreamAsync(BaseParsedModel parsedModel, Stream contentStream)
         {
-            var node = xmlDocument.Elements(name).FirstOrDefault();
-            var value = node?.Value ?? string.Empty;
-            return value;
-        }
+            using var xmlReader = XmlReader.Create(contentStream, _xmlReaderSettings);
 
-        private static IEnumerable<TransactionRecord> ParseTransactionRecords(XElement xmlDocument, XNamespace ns)
-        {
-            var mktActivityRecords = xmlDocument
-                .Elements($"{ns + "MktActivityRecord"}")
-                .ToList();
+            var tempTransactionRecords = new List<TransactionRecord>();
 
-            if (mktActivityRecords.Any())
+            var continueRead = await xmlReader.ReadAsync().ConfigureAwait(false);
+
+            do
             {
-                return ReadTransactionRecords(
-                    mktActivityRecords,
-                    ns,
-                    ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid);
-            }
-
-            var seriesRecords = xmlDocument
-                .Elements($"{ns + "Series"}")
-                .ToList();
-
-            if (seriesRecords.Any())
-            {
-                return ReadTransactionRecords(
-                    seriesRecords,
-                    ns,
-                    ElementNames.OriginalTransactionIdReferenceSeriesmRid);
-            }
-
-            return Array.Empty<TransactionRecord>();
-        }
-
-        private static IEnumerable<TransactionRecord> ReadTransactionRecords(
-            IEnumerable<XElement> transactionRecords,
-            XNamespace ns,
-            string transactionReferenceIdName)
-        {
-            var parsedTransactionRecords = new List<TransactionRecord>();
-
-            foreach (var record in transactionRecords)
-            {
-                var mridValue = ReadValueOrEmptyString(record, $"{ns + ElementNames.MRid}");
-                var originalTransactionReferenceId = ReadValueOrEmptyString(record, $"{ns + transactionReferenceIdName}");
-
-                if (!string.IsNullOrWhiteSpace(mridValue))
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.EndsWith("_MarketDocument", StringComparison.OrdinalIgnoreCase))
                 {
-                    parsedTransactionRecords.Add(new TransactionRecord
-                    {
-                        MRid = mridValue,
-                        OriginalTransactionIdReferenceId = originalTransactionReferenceId,
-                    });
+                    parsedModel.RsmName = ReadRsmName(xmlReader.LocalName);
+                    continueRead = await xmlReader.ReadAsync().ConfigureAwait(false);
                 }
-            }
 
-            return parsedTransactionRecords;
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.MRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.MessageId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.Type, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.MessageType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.ProcessProcessType, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.ProcessType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.BusinessSectorType, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.BusinessSectorType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.ReasonCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.ReasonCode = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.CreatedDateTime, StringComparison.OrdinalIgnoreCase))
+                {
+                    var dateString = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    parsedModel.CreatedDate = DateTimeOffset.TryParse(dateString, out var result) ? result : null;
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.SenderMarketParticipantmRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.SenderGln = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.SenderMarketParticipantmarketRoletype, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.SenderGlnMarketRoleType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.ReceiverMarketParticipantmRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.ReceiverGln = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.ReceiverMarketParticipantmarketRoletype, StringComparison.OrdinalIgnoreCase))
+                {
+                    parsedModel.ReceiverGlnMarketRoleType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element &&
+                    (xmlReader.LocalName.Equals("MktActivityRecord", StringComparison.OrdinalIgnoreCase) ||
+                     xmlReader.LocalName.Equals("Series", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var transactionRecord = await ReadTransactionRecordsAsync(xmlReader).ConfigureAwait(false);
+                    tempTransactionRecords.Add(transactionRecord);
+                }
+
+                continueRead = await xmlReader.ReadAsync().ConfigureAwait(false);
+            }
+            while (continueRead);
+
+            if (tempTransactionRecords.Count > 0)
+            {
+                parsedModel.TransactionRecords = tempTransactionRecords;
+            }
         }
 
-        private static string ReadRsmName(XElement xmlDocument)
+        private static async Task<TransactionRecord> ReadTransactionRecordsAsync(XmlReader xmlReader)
         {
-            var rootName = xmlDocument.Name.LocalName;
+            var payloadElementName = xmlReader.LocalName;
+            var transactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
+            var readPayload = true;
+
+            while (readPayload)
+            {
+                if (xmlReader.Depth > 2)
+                {
+                    readPayload = await xmlReader.ReadAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.MRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    transactionRecord.MRid = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    transactionRecord.OriginalTransactionIdReferenceId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.OriginalTransactionIdReferenceSeriesmRid, StringComparison.OrdinalIgnoreCase))
+                {
+                    transactionRecord.OriginalTransactionIdReferenceId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (xmlReader.NodeType == XmlNodeType.EndElement
+                    && xmlReader.LocalName.Equals(payloadElementName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return transactionRecord;
+                }
+
+                readPayload = await xmlReader.ReadAsync().ConfigureAwait(false);
+            }
+
+            return transactionRecord;
+        }
+
+        private static string ReadRsmName(string rootName)
+        {
             var indexOfSeparator = rootName.IndexOf(RsmNameSeparator, StringComparison.CurrentCultureIgnoreCase);
             if (indexOfSeparator >= 0)
             {
-                var rsmName = rootName.Substring(0, indexOfSeparator);
+                var rsmName = rootName[..indexOfSeparator];
 #pragma warning disable CA1308
                 return rsmName.ToLowerInvariant();
 #pragma warning restore CA1308

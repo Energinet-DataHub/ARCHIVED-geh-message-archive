@@ -26,18 +26,13 @@ namespace Energinet.DataHub.MessageArchive.Tests
         {
             var uri = new Uri("https://localhost/TestBlob");
 
-            var contentStream = GenerateStreamFromString(content);
-
-            return new BlobItemData(
+            var blobItemData = new BlobItemData(
                 It.IsAny<string>(),
                 new Dictionary<string, string>() { { "contenttype", contentType } },
                 indexTags ?? new Dictionary<string, string>(),
                 DateTimeOffset.Now,
-                uri)
-            {
-                ContentStream = contentStream,
-                ContentLength = content?.Length ?? 0,
-            };
+                uri) { ContentStream = GenerateStreamFromString(content) };
+            return blobItemData;
         }
 
         public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null)
@@ -49,17 +44,17 @@ namespace Energinet.DataHub.MessageArchive.Tests
                 new Dictionary<string, string>() { { "contenttype", contentType } },
                 indexTags ?? new Dictionary<string, string>(),
                 DateTimeOffset.Now,
-                uri);
+                uri) { ContentStream = contentStream };
 
-            blobItem.ContentStream = contentStream;
-            blobItem.ContentLength = contentStream?.Length ?? 0;
             return blobItem;
         }
 
-        public static Stream GenerateStreamFromString(string s)
+        private static Stream GenerateStreamFromString(string s)
         {
             var stream = new MemoryStream();
-            using var writer = new StreamWriter(stream);
+#pragma warning disable CA2000
+            var writer = new StreamWriter(stream);
+#pragma warning restore CA2000
             writer.Write(s);
             writer.Flush();
             stream.Position = 0;

@@ -14,15 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Processing.Services;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Persistence.Services
@@ -30,7 +27,6 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
     public class BlobReader : IBlobReader
     {
         private readonly ILogger<BlobReader> _logger;
-        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         private readonly BlobContainerClient _blobContainerClient;
 
         public BlobReader(
@@ -75,16 +71,9 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
             return downloadedBlobData.ToList();
         }
 
-        private static bool IsJsonContent(IDictionary<string, string> metaData)
-        {
-            return metaData.TryGetValue("contenttype", out var contentTypeValue) &&
-                   !string.IsNullOrWhiteSpace(contentTypeValue) &&
-                   contentTypeValue.Contains("json", StringComparison.InvariantCultureIgnoreCase);
-        }
-
         private async Task<BlobItemData> DownloadBlobDataAsync(BlobItem blobItemToDownload)
         {
-            Guard.ThrowIfNull(blobItemToDownload, nameof(blobItemToDownload));
+            ArgumentNullException.ThrowIfNull(blobItemToDownload, nameof(blobItemToDownload));
 
             var metaData = blobItemToDownload.Metadata ?? new Dictionary<string, string>();
             var indexTags = blobItemToDownload.Tags ?? new Dictionary<string, string>();
@@ -93,44 +82,12 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
 
             var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
             var createdOnUtc = properties.CreatedOn.GetValueOrDefault().ToUniversalTime();
-            var contentLength = blobItemToDownload.Properties.ContentLength;
 
-            if (IsJsonContent(metaData))
-            {
-                var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
-                var blobItemDataJson = new BlobItemData(name, metaData, indexTags, string.Empty, createdOnUtc, blobClient.Uri);
-                blobItemDataJson.ContentStream = response.Value.Content;
-                blobItemDataJson.ContentLength = contentLength;
+            var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
+            var blobItemDataJson = new BlobItemData(name, metaData, indexTags, createdOnUtc, blobClient.Uri);
+            blobItemDataJson.ContentStream = response.Value.Content;
 
-                return blobItemDataJson;
-            }
-            else
-            {
-                var response = await blobClient.DownloadAsync().ConfigureAwait(false);
-                using var streamReader = new StreamReader(response.Value.Content, Encoding.UTF8);
-                var downloadedContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-                var cleanContent = CleanStringForUtf8Preamble(downloadedContent);
-
-                var blobItemDataXml = new BlobItemData(name, metaData, indexTags, cleanContent, createdOnUtc, blobClient.Uri);
-                blobItemDataXml.ContentLength = contentLength;
-
-                return blobItemDataXml;
-            }
-        }
-
-        private string CleanStringForUtf8Preamble(string content)
-        {
-            if (content.StartsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
-            {
-                content = content.Remove(0, _byteOrderMarkUtf8.Length);
-            }
-
-            if (content.EndsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
-            {
-                content = content.Remove(content.Length - _byteOrderMarkUtf8.Length, _byteOrderMarkUtf8.Length);
-            }
-
-            return content;
+            return blobItemDataJson;
         }
     }
 }

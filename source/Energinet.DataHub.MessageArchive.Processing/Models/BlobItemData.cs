@@ -34,7 +34,9 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
             BlobCreatedOn = blobCreatedOn;
 
             ContentStream = Stream.Null;
-            ContentLength = 0;
+
+            ContentType = MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
+            HttpStatusCode = MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
         }
 
         public string Name { get; }
@@ -45,10 +47,14 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
 
         public Stream ContentStream { get; set; }
 
-        public long ContentLength { get; set; }
+        public long ContentLength => ContentStream.Length;
 
         public DateTimeOffset? BlobCreatedOn { get; }
 
         public Uri Uri { get; }
+
+        public string ContentType { get; }
+
+        public string HttpStatusCode { get; }
     }
 }
