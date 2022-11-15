@@ -86,6 +86,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
             var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
             var blobItemDataJson = new BlobItemData(name, metaData, indexTags, createdOnUtc, blobClient.Uri);
             blobItemDataJson.ContentStream = response.Value.Content;
+            blobItemDataJson.ContentLength = response.Value.Details.ContentLength;
 
             return blobItemDataJson;
         }

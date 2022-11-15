@@ -41,16 +41,20 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
             var indexTags = new Dictionary<string, string>() { { "TagKey1", "TagValue1" }, };
             var content = GenerateStreamFromString("logcontent");
             var logUri = new Uri($"http://127.0.0.1:10000/{name}/");
-            var item = new BlobItemData(name, metaData, indexTags, DateTimeOffset.Now, logUri);
-            item.ContentStream = content;
-            item.ContentLength = content.Length;
+            var item = new BlobItemData(name, metaData, indexTags, DateTimeOffset.Now, logUri)
+            {
+                ContentStream = content,
+                ContentLength = content?.Length ?? 0,
+            };
             return item;
         }
 
         private static Stream GenerateStreamFromString(string s)
         {
             var stream = new MemoryStream();
-            using var writer = new StreamWriter(stream);
+#pragma warning disable CA2000
+            var writer = new StreamWriter(stream);
+#pragma warning restore CA2000
             writer.Write(s);
             writer.Flush();
             stream.Position = 0;

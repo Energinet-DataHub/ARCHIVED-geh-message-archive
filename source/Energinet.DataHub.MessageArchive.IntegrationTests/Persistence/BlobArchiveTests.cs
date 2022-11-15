@@ -37,7 +37,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             var marketoplogsArchive = "marketoplogs-archive";
 
             var itemToMove = IntegrationTestHelper.CrateRandomBlobItem();
-            var itemToMoveContentStream = itemToMove.ContentStream;
+            using var itemToMoveContentStream = itemToMove.ContentStream;
 
             var blobServiceClientMarketoplogs = await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogs).ConfigureAwait(false);
             await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogsArchive).ConfigureAwait(false);

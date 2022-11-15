@@ -149,7 +149,10 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                      xmlReader.LocalName.Equals("Series", StringComparison.OrdinalIgnoreCase)))
                 {
                     var transactionRecord = await ReadTransactionRecordsAsync(xmlReader).ConfigureAwait(false);
-                    tempTransactionRecords.Add(transactionRecord);
+                    if (!string.IsNullOrWhiteSpace(transactionRecord.MRid))
+                    {
+                        tempTransactionRecords.Add(transactionRecord);
+                    }
                 }
 
                 continueRead = await xmlReader.ReadAsync().ConfigureAwait(false);

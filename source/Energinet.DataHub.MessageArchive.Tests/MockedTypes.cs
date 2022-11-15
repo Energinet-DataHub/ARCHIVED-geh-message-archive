@@ -22,29 +22,39 @@ namespace Energinet.DataHub.MessageArchive.Tests
 {
     public static class MockedTypes
     {
-        public static BlobItemData BlobItemData(string contentType, string content, IDictionary<string, string>? indexTags = null)
+        public static BlobItemData BlobItemData(string contentType, string content, IDictionary<string, string>? indexTags = null, string httpStatusCode = "200")
         {
             var uri = new Uri("https://localhost/TestBlob");
 
+            var contentStream = GenerateStreamFromString(content);
+
             var blobItemData = new BlobItemData(
                 It.IsAny<string>(),
-                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>() { { "contenttype", contentType }, { "statuscode", httpStatusCode } },
                 indexTags ?? new Dictionary<string, string>(),
                 DateTimeOffset.Now,
-                uri) { ContentStream = GenerateStreamFromString(content) };
+                uri)
+            {
+                ContentStream = contentStream,
+                ContentLength = contentStream?.Length ?? 0,
+            };
             return blobItemData;
         }
 
-        public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null)
+        public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null, string httpStatusCode = "200")
         {
             var uri = new Uri("https://localhost/TestBlob");
 
             var blobItem = new BlobItemData(
                 It.IsAny<string>(),
-                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>() { { "contenttype", contentType }, { "statuscode", httpStatusCode } },
                 indexTags ?? new Dictionary<string, string>(),
                 DateTimeOffset.Now,
-                uri) { ContentStream = contentStream };
+                uri)
+            {
+                ContentStream = contentStream,
+                ContentLength = contentStream?.Length ?? 0,
+            };
 
             return blobItem;
         }
