@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.IO;
 using System.Net;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Net.Http.Headers;
 
@@ -24,7 +24,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.Extensions
     {
         public static HttpResponseData CreateResponse(this HttpRequestData source, Stream stream, string contentType, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            Guard.ThrowIfNull(source, nameof(source));
+            ArgumentNullException.ThrowIfNull(source, nameof(source));
 
             var response = source.CreateResponse(statusCode);
             response.Body = stream;

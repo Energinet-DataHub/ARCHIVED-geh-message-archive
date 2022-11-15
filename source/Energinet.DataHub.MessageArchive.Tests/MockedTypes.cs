@@ -26,15 +26,17 @@ namespace Energinet.DataHub.MessageArchive.Tests
         {
             var uri = new Uri("https://localhost/TestBlob");
 
+            var contentStream = GenerateStreamFromString(content);
+
             return new BlobItemData(
                 It.IsAny<string>(),
                 new Dictionary<string, string>() { { "contenttype", contentType } },
                 indexTags ?? new Dictionary<string, string>(),
-                content,
                 DateTimeOffset.Now,
                 uri)
             {
-                ContentLength = content?.Length,
+                ContentStream = contentStream,
+                ContentLength = content?.Length ?? 0,
             };
         }
 
@@ -46,13 +48,22 @@ namespace Energinet.DataHub.MessageArchive.Tests
                 It.IsAny<string>(),
                 new Dictionary<string, string>() { { "contenttype", contentType } },
                 indexTags ?? new Dictionary<string, string>(),
-                string.Empty,
                 DateTimeOffset.Now,
                 uri);
 
             blobItem.ContentStream = contentStream;
-            blobItem.ContentLength = contentStream?.Length;
+            blobItem.ContentLength = contentStream?.Length ?? 0;
             return blobItem;
+        }
+
+        public static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }

@@ -18,7 +18,6 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Reader;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -76,7 +75,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi.Controllers
 
         private static string BuildFileName(string filename)
         {
-            Guard.ThrowIfNull(filename, nameof(filename));
+            ArgumentNullException.ThrowIfNull(filename, nameof(filename));
 
             if (filename.EndsWith(".txt", StringComparison.InvariantCultureIgnoreCase) ||
                 filename.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))

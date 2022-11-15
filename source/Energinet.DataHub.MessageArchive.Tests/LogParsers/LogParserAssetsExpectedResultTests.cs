@@ -68,7 +68,7 @@ public class LogParserAssetsExpectedResultTests
 
         var blobItem = await LoadFileAndSetBlobItemData(assetsPath, extensionAndContentType).ConfigureAwait(false);
 
-        var contentParser = ParserFinder.FindParser(extensionAndContentType, "200", blobItem.Content, new Mock<ILogger<LogParserBlobProperties>>().Object);
+        var contentParser = ParserFinder.FindParser(extensionAndContentType, "200", new Mock<ILogger<LogParserBlobProperties>>().Object);
 
         // Act
         var parsed = await contentParser.ParseAsync(blobItem).ConfigureAwait(false);
@@ -108,13 +108,13 @@ public class LogParserAssetsExpectedResultTests
 
         if (extensionAndContentType.Equals("json", StringComparison.OrdinalIgnoreCase))
         {
-            var fileStream = File.Open(assetsPath, FileMode.Open);
+            using var fileStream = File.Open(assetsPath, FileMode.Open);
             return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);
         }
 
         if (extensionAndContentType.Equals("ebix.xml", StringComparison.OrdinalIgnoreCase))
         {
-            var fileStream = File.Open(assetsPath, FileMode.Open);
+            using var fileStream = File.Open(assetsPath, FileMode.Open);
             return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);
         }
 

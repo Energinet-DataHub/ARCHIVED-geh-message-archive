@@ -24,16 +24,17 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
             string name,
             IDictionary<string, string> metaData,
             IDictionary<string, string> indexTags,
-            string content,
             DateTimeOffset? blobCreatedOn,
             Uri uri)
         {
             Name = name;
             MetaData = metaData;
             IndexTags = indexTags;
-            Content = content;
             Uri = uri;
             BlobCreatedOn = blobCreatedOn;
+
+            ContentStream = Stream.Null;
+            ContentLength = 0;
         }
 
         public string Name { get; }
@@ -42,11 +43,9 @@ namespace Energinet.DataHub.MessageArchive.Processing.Models
 
         public IDictionary<string, string> IndexTags { get; }
 
-        public string Content { get; }
+        public Stream ContentStream { get; set; }
 
-        public Stream? ContentStream { get; set; }
-
-        public long? ContentLength { get; set; }
+        public long ContentLength { get; set; }
 
         public DateTimeOffset? BlobCreatedOn { get; }
 

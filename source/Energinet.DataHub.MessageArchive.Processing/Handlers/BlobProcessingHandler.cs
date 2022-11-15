@@ -54,7 +54,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
                 var contentType = blobItemData.MetaData.TryGetValue("contenttype", out var contentTypeValue) ? contentTypeValue : string.Empty;
                 var httpStatusCode = blobItemData.MetaData.TryGetValue("statuscode", out var statusCodeValue) ? statusCodeValue : string.Empty;
 
-                var parser = ParserFinder.FindParser(contentType, httpStatusCode, blobItemData.Content, _parserLogger);
+                var parser = ParserFinder.FindParser(contentType, httpStatusCode, _parserLogger);
 
                 try
                 {
