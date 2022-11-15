@@ -22,12 +22,12 @@ using Microsoft.Extensions.Logging;
 namespace PerformanceParserProfiler
 {
     [MemoryDiagnoser]
-    public class JsonParseBenchmark
+    public class EbixParseBenchmark
     {
         private readonly IConfigurationRoot _config;
         private ILogger<LogParserBlobProperties> _logger;
 
-        public JsonParseBenchmark()
+        public EbixParseBenchmark()
         {
             _config = BuildConfig();
             using var loggerFactory = LoggerFactory.Create(builder =>
@@ -44,11 +44,11 @@ namespace PerformanceParserProfiler
         [Benchmark]
         public async Task ParseBenchmarkAsync()
         {
-            var filePathToTest = _config["JsonFilePath"];
+            var filePathToTest = _config["EbixFilePath"];
             using var fileStream = new FileStream(filePathToTest, FileMode.Open);
-            var jsonStreamParser = new LogParserJson(_logger);
-            var blobItem = BlobItemHelper.BlobItemDataStream("json", fileStream);
-            var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var ebixStreamParser = new LogParserEbix(_logger);
+            var blobItem = BlobItemHelper.BlobItemDataStream("ebix", fileStream);
+            var parsedModel = await ebixStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
         }
 
         private static IConfigurationRoot BuildConfig()

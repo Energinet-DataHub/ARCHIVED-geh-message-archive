@@ -22,12 +22,12 @@ using Microsoft.Extensions.Logging;
 namespace PerformanceParserProfiler
 {
     [MemoryDiagnoser]
-    public class JsonParseBenchmark
+    public class CimXmlParseBenchmark
     {
         private readonly IConfigurationRoot _config;
         private ILogger<LogParserBlobProperties> _logger;
 
-        public JsonParseBenchmark()
+        public CimXmlParseBenchmark()
         {
             _config = BuildConfig();
             using var loggerFactory = LoggerFactory.Create(builder =>
@@ -44,11 +44,12 @@ namespace PerformanceParserProfiler
         [Benchmark]
         public async Task ParseBenchmarkAsync()
         {
-            var filePathToTest = _config["JsonFilePath"];
-            using var fileStream = new FileStream(filePathToTest, FileMode.Open);
-            var jsonStreamParser = new LogParserJson(_logger);
-            var blobItem = BlobItemHelper.BlobItemDataStream("json", fileStream);
-            var parsedModel = await jsonStreamParser.ParseAsync(blobItem).ConfigureAwait(false);
+            var filePathToTest = _config["CimXmlFilePath"];
+            var fileContent = File.ReadAllText(filePathToTest);
+
+            var cimParser = new LogParserXml(_logger);
+            var blobItem = BlobItemHelper.BlobItemDataContent("xml", fileContent);
+            var parsedModel = await cimParser.ParseAsync(blobItem).ConfigureAwait(false);
         }
 
         private static IConfigurationRoot BuildConfig()

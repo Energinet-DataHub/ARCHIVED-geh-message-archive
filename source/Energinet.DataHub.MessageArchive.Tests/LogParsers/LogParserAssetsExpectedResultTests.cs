@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,11 +31,36 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers;
 public class LogParserAssetsExpectedResultTests
 {
     [Theory]
-    [InlineData("requestchangeaccountingpointcharacteristics", "xml")]
-    [InlineData("requestchangeaccountingpointcharacteristics", "json")]
-    [InlineData("notifybillingmasterdata", "xml")]
-    [InlineData("notifybillingmasterdata", "json")]
-    public async Task Parse_CompareWithJsonExpectedResult(string assetsFileName, string extensionAndContentType)
+    [InlineData("requestchangeaccountingpointcharacteristics")]
+    [InlineData("notifybillingmasterdata")]
+    public async Task Parse_CompareWithExpectedResult_Xml(string assetsFileName)
+    {
+        await Parse_CompareWithJsonExpectedResult(assetsFileName, "xml").ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("requestchangeaccountingpointcharacteristics")]
+    [InlineData("notifybillingmasterdata")]
+    public async Task Parse_CompareWithJsonExpectedResult_Json(string assetsFileName)
+    {
+        await Parse_CompareWithJsonExpectedResult(assetsFileName, "json").ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("EbIX/DK_RequestEndOfSupply-1")]
+    [InlineData("EbIX/DK_RequestEndOfSupply-2")]
+    [InlineData("EbIX/DK_RequestEndOfSupply-3")]
+    [InlineData("EbIX/DK_MeteredDataTimeSeries-1")]
+    [InlineData("EbIX/DK_Acknowledgment-1")]
+    [InlineData("EbIX/DK_ConfirmChangeOfSupplier-1")]
+    [InlineData("EbIX/DK_NotifyChangeOfSupplier-1")]
+    [InlineData("EbIX/DK_RequestChangeOfSupplier-1")]
+    public async Task Parse_CompareWithExpectedResult_Ebix(string assetsFileName)
+    {
+        await Parse_CompareWithJsonExpectedResult(assetsFileName, "ebix.xml").ConfigureAwait(false);
+    }
+
+    private static async Task Parse_CompareWithJsonExpectedResult(string assetsFileName, string extensionAndContentType)
     {
         // Arrange
         var assetsPath = $"Assets/{assetsFileName}.{extensionAndContentType}";
@@ -63,7 +89,17 @@ public class LogParserAssetsExpectedResultTests
         resultJsonJObject.Remove("LogCreatedDate");
         resultJsonJObject.Remove("BlobContentUri");
 
-        Assert.True(JToken.DeepEquals(expectedJsonJObject, resultJsonJObject));
+        var isEqual = JToken.DeepEquals(expectedJsonJObject, resultJsonJObject);
+
+#if DEBUG
+        if (!isEqual)
+        {
+            Debug.WriteLine(expectedResultJsonString);
+            Debug.WriteLine(resultJsonString);
+        }
+#endif
+
+        Assert.True(isEqual);
     }
 
     private static async Task<BlobItemData> LoadFileAndSetBlobItemData(string assetsPath, string extensionAndContentType)
@@ -71,6 +107,12 @@ public class LogParserAssetsExpectedResultTests
         ArgumentNullException.ThrowIfNull(extensionAndContentType);
 
         if (extensionAndContentType.Equals("json", StringComparison.OrdinalIgnoreCase))
+        {
+            var fileStream = File.Open(assetsPath, FileMode.Open);
+            return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);
+        }
+
+        if (extensionAndContentType.Equals("ebix.xml", StringComparison.OrdinalIgnoreCase))
         {
             var fileStream = File.Open(assetsPath, FileMode.Open);
             return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);

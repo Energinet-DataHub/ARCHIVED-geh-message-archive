@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================================
+  
+  RSM-009 Acknowledgement (Kvittering)
+  ==================================== 
+ 
+  Semantically identical to EDIFACT example §1.7 
+  APERAK (Negative aperak upon UTILMD 392-E03)
+  
+  Copyright (c) 2011 by Energinet.dk
+  For all questions, please contact datahub@energinet.dk
+========================================================================== -->
+<DK_Acknowledgement
+    xmlns="un:unece:260:data:EEM-DK_Acknowledgement:v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="un:unece:260:data:EEM-DK_Acknowledgement:v1 \Schemas\DataHub\document\DK_Acknowledgement\ebIX_DK_Acknowledgement-1.xsd">
+  <HeaderEnergyDocument>
+    <Identification>SPH1001</Identification>
+    <!-- MessageIdentification, a unique (business related) reference for the message over time -->
+    <DocumentType>294</DocumentType>
+    <!-- 294="Acknowledgement" -->
+    <Creation>2011-10-01T14:32:00.00Z</Creation>
+    <!-- Date and time for the composition of the message -->
+    <SenderEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999933318</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDQ</Role>
+      <!-- Sender Role : Metering point administrator -->
+    </SenderEnergyParty>
+    <RecipientEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999911118</Identification>
+      <!-- 9=GS1, GLN of receiving party -->
+      <Role>DDZ</Role>
+      <!-- Recipient Role : Balance supplier -->
+    </RecipientEnergyParty>
+  </HeaderEnergyDocument>
+  <ProcessEnergyContext>
+    <EnergyBusinessProcess listAgencyIdentifier="260">E03</EnergyBusinessProcess>
+    <!-- 260="ebIX", E03="Change of Balance Supplier" -->
+    <EnergyIndustryClassification>23</EnergyIndustryClassification>
+    <OriginalBusinessMessageReferenceIdentity>
+      <Identification>MES002</Identification>
+      <!-- OriginalBusinessMessageIdentificiation, MessageIdentification from Change-Of-Supplier-Request-->
+    </OriginalBusinessMessageReferenceIdentity>
+  </ProcessEnergyContext>
+  <PayloadResponseEvent>
+    <Identification>Id2301</Identification>
+    <!-- TransactionIdentification, Unique transaction id -->
+    <StatusType>41</StatusType>
+    <!-- ResponseStatus, 41="Rejected"-->
+    <ResponseReasonType listAgencyIdentifier="260">E10</ResponseReasonType>
+    <!--Responsereason, 260="ebIX", E10="Metering point not identifiable"-->
+    <OriginalBusinessDocumentReferenceIdentity>
+      <Identification>TrID04</Identification>
+      <!-- OriginalBusinessDocumentIdentificiation, TransactionIdentification from Change-Of-Supplier-Request-->
+    </OriginalBusinessDocumentReferenceIdentity>
+    <ReasonText>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</ReasonText>
+    <!-- Description of the error encountered-->
+  </PayloadResponseEvent>
+</DK_Acknowledgement>

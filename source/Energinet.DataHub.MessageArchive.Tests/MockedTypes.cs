@@ -32,7 +32,10 @@ namespace Energinet.DataHub.MessageArchive.Tests
                 indexTags ?? new Dictionary<string, string>(),
                 content,
                 DateTimeOffset.Now,
-                uri);
+                uri)
+            {
+                ContentLength = content?.Length,
+            };
         }
 
         public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null)
@@ -48,6 +51,7 @@ namespace Energinet.DataHub.MessageArchive.Tests
                 uri);
 
             blobItem.ContentStream = contentStream;
+            blobItem.ContentLength = contentStream?.Length;
             return blobItem;
         }
     }

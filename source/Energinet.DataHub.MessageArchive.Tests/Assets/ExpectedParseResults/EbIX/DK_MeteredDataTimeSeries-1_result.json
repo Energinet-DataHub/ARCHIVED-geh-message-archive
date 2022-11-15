@@ -1,12 +1,12 @@
-{
-  "MessageId": "98653214",
-  "MessageType": "D07",
-  "ProcessType": "E01",
+﻿{
+  "MessageId": "MES0773",
+  "MessageType": "E66",
+  "ProcessType": "E23",
   "BusinessSectorType": "23",
   "ReasonCode": "",
-  "CreatedDate": "2022-12-17T23:00:47+00:00",
-  "SenderGln": "5790001330552",
-  "SenderGlnMarketRoleType": "DDZ",
+  "CreatedDate": "2011-11-04T08:59:07+00:00",
+  "SenderGln": "5799999911118",
+  "SenderGlnMarketRoleType": "DEA",
   "ReceiverGln": "5799999933318",
   "ReceiverGlnMarketRoleType": "DDQ",
   "HttpData": "",
@@ -17,11 +17,11 @@
   "ResponseStatus": "",
   "TransactionRecords": [
     {
-      "MRid": "25361487",
-      "OriginalTransactionIdReferenceId": "98147565"
+      "MRid": "DK3245R14",
+      "OriginalTransactionIdReferenceId": ""
     }
   ],
-  "RsmName": "notifybillingmasterdata",
+  "RsmName": "metereddatatimeseries",
   "HaveBodyContent": true,
   "ParsingSuccess": true,
   "Data": null,

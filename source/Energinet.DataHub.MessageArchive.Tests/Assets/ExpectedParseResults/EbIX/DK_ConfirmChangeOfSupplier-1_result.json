@@ -1,11 +1,11 @@
-{
-  "MessageId": "98653214",
-  "MessageType": "D07",
-  "ProcessType": "E01",
+﻿{
+  "MessageId": "MES011",
+  "MessageType": "414",
+  "ProcessType": "E03",
   "BusinessSectorType": "23",
-  "ReasonCode": "",
-  "CreatedDate": "2022-12-17T23:00:47+00:00",
-  "SenderGln": "5790001330552",
+  "ReasonCode": "39",
+  "CreatedDate": "2011-10-01T12:15:00+00:00",
+  "SenderGln": "5799999911118",
   "SenderGlnMarketRoleType": "DDZ",
   "ReceiverGln": "5799999933318",
   "ReceiverGlnMarketRoleType": "DDQ",
@@ -17,11 +17,11 @@
   "ResponseStatus": "",
   "TransactionRecords": [
     {
-      "MRid": "25361487",
-      "OriginalTransactionIdReferenceId": "98147565"
+      "MRid": "TrID11",
+      "OriginalTransactionIdReferenceId": "TrID01"
     }
   ],
-  "RsmName": "notifybillingmasterdata",
+  "RsmName": "confirmchangeofsupplier",
   "HaveBodyContent": true,
   "ParsingSuccess": true,
   "Data": null,

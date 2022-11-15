@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================================
+  
+  RSM-001 Change of supplier (Start af leverance)
+  ================================= 
+ 
+  Semantically identical to EDIFACT example §1.1 
+  UTILMD 414-E03 (Confirm Change of Supplier for one metering point)
+  
+  Copyright (c) 2011 by Energinet.dk
+  For all questions, please contact datahub@energinet.dk
+========================================================================== -->
+<DK_ConfirmChangeOfSupplier
+  xmlns="un:unece:260:data:EEM-DK_ConfirmChangeOfSupplier:v1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="un:unece:260:data:EEM-DK_ConfirmChangeOfSupplier:v1 ..\Staging\document\DK_ConfirmChangeOfSupplier\ebIX_DK_ConfirmChangeOfSupplier-1.xsd">
+  <HeaderEnergyDocument>
+    <Identification>MES011</Identification>
+    <!-- MessageIdentification, a unique (business related) reference for the message over time -->
+    <DocumentType>414</DocumentType>
+    <!-- 414="Confirmation of start of supply" -->
+    <Creation>2011-10-01T12:15:00Z</Creation>
+    <!-- Date and time for the composition of the message -->
+    <SenderEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999911118</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDZ</Role>
+      <!-- Sender Role : Metering point administrator -->
+    </SenderEnergyParty>
+    <RecipientEnergyParty>
+      <Identification schemeAgencyIdentifier="9">5799999933318</Identification>
+      <!-- 9=GS1, GLN of sending party -->
+      <Role>DDQ</Role>
+      <!-- Recipient Role : Balance supplier -->
+    </RecipientEnergyParty>
+  </HeaderEnergyDocument>
+  <ProcessEnergyContext>
+    <EnergyBusinessProcess listAgencyIdentifier="260">E03</EnergyBusinessProcess>
+    <!-- 260="ebIX", E03= "Change of Balance Supplier" -->
+    <EnergyIndustryClassification>23</EnergyIndustryClassification>
+    <!-- Must be 23 for the electricity market -->
+  </ProcessEnergyContext>
+  <PayloadResponseEvent>
+    <Identification>TrID11</Identification>
+    <!-- TransactionIdentification, Unique transaction id -->
+    <StatusType>39</StatusType>
+    <!-- Response status, 39="Approved"-->
+    <OriginalBusinessDocumentReferenceIdentity>
+      <Identification>TrID01</Identification>
+      <!-- OriginalBusinessDocumentIdentificiation, TransactionIdentification from Change-Of-Supplier-Request-->
+    </OriginalBusinessDocumentReferenceIdentity>
+    <MeteringPointDomainLocation>
+      <Identification schemeAgencyIdentifier="9">57131319998888819</Identification>
+      <!-- 9=GS1, MeteringPointIdentification -->
+    </MeteringPointDomainLocation>
+  </PayloadResponseEvent>
+</DK_ConfirmChangeOfSupplier>

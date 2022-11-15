@@ -284,7 +284,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             var indexOfSeparator = documentName.IndexOf("_", StringComparison.CurrentCultureIgnoreCase);
             if (indexOfSeparator >= 0)
             {
-                var rsmName = documentName.Substring(0, indexOfSeparator);
+                var rsmName = documentName[..indexOfSeparator];
 #pragma warning disable CA1308
                 return rsmName.ToLowerInvariant();
 #pragma warning restore CA1308
