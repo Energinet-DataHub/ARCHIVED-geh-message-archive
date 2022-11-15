@@ -34,7 +34,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
         {
             if (_azuriteManager != null)
             {
-                //_azuriteManager.StartAzurite();
+                _azuriteManager.StartAzurite();
             }
 
             return Task.CompletedTask;
