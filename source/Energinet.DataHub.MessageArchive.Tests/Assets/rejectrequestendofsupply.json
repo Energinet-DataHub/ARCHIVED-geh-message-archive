@@ -1,0 +1,50 @@
+{
+	"RejectRequestEndOfSupply_MarketDocument": {
+		"mRID": "1233456678",
+		"businessSector.type": {
+			"value": "23"
+		},
+		"createdDateTime": "2022-12-17T09:30:47Z",
+		"process.processType": {
+			"value": "E20"
+		},
+		"reason.code": {
+			"value": "A02"
+		},
+		"receiver_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5790001330552"
+		},
+		"receiver_MarketParticipant.marketRole.type": {
+			"value": "DDQ"
+		},
+		"sender_MarketParticipant.mRID": {
+			"codingScheme": "A10",
+			"value": "5799999933318"
+		},
+		"sender_MarketParticipant.marketRole.type": {
+			"value": "DDZ"
+		},
+		"type": {
+			"value": "E44"
+		},
+		"MktActivityRecord": [
+			{
+				"mRID": "1258945",
+				"marketEvaluationPoint.mRID": {
+					"codingScheme": "A10",
+					"value": "579999993331812345"
+				},
+				"originalTransactionIDReference_MktActivityRecord.mRID": "12584789",
+				"Reason": [
+					{
+						"code": {
+							"value": "D18"
+						},
+						"text": "Målepunktstype D04 er ikke korrekt"
+					}
+				]
+			}
+		]
+	}
+}

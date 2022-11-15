@@ -141,6 +141,15 @@ limitations under the License.
       <None Update="Assets\ExpectedParseResults\EbIX\DK_RequestChangeOfSupplier-1_result.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Assets\ExpectedParseResults\rejectrequestendofsupply_result.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\rejectrequestendofsupply.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\rejectrequestendofsupply.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

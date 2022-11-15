@@ -31,6 +31,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.LogParsers;
 public class LogParserAssetsExpectedResultTests
 {
     [Theory]
+    [InlineData("rejectrequestendofsupply")]
     [InlineData("requestchangeaccountingpointcharacteristics")]
     [InlineData("notifybillingmasterdata")]
     public async Task Parse_CompareWithExpectedResult_Xml(string assetsFileName)
@@ -39,6 +40,7 @@ public class LogParserAssetsExpectedResultTests
     }
 
     [Theory]
+    [InlineData("rejectrequestendofsupply")]
     [InlineData("requestchangeaccountingpointcharacteristics")]
     [InlineData("notifybillingmasterdata")]
     public async Task Parse_CompareWithJsonExpectedResult_Json(string assetsFileName)
@@ -108,13 +110,13 @@ public class LogParserAssetsExpectedResultTests
 
         if (extensionAndContentType.Equals("json", StringComparison.OrdinalIgnoreCase))
         {
-            using var fileStream = File.Open(assetsPath, FileMode.Open);
+            var fileStream = File.Open(assetsPath, FileMode.Open);
             return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);
         }
 
         if (extensionAndContentType.Equals("ebix.xml", StringComparison.OrdinalIgnoreCase))
         {
-            using var fileStream = File.Open(assetsPath, FileMode.Open);
+            var fileStream = File.Open(assetsPath, FileMode.Open);
             return MockedTypes.BlobItemDataStream(extensionAndContentType, fileStream);
         }
 
