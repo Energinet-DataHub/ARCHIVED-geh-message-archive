@@ -29,6 +29,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities
         public const string CreatedDateTime = "createdDateTime";
         public const string OriginalTransactionIdReferenceSeriesmRid = "originalTransactionIDReference_Series.mRID";
         public const string OriginalTransactionIdReferenceMktActivityRecordmRid = "originalTransactionIDReference_MktActivityRecord.mRID";
+        public const string TransactionReason = "Reason";
         public const string RegistrationDateAndOrTimedateTime = "registration_DateAndOrTime.dateTime";
         public const string InDomainmRid = "in_Domain.mRID";
         public const string OutDomainmRid = "out_Domain.mRID";

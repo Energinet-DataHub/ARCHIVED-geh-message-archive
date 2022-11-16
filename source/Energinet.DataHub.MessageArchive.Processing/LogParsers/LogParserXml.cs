@@ -169,7 +169,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         private static async Task<TransactionRecord> ReadTransactionRecordsAsync(XmlReader xmlReader)
         {
             var payloadElementName = xmlReader.LocalName;
-            var transactionRecord = new TransactionRecord() { OriginalTransactionIdReferenceId = string.Empty };
+            var transactionRecord = new TransactionRecord { OriginalTransactionIdReferenceId = string.Empty };
             var readPayload = true;
 
             while (readPayload)
@@ -201,6 +201,15 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
+                if (xmlReader.NodeType == XmlNodeType.Element
+                    && xmlReader.LocalName.Equals(ElementNames.TransactionReason, StringComparison.OrdinalIgnoreCase))
+                {
+                    (string Code, string Text) reason = await ReadTransactionReasonAsync(xmlReader).ConfigureAwait(false);
+                    transactionRecord.ReasonCode = reason.Code;
+                    transactionRecord.ReasonText = reason.Text;
+                    continue;
+                }
+
                 if (xmlReader.NodeType == XmlNodeType.EndElement
                     && xmlReader.LocalName.Equals(payloadElementName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -211,6 +220,34 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             }
 
             return transactionRecord;
+        }
+
+        private static async Task<(string Code, string Message)> ReadTransactionReasonAsync(XmlReader xmlReader)
+        {
+            var payloadElementName = xmlReader.LocalName;
+            var code = string.Empty;
+            var text = string.Empty;
+            var readReason = true;
+
+            while (readReason)
+            {
+                switch (xmlReader.NodeType)
+                {
+                    case XmlNodeType.Element when xmlReader.LocalName.Equals("Code", StringComparison.OrdinalIgnoreCase):
+                        code = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                        continue;
+                    case XmlNodeType.Element when xmlReader.LocalName.Equals("text", StringComparison.OrdinalIgnoreCase):
+                        text = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                        continue;
+                    case XmlNodeType.EndElement when xmlReader.LocalName.Equals(payloadElementName, StringComparison.OrdinalIgnoreCase):
+                        return (code, text);
+                    default:
+                        readReason = await xmlReader.ReadAsync().ConfigureAwait(false);
+                        break;
+                }
+            }
+
+            return (string.Empty, string.Empty);
         }
 
         private static string ReadRsmName(string rootName)

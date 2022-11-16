@@ -19,5 +19,9 @@ namespace Energinet.DataHub.MessageArchive.PersistenceModels
         public string? MRid { get; set; }
 
         public string? OriginalTransactionIdReferenceId { get; set; }
+
+        public string ReasonCode { get; set; } = string.Empty;
+
+        public string ReasonText { get; set; } = string.Empty;
     }
 }

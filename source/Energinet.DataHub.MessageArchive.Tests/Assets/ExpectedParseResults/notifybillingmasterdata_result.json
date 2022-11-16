@@ -18,7 +18,9 @@
   "TransactionRecords": [
     {
       "MRid": "25361487",
-      "OriginalTransactionIdReferenceId": "98147565"
+      "OriginalTransactionIdReferenceId": "98147565",
+      "ReasonCode": "",
+      "ReasonText": ""
     }
   ],
   "RsmName": "notifybillingmasterdata",

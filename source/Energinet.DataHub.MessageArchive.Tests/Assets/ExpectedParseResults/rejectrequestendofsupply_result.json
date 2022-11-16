@@ -18,7 +18,9 @@
   "TransactionRecords": [
     {
       "MRid": "1258945",
-      "OriginalTransactionIdReferenceId": "12584789"
+      "OriginalTransactionIdReferenceId": "12584789",
+      "ReasonCode": "D18",
+      "ReasonText": "Målepunktstype D04 er ikke korrekt"
     }
   ],
   "RsmName": "rejectrequestendofsupply",

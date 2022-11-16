@@ -18,19 +18,27 @@
   "TransactionRecords": [
     {
       "MRid": "25361487",
-      "OriginalTransactionIdReferenceId": ""
+      "OriginalTransactionIdReferenceId": "",
+      "ReasonCode": "",
+      "ReasonText": ""
     },
     {
       "MRid": "25361487-custom-for-test1",
-      "OriginalTransactionIdReferenceId": ""
+      "OriginalTransactionIdReferenceId": "",
+      "ReasonCode": "",
+      "ReasonText": ""
     },
     {
       "MRid": "25361487-custom-for-test2",
-      "OriginalTransactionIdReferenceId": ""
+      "OriginalTransactionIdReferenceId": "",
+      "ReasonCode": "",
+      "ReasonText": ""
     },
     {
       "MRid": "25361487-custom-for-test3",
-      "OriginalTransactionIdReferenceId": ""
+      "OriginalTransactionIdReferenceId": "",
+      "ReasonCode": "",
+      "ReasonText": ""
     }
   ],
   "RsmName": "requestchangeaccountingpointcharacteristics",
