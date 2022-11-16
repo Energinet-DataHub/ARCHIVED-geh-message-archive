@@ -41,7 +41,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
         public async Task<List<BlobItemData>> GetBlobsReadyForProcessingAsync()
         {
             var blobPagesToProcess = _blobContainerClient
-                .GetBlobsAsync(BlobTraits.All)
+                .GetBlobsAsync(BlobTraits.Tags)
                 .AsPages(default, 500);
 
             var tasks = new List<Task<BlobItemData>>();
@@ -75,15 +75,15 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
         {
             ArgumentNullException.ThrowIfNull(blobItemToDownload, nameof(blobItemToDownload));
 
-            var metaData = blobItemToDownload.Metadata ?? new Dictionary<string, string>();
+            var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
+            var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
+
+            var metaData = response.Value.Details.Metadata ?? new Dictionary<string, string>();
             var indexTags = blobItemToDownload.Tags ?? new Dictionary<string, string>();
             var properties = blobItemToDownload.Properties;
             var name = blobItemToDownload.Name;
-
-            var blobClient = _blobContainerClient.GetBlobClient(blobItemToDownload.Name);
             var createdOnUtc = properties.CreatedOn.GetValueOrDefault().ToUniversalTime();
 
-            var response = await blobClient.DownloadStreamingAsync().ConfigureAwait(false);
             var blobItemDataJson = new BlobItemData(name, metaData, indexTags, createdOnUtc, blobClient.Uri);
             blobItemDataJson.ContentStream = response.Value.Content;
             blobItemDataJson.ContentLength = response.Value.Details.ContentLength;
