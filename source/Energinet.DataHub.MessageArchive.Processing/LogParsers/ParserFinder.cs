@@ -44,14 +44,14 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 return new LogParserBlobProperties();
             }
 
-            if (IsCimXmlWithContent(blobItemData))
-            {
-                return new LogParserXml(logger);
-            }
-
             if (IsEbixWithContent(blobItemData))
             {
                 return new LogParserEbix(logger);
+            }
+
+            if (IsCimXmlWithContent(blobItemData))
+            {
+                return new LogParserXml(logger);
             }
 
             if (IsJsonContentWithContent(blobItemData))

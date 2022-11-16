@@ -71,6 +71,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 {
                     parsedModel.RsmName = ReadRsmName(xmlReader.LocalName);
                     continueRead = await xmlReader.ReadAsync().ConfigureAwait(false);
+                    continue;
                 }
 
                 if (xmlReader.NodeType == XmlNodeType.Element
