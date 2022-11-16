@@ -71,13 +71,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
         private static async Task<BlobItemData> AddBlobToStorage(string connectionString, string container)
         {
             var itemToMove = IntegrationTestHelper.CrateRandomBlobItem();
-            var itemToMoveContentStream = itemToMove.ContentStream;
+            using var itemToMoveContentStream = itemToMove.ContentStream;
 
             var blobServiceClientMarketoplogs = await IntegrationTestHelper.InitTestBlobStorageAsync(connectionString, container).ConfigureAwait(false);
             var containerClient = blobServiceClientMarketoplogs.GetBlobContainerClient(container);
             var blobClient = containerClient.GetBlobClient(itemToMove.Name);
 
-            // First Upload to storage
             await blobClient.UploadAsync(itemToMoveContentStream).ConfigureAwait(false);
 
             return itemToMove;
