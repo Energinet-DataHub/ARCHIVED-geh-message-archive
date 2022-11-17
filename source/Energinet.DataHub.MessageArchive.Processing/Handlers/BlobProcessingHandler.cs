@@ -69,7 +69,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.Handlers
 
         private async Task ParseAndSaveAsync(ILogParser parser, BlobItemData blobItemData)
         {
-            _parserLogger.LogInformation("Starts parsing with parser {ParserName} item name: {Name}, ContentLength: {ContentLength}", nameof(parser), blobItemData.Name, blobItemData.ContentLength);
+            _parserLogger.LogInformation("Starts parsing with parser {ParserName} item name: {Name}, ContentLength: {ContentLength}", parser.GetType().Name, blobItemData.Name, blobItemData.ContentLength);
 
             var parsedModel = await parser.ParseAsync(blobItemData).ConfigureAwait(false);
 
