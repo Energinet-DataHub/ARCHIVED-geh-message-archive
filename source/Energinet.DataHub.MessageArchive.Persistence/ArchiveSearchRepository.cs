@@ -20,7 +20,6 @@ using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Reader.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
@@ -37,7 +36,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         public async Task<SearchResults> GetSearchResultsAsync(SearchCriteria criteria)
         {
-            Guard.ThrowIfNull(criteria, nameof(criteria));
+            ArgumentNullException.ThrowIfNull(criteria, nameof(criteria));
 
             string? token = criteria.ContinuationToken;
             var documents = new List<CosmosRequestResponseLog>();

@@ -47,7 +47,6 @@ limitations under the License.
   <ItemGroup>
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Common\Energinet.DataHub.MessageArchive.Common.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Processing\Energinet.DataHub.MessageArchive.Processing.csproj" />
-    <ProjectReference Include="..\Energinet.DataHub.MessageArchive.Utilities\Energinet.DataHub.MessageArchive.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

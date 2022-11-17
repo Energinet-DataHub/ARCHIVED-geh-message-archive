@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers;
 using Energinet.DataHub.MessageArchive.Processing.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
@@ -24,10 +25,15 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
     {
         public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
-            Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+            ArgumentNullException.ThrowIfNull(blobItemData, nameof(blobItemData));
 
             var parsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
-            parsedModel.Errors = JsonErrorParser.ParseErrors(blobItemData.Content);
+
+            // Not expecting a long string so we read the entire error message
+            using var reader = new StreamReader(blobItemData.ContentStream);
+            var jsonContentString = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+            parsedModel.Errors = JsonErrorParser.ParseErrors(jsonContentString);
             return parsedModel;
         }
     }

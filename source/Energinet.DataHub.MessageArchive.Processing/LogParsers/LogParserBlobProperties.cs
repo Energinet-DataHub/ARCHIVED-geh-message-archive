@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
         /// <returns>Parsed blob data</returns>
         public virtual Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
-            Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+            ArgumentNullException.ThrowIfNull(blobItemData, nameof(blobItemData));
 
             var parsedModel = new BaseParsedModel
             {

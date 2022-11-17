@@ -22,37 +22,53 @@ namespace Energinet.DataHub.MessageArchive.Tests
 {
     public static class MockedTypes
     {
-        public static BlobItemData BlobItemData(string contentType, string content, IDictionary<string, string>? indexTags = null)
+        public static BlobItemData BlobItemData(string contentType, string content, IDictionary<string, string>? indexTags = null, string httpStatusCode = "200")
         {
             var uri = new Uri("https://localhost/TestBlob");
 
-            return new BlobItemData(
+            var contentStream = GenerateStreamFromString(content);
+
+            var blobItemData = new BlobItemData(
                 It.IsAny<string>(),
-                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>() { { "contenttype", contentType }, { "statuscode", httpStatusCode } },
                 indexTags ?? new Dictionary<string, string>(),
-                content,
                 DateTimeOffset.Now,
                 uri)
             {
-                ContentLength = content?.Length,
+                ContentStream = contentStream,
+                ContentLength = contentStream?.Length ?? 0,
             };
+            return blobItemData;
         }
 
-        public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null)
+        public static BlobItemData BlobItemDataStream(string contentType, Stream contentStream, IDictionary<string, string>? indexTags = null, string httpStatusCode = "200")
         {
             var uri = new Uri("https://localhost/TestBlob");
 
             var blobItem = new BlobItemData(
                 It.IsAny<string>(),
-                new Dictionary<string, string>() { { "contenttype", contentType } },
+                new Dictionary<string, string>() { { "contenttype", contentType }, { "statuscode", httpStatusCode } },
                 indexTags ?? new Dictionary<string, string>(),
-                string.Empty,
                 DateTimeOffset.Now,
-                uri);
+                uri)
+            {
+                ContentStream = contentStream,
+                ContentLength = contentStream?.Length ?? 0,
+            };
 
-            blobItem.ContentStream = contentStream;
-            blobItem.ContentLength = contentStream?.Length;
             return blobItem;
+        }
+
+        private static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+#pragma warning disable CA2000
+            var writer = new StreamWriter(stream);
+#pragma warning restore CA2000
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }
