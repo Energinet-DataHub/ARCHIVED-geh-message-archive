@@ -18,6 +18,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
+using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Microsoft.Extensions.Logging;
 
@@ -62,7 +63,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (await xmlReader.ReadAsync().ConfigureAwait(false))
             {
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.StartsWith("DK_", StringComparison.OrdinalIgnoreCase))
                 {
                     parsedModel.RsmName = ReadRsmName(xmlReader.LocalName);
@@ -75,21 +76,21 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
                     do
                     {
-                        if (xmlReader.NodeType == XmlNodeType.Element
+                        if (xmlReader.IsNodeType(XmlNodeType.Element)
                             && xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                         {
                             parsedModel.MessageId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                             continue;
                         }
 
-                        if (xmlReader.NodeType == XmlNodeType.Element
+                        if (xmlReader.IsNodeType(XmlNodeType.Element)
                             && xmlReader.LocalName.Equals("DocumentType", StringComparison.OrdinalIgnoreCase))
                         {
                             parsedModel.MessageType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                             continue;
                         }
 
-                        if (xmlReader.NodeType == XmlNodeType.Element
+                        if (xmlReader.IsNodeType(XmlNodeType.Element)
                             && xmlReader.LocalName.Equals("Creation", StringComparison.OrdinalIgnoreCase))
                         {
                             var dateString = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
@@ -97,7 +98,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                             continue;
                         }
 
-                        if (xmlReader.NodeType == XmlNodeType.Element
+                        if (xmlReader.IsNodeType(XmlNodeType.Element)
                             && xmlReader.LocalName.Equals("SenderEnergyParty", StringComparison.OrdinalIgnoreCase))
                         {
                             var senderResult = await ReadSenderEnergyPartyAsync(xmlReader).ConfigureAwait(false);
@@ -106,7 +107,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                             continue;
                         }
 
-                        if (xmlReader.NodeType == XmlNodeType.Element
+                        if (xmlReader.IsNodeType(XmlNodeType.Element)
                             && xmlReader.LocalName.Equals("RecipientEnergyParty", StringComparison.OrdinalIgnoreCase))
                         {
                             var recipientResult = await ReadRecipientEnergyPartyAsync(xmlReader).ConfigureAwait(false);
@@ -115,7 +116,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                             continue;
                         }
 
-                        if (xmlReader.NodeType == XmlNodeType.EndElement
+                        if (xmlReader.IsNodeType(XmlNodeType.EndElement)
                             && xmlReader.LocalName.Equals("HeaderEnergyDocument", StringComparison.OrdinalIgnoreCase))
                         {
                             break;
@@ -126,7 +127,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     while (continueRead);
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("ProcessEnergyContext", StringComparison.OrdinalIgnoreCase))
                 {
                     var energyContext = await ReadProcessEnergyContextAsync(xmlReader).ConfigureAwait(false);
@@ -135,7 +136,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.StartsWith("Payload", StringComparison.OrdinalIgnoreCase))
                 {
                     var transactionRecord = await ReadPayloadAsync(xmlReader).ConfigureAwait(false);
@@ -164,28 +165,28 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.MRid = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("StatusType", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.StatusType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("OriginalBusinessDocumentReferenceIdentity", StringComparison.OrdinalIgnoreCase))
                 {
                     transactionRecord.OriginalTransactionIdReferenceId = await ReadOriginalBusinessDocumentReferenceIdentityAsync(xmlReader).ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.EndElement
+                if (xmlReader.IsNodeType(XmlNodeType.EndElement)
                     && xmlReader.LocalName.Equals(payloadElementName, StringComparison.OrdinalIgnoreCase))
                 {
                     return transactionRecord;
@@ -219,7 +220,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     return await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.EndElement
+                if (xmlReader.IsNodeType(XmlNodeType.EndElement)
                     && xmlReader.LocalName.Equals(originalBusinessDocumentReferenceIdentityElement, StringComparison.OrdinalIgnoreCase))
                 {
                     break;
@@ -240,21 +241,21 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (readElements)
             {
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("Identification", StringComparison.OrdinalIgnoreCase))
                 {
                     result.Identification = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName.Equals("Role", StringComparison.OrdinalIgnoreCase))
                 {
                     result.Role = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.EndElement
+                if (xmlReader.IsNodeType(XmlNodeType.EndElement)
                     && xmlReader.LocalName.Equals(energyPartyElement, StringComparison.OrdinalIgnoreCase))
                 {
                     break;
@@ -277,21 +278,21 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             while (readElements)
             {
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName == processTypeElementName)
                 {
                     processType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.Element
+                if (xmlReader.IsNodeType(XmlNodeType.Element)
                     && xmlReader.LocalName == businessSectorTypeElementName)
                 {
                     businessSectorType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.NodeType == XmlNodeType.EndElement
+                if (xmlReader.IsNodeType(XmlNodeType.EndElement)
                     && xmlReader.LocalName.Equals(processContextElement, StringComparison.OrdinalIgnoreCase))
                 {
                     break;
