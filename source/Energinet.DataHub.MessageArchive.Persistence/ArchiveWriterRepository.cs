@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MessageArchive.Persistence.Containers;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing;
-using Energinet.DataHub.MessageArchive.Utilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -39,7 +38,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
 
         public async Task WriteAsync(CosmosRequestResponseLog objectToSave)
         {
-            Guard.ThrowIfNull(objectToSave, nameof(objectToSave));
+            ArgumentNullException.ThrowIfNull(objectToSave, nameof(objectToSave));
 
             objectToSave.Id = Guid.NewGuid().ToString();
             objectToSave.PartitionKey = Guid.NewGuid().ToString();

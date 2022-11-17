@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers;
 using Energinet.DataHub.MessageArchive.Processing.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
@@ -25,11 +26,15 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
     {
         public override async Task<BaseParsedModel> ParseAsync(BlobItemData blobItemData)
         {
-            Guard.ThrowIfNull(blobItemData, nameof(blobItemData));
+            ArgumentNullException.ThrowIfNull(blobItemData, nameof(blobItemData));
 
             var baseParsedModel = await base.ParseAsync(blobItemData).ConfigureAwait(false);
 
-            var xmlDocument = XElement.Parse(blobItemData.Content);
+            // Not expecting a long string so we read the whole error message
+            using var reader = new StreamReader(blobItemData.ContentStream);
+            var xmlContentString = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+            var xmlDocument = XElement.Parse(xmlContentString);
             baseParsedModel.Errors = XmlErrorParser.ParseErrors(xmlDocument);
 
             return baseParsedModel;

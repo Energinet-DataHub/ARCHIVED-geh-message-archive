@@ -16,25 +16,27 @@ using System;
 using System.Linq;
 using System.Net;
 using Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities;
-using Energinet.DataHub.MessageArchive.Utilities;
+using Energinet.DataHub.MessageArchive.Processing.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 {
     public static class ParserFinder
     {
-        public static ILogParser FindParser(string contentType, string httpStatusCode, string content, ILogger<LogParserBlobProperties> logger)
+        public static ILogParser FindParser(
+            BlobItemData blobItemData,
+            ILogger<LogParserBlobProperties> logger)
         {
-            Guard.ThrowIfNull(contentType, nameof(contentType));
+            ArgumentNullException.ThrowIfNull(blobItemData, nameof(blobItemData));
 
-            if (IsErrorServerResponse(httpStatusCode))
+            if (IsErrorServerResponse(blobItemData.HttpStatusCode))
             {
-                if (IsErrorXmlWithContent(contentType, content))
+                if (IsErrorXmlWithContent(blobItemData))
                 {
                     return new LogParserErrorResponseXml();
                 }
 
-                if (IsErrorJsonWithContent(contentType, content))
+                if (IsJsonContentWithContent(blobItemData))
                 {
                     return new LogParserErrorResponseJson();
                 }
@@ -42,17 +44,17 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                 return new LogParserBlobProperties();
             }
 
-            if (IsEbix(contentType))
+            if (IsEbixWithContent(blobItemData))
             {
                 return new LogParserEbix(logger);
             }
 
-            if (IsXmlWithContent(contentType, content))
+            if (IsCimXmlWithContent(blobItemData))
             {
                 return new LogParserXml(logger);
             }
 
-            if (IsJsonContent(contentType, content))
+            if (IsJsonContentWithContent(blobItemData))
             {
                 return new LogParserJson(logger);
             }
@@ -60,40 +62,24 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
             return new LogParserBlobProperties();
         }
 
-        private static bool IsEbix(string contentType)
+        private static bool IsEbixWithContent(BlobItemData blobItemData)
         {
-            return contentType.Contains("ebix", StringComparison.InvariantCultureIgnoreCase);
+            return blobItemData.ContentLength > 0 && blobItemData.ContentType.Contains("ebix", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static bool IsXmlWithContent(string contentType, string content)
+        private static bool IsCimXmlWithContent(BlobItemData blobItemData)
         {
-            return (contentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrWhiteSpace(content))
-                || (!string.IsNullOrWhiteSpace(content) &&
-                    content.Trim().StartsWith("<?xml version", StringComparison.InvariantCultureIgnoreCase))
-                || (!string.IsNullOrWhiteSpace(content) &&
-                    content.Trim().StartsWith("<cim:", StringComparison.InvariantCultureIgnoreCase));
+            return blobItemData.ContentLength > 0 && blobItemData.ContentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static bool IsErrorXmlWithContent(string contentType, string content)
+        private static bool IsErrorXmlWithContent(BlobItemData blobItemData)
         {
-            return contentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase)
-                   && !string.IsNullOrWhiteSpace(content)
-                   && content.Trim().Contains("<Error>", StringComparison.InvariantCultureIgnoreCase);
+            return blobItemData.ContentLength > 0 && blobItemData.ContentType.Contains("xml", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static bool IsJsonContent(string contentType, string content)
+        private static bool IsJsonContentWithContent(BlobItemData blobItemData)
         {
-            return contentType.Contains("json", StringComparison.InvariantCultureIgnoreCase)
-                   || (!string.IsNullOrWhiteSpace(content) &&
-                       content.Trim().StartsWith("{", StringComparison.InvariantCulture));
-        }
-
-        private static bool IsErrorJsonWithContent(string contentType, string content)
-        {
-            return contentType.Contains("json", StringComparison.InvariantCultureIgnoreCase)
-                   || (!string.IsNullOrWhiteSpace(content)
-                       && content.Contains("error", StringComparison.InvariantCultureIgnoreCase)
-                       && content.Contains("code", StringComparison.InvariantCultureIgnoreCase));
+            return blobItemData.ContentLength > 0 && blobItemData.ContentType.Contains("json", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static bool IsErrorServerResponse(string httpStatusCodeStr)

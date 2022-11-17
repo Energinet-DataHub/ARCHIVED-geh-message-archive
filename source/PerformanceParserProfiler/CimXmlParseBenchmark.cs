@@ -45,10 +45,9 @@ namespace PerformanceParserProfiler
         public async Task ParseBenchmarkAsync()
         {
             var filePathToTest = _config["CimXmlFilePath"];
-            var fileContent = File.ReadAllText(filePathToTest);
-
+            using var fileStream = new FileStream(filePathToTest, FileMode.Open);
             var cimParser = new LogParserXml(_logger);
-            var blobItem = BlobItemHelper.BlobItemDataContent("xml", fileContent);
+            var blobItem = BlobItemHelper.BlobItemDataStream("xml", fileStream);
             var parsedModel = await cimParser.ParseAsync(blobItem).ConfigureAwait(false);
         }
 

@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Energinet.DataHub.MessageArchive.Reader.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Reader.Validation
 {
@@ -24,7 +23,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
     {
         public static SearchCriteriaValidationResult Validate(SearchCriteria searchCriteria)
         {
-            Guard.ThrowIfNull(searchCriteria, nameof(searchCriteria));
+            ArgumentNullException.ThrowIfNull(searchCriteria, nameof(searchCriteria));
 
             var datetimeValidation = ValidateDateTime(searchCriteria);
             if (!datetimeValidation.Valid)

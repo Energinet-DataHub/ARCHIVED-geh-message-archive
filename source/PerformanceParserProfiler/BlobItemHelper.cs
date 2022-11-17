@@ -29,28 +29,11 @@ public static class BlobItemHelper
             "TestFile",
             new Dictionary<string, string>() { { "contenttype", contentType } },
             indexTags ?? new Dictionary<string, string>(),
-            string.Empty,
             DateTimeOffset.Now,
             uri);
 
         blobItem.ContentStream = contentStream;
-        blobItem.ContentLength = contentStream?.Length;
+        blobItem.ContentLength = contentStream?.Length ?? 0;
         return blobItem;
-    }
-
-    public static BlobItemData BlobItemDataContent(string contentType, string content, IDictionary<string, string>? indexTags = null)
-    {
-        var uri = new Uri("https://localhost/TestBlob");
-
-        return new BlobItemData(
-            "TestFile",
-            new Dictionary<string, string>() { { "contenttype", contentType } },
-            indexTags ?? new Dictionary<string, string>(),
-            content,
-            DateTimeOffset.Now,
-            uri)
-        {
-            ContentLength = content?.Length,
-        };
     }
 }
