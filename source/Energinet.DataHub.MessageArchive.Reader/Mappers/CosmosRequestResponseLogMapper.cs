@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
-using Energinet.DataHub.MessageArchive.Reader.Models;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Reader.Mappers
 {
@@ -22,7 +21,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Mappers
     {
         public static BaseParsedModel ToBaseParsedModels(CosmosRequestResponseLog fromobj)
         {
-            Guard.ThrowIfNull(fromobj, nameof(fromobj));
+            ArgumentNullException.ThrowIfNull(fromobj, nameof(fromobj));
 
             var toobj = new BaseParsedModel();
             toobj.MessageId = fromobj.MessageId;

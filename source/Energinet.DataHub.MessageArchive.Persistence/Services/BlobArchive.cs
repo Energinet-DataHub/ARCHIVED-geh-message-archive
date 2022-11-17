@@ -20,7 +20,6 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Processing.Services;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Persistence.Services
 {
@@ -37,7 +36,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
 
         public async Task<Uri> MoveToArchiveAsync(BlobItemData itemToMove)
         {
-            Guard.ThrowIfNull(itemToMove, nameof(itemToMove));
+            ArgumentNullException.ThrowIfNull(itemToMove, nameof(itemToMove));
 
             var fromContainerClient = _fromContainerClient.GetBlockBlobClient(itemToMove.Name);
             var toContainerClient = _toContainerClient.GetBlockBlobClient(itemToMove.Name);

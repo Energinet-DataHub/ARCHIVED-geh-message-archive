@@ -84,10 +84,8 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             var logger = new Mock<ILogger<BlobProcessingHandler>>().Object;
             var parserLogger = new Mock<ILogger<LogParserBlobProperties>>().Object;
 
-            var blobItemErrorResponseXml = MockedTypes.BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>");
-            blobItemErrorResponseXml.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
-            var blobItemErrorResponseJson = MockedTypes.BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}");
-            blobItemErrorResponseJson.MetaData.Add("statuscode", HttpStatusCode.InternalServerError.ToString());
+            var blobItemErrorResponseXml = MockedTypes.BlobItemData("xml", "<Error><Code>1</Code><Message>test</Message></Error>", null, HttpStatusCode.InternalServerError.ToString());
+            var blobItemErrorResponseJson = MockedTypes.BlobItemData("json", "{\"error\":{\"code\":\"1\",\"message\":\"test\"}}", null, HttpStatusCode.InternalServerError.ToString());
 
             reader
                 .Setup(e => e.GetBlobsReadyForProcessingAsync())
@@ -132,8 +130,7 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
             await writer.FlushAsync().ConfigureAwait(false);
             contentStream.Position = 0;
 
-            var blobItemErrorResponseJson = MockedTypes.BlobItemDataStream("json", contentStream);
-            blobItemErrorResponseJson.MetaData.Add("statuscode", HttpStatusCode.OK.ToString());
+            var blobItemErrorResponseJson = MockedTypes.BlobItemDataStream("json", contentStream, null, HttpStatusCode.OK.ToString());
 
             reader
                 .Setup(e => e.GetBlobsReadyForProcessingAsync())
@@ -162,14 +159,13 @@ namespace Energinet.DataHub.MessageArchive.Tests.Handlers
         [InlineData("text/plain", null, "", typeof(LogParserBlobProperties))]
         [InlineData("nocontent", null, "", typeof(LogParserBlobProperties))]
         [InlineData("nocontent", HttpStatusCode.InternalServerError, "", typeof(LogParserBlobProperties))]
-
         public void Test_FindParser(string contentType, HttpStatusCode? httpStatusCode, string content, Type expectedParser)
         {
             // Arrange
-            var httpStatusCodeStr = httpStatusCode?.ToString() ?? string.Empty;
+            var blobItemData = MockedTypes.BlobItemData(contentType, content, null, httpStatusCode?.ToString() ?? string.Empty);
 
             // Act
-            var parser = ParserFinder.FindParser(contentType, httpStatusCodeStr, content, new Mock<ILogger<LogParserBlobProperties>>().Object);
+            var parser = ParserFinder.FindParser(blobItemData, new Mock<ILogger<LogParserBlobProperties>>().Object);
 
             // Assert
             Assert.IsType(expectedParser, parser);

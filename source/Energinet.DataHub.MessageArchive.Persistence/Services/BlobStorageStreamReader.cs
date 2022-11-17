@@ -21,7 +21,6 @@ using Azure.Storage.Blobs;
 using Energinet.DataHub.MessageArchive.Processing.Models;
 using Energinet.DataHub.MessageArchive.Reader;
 using Energinet.DataHub.MessageArchive.Reader.Factories;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Persistence.Services
 {
@@ -40,7 +39,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence.Services
 
         public async Task<Stream> GetStreamFromStorageAsync(string name)
         {
-            Guard.ThrowIfNull(name, nameof(name));
+            ArgumentNullException.ThrowIfNull(name, nameof(name));
 
             try
             {

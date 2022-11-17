@@ -1,0 +1,30 @@
+{
+  "MessageId": "1233456678",
+  "MessageType": "E44",
+  "ProcessType": "E20",
+  "BusinessSectorType": "23",
+  "ReasonCode": "A02",
+  "CreatedDate": "2022-12-17T09:30:47+00:00",
+  "SenderGln": "5799999933318",
+  "SenderGlnMarketRoleType": "DDZ",
+  "ReceiverGln": "5790001330552",
+  "ReceiverGlnMarketRoleType": "DDQ",
+  "HttpData": "",
+  "InvocationId": "",
+  "FunctionName": "",
+  "TraceId": "",
+  "TraceParent": "",
+  "ResponseStatus": "",
+  "TransactionRecords": [
+    {
+      "MRid": "1258945",
+      "OriginalTransactionIdReferenceId": "12584789"
+    }
+  ],
+  "RsmName": "rejectrequestendofsupply",
+  "HaveBodyContent": true,
+  "ParsingSuccess": true,
+  "Data": null,
+  "Query": null,
+  "Errors": null
+}

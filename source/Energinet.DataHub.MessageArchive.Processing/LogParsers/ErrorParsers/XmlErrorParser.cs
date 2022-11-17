@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Energinet.DataHub.MessageArchive.PersistenceModels;
-using Energinet.DataHub.MessageArchive.Utilities;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers
 {
@@ -24,7 +24,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.ErrorParsers
     {
         public static IEnumerable<ParsedErrorModel> ParseErrors(XElement xmlDocument)
         {
-            Guard.ThrowIfNull(xmlDocument, nameof(xmlDocument));
+            ArgumentNullException.ThrowIfNull(xmlDocument, nameof(xmlDocument));
 
             var errors = xmlDocument.DescendantsAndSelf("Error");
             return errors

@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Energinet.DataHub.MessageArchive.Persistence.Services;
@@ -39,7 +37,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Persistence
             var marketoplogsArchive = "marketoplogs-archive";
 
             var itemToMove = IntegrationTestHelper.CrateRandomBlobItem();
-            await using var itemToMoveContentStream = new MemoryStream(Encoding.UTF8.GetBytes(itemToMove.Content));
+            using var itemToMoveContentStream = itemToMove.ContentStream;
 
             var blobServiceClientMarketoplogs = await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogs).ConfigureAwait(false);
             await IntegrationTestHelper.InitTestBlobStorageAsync(archiveConn, marketoplogsArchive).ConfigureAwait(false);

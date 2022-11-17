@@ -36,7 +36,7 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests.Handlers
     public class BlobProcessingHandlerTests
     {
         [Fact]
-        public async Task Test_ParseJson_CreateChangeOfSupplier()
+        public async Task Test_ParseAssetsFiles()
         {
             // Arrange
             await IntegrationTestHelper.InitTestBlobStorageAsync(
