@@ -66,7 +66,7 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
 
             do
             {
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
+                if (xmlReader.NodeType == XmlNodeType.Element
                     && xmlReader.LocalName.EndsWith("_MarketDocument", StringComparison.OrdinalIgnoreCase))
                 {
                     parsedModel.RsmName = ReadRsmName(xmlReader.LocalName);
@@ -74,80 +74,68 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.MRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.MRid))
                 {
                     parsedModel.MessageId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.Type, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.Type))
                 {
                     parsedModel.MessageType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.ProcessProcessType, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.ProcessProcessType))
                 {
                     parsedModel.ProcessType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.BusinessSectorType, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.BusinessSectorType))
                 {
                     parsedModel.BusinessSectorType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.ReasonCode, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.ReasonCode))
                 {
                     parsedModel.ReasonCode = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.CreatedDateTime, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.CreatedDateTime))
                 {
                     var dateString = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     parsedModel.CreatedDate = DateTimeOffset.TryParse(dateString, out var result) ? result : null;
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.SenderMarketParticipantmRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.SenderMarketParticipantmRid))
                 {
                     parsedModel.SenderGln = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.SenderMarketParticipantmarketRoletype, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.SenderMarketParticipantmarketRoletype))
                 {
                     parsedModel.SenderGlnMarketRoleType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.ReceiverMarketParticipantmRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.ReceiverMarketParticipantmRid))
                 {
                     parsedModel.ReceiverGln = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.ReceiverMarketParticipantmarketRoletype, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.ReceiverMarketParticipantmarketRoletype))
                 {
                     parsedModel.ReceiverGlnMarketRoleType = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element) &&
-                    (xmlReader.LocalName.Equals("MktActivityRecord", StringComparison.OrdinalIgnoreCase) ||
-                     xmlReader.LocalName.Equals("Series", StringComparison.OrdinalIgnoreCase)))
+                if (xmlReader.IsElement("MktActivityRecord") || xmlReader.IsElement("Series"))
                 {
                     var transactionRecord = await ReadTransactionRecordsAsync(xmlReader).ConfigureAwait(false);
                     if (!string.IsNullOrWhiteSpace(transactionRecord.MRid))
@@ -180,29 +168,25 @@ namespace Energinet.DataHub.MessageArchive.Processing.LogParsers
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.MRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.MRid))
                 {
                     transactionRecord.MRid = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.OriginalTransactionIdReferenceMktActivityRecordmRid))
                 {
                     transactionRecord.OriginalTransactionIdReferenceId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.Element)
-                    && xmlReader.LocalName.Equals(ElementNames.OriginalTransactionIdReferenceSeriesmRid, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsElement(ElementNames.OriginalTransactionIdReferenceSeriesmRid))
                 {
                     transactionRecord.OriginalTransactionIdReferenceId = await xmlReader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                if (xmlReader.IsNodeType(XmlNodeType.EndElement)
-                    && xmlReader.LocalName.Equals(payloadElementName, StringComparison.OrdinalIgnoreCase))
+                if (xmlReader.IsEndElement(payloadElementName))
                 {
                     return transactionRecord;
                 }

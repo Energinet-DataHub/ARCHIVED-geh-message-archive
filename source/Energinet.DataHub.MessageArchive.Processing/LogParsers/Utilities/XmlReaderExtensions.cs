@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Xml;
 
 namespace Energinet.DataHub.MessageArchive.Processing.LogParsers.Utilities
 {
     internal static class XmlReaderExtensions
     {
-        public static bool IsNodeType(this XmlReader xmlReader, XmlNodeType nodeType)
+        public static bool IsElement(this XmlReader xmlReader, string elementName)
         {
-            return xmlReader.NodeType == nodeType;
+            return xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName.Equals(elementName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsEndElement(this XmlReader xmlReader, string elementName)
+        {
+            return xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.LocalName.Equals(elementName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
