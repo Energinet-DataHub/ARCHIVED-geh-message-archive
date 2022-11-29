@@ -34,6 +34,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             }
 
             ValidateAndUpdateRsmName(searchCriteria);
+            ValidateAndUpdateProcessTypes(searchCriteria);
             ValidateIncludeRelated(searchCriteria);
 
             return new SearchCriteriaValidationResult(true);
