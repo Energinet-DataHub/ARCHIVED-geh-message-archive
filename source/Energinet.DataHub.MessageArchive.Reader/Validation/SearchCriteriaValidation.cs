@@ -34,7 +34,6 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             }
 
             ValidateAndUpdateRsmName(searchCriteria);
-            ValidateAndUpdateProcessTypes(searchCriteria);
             ValidateIncludeRelated(searchCriteria);
 
             return new SearchCriteriaValidationResult(true);
@@ -103,7 +102,7 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
 
         private static bool TryParseExactDateTimeStringAsIso(string datetime, out DateTimeOffset parsedResult)
         {
-            if (DateTime.TryParseExact(datetime, _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+            if (DateTime.TryParse(datetime, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
             {
                 parsedResult = result;
                 return true;
@@ -112,37 +111,5 @@ namespace Energinet.DataHub.MessageArchive.Reader.Validation
             parsedResult = default;
             return false;
         }
-
-#pragma warning disable SA1201
-        private static readonly string[] _formats =
-        {
-#pragma warning restore SA1201
-            // Basic formats
-            "yyyyMMddTHHmmsszzz",
-            "yyyyMMddTHHmmsszz",
-            "yyyyMMddTHHmmssZ",
-
-            // Extended formats
-            "yyyy-MM-ddTHH:mm:sszzz",
-            "yyyy-MM-ddTHH:mm:sszz",
-            "yyyy-MM-ddTHH:mm:ssZ",
-            "yyyy-MM-ddTHH:mm:ss.fffzzz",
-
-            // All of the above with reduced accuracy
-            "yyyyMMddTHHmmzzz",
-            "yyyyMMddTHHmmzz",
-            "yyyyMMddTHHmmZ",
-            "yyyy-MM-ddTHH:mmzzz",
-            "yyyy-MM-ddTHH:mmzz",
-            "yyyy-MM-ddTHH:mmZ",
-
-            // Accuracy reduced to hours
-            "yyyyMMddTHHzzz",
-            "yyyyMMddTHHzz",
-            "yyyyMMddTHHZ",
-            "yyyy-MM-ddTHHzzz",
-            "yyyy-MM-ddTHHzz",
-            "yyyy-MM-ddTHHZ",
-        };
     }
 }
