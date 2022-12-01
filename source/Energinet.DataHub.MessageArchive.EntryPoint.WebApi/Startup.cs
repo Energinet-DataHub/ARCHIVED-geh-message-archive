@@ -14,6 +14,8 @@
 
 using System;
 using System.Text.Json.Serialization;
+using Energinet.DataHub.Core.App.WebApp.Authentication;
+using Energinet.DataHub.Core.App.WebApp.Authorization;
 using Energinet.DataHub.Core.App.WebApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.WebApp.Middleware;
 using Energinet.DataHub.Core.App.WebApp.SimpleInjector;
@@ -43,6 +45,7 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                AuthenticationExtensions.DisableHttpsConfiguration = true;
             }
 
             app.UseSwagger();
@@ -51,10 +54,8 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
                 "Energinet.DataHub.MessageArchive.EntryPoint.WebApi v1"));
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
-            app.UseMiddleware<JwtTokenMiddleware>();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
@@ -101,7 +102,11 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
 
                 c.AddSecurityRequirement(securityRequirement);
             });
-
+            var externalOpenIdUrl = Configuration["EXTERNAL_OPEN_ID_URL"];
+            var internalOpenIdUrl = Configuration["INTERNAL_OPEN_ID_URL"];
+            var backendAppId = Configuration["BACKEND_SERVICE_APP_ID"];
+            services.AddJwtBearerAuthentication(externalOpenIdUrl, internalOpenIdUrl, backendAppId);
+            services.AddPermissionAuthorization();
             services.AddTransient<IMiddlewareFactory>(_ => new SimpleInjectorMiddlewareFactory(Container));
         }
 
