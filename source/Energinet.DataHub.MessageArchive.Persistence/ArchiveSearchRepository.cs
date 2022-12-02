@@ -53,7 +53,7 @@ namespace Energinet.DataHub.MessageArchive.Persistence
                 var ignoreBodyRequirement = criteria.IncludeResultsWithoutContent || !string.IsNullOrWhiteSpace(criteria.TraceId);
 
                 var query = from searchResult in asLinq
-                            where (criteria.MessageId == null || criteria.MessageId == searchResult.MessageId) &&
+                            where (criteria.MessageId == null || (searchResult.MessageId ?? string.Empty).Contains(criteria.MessageId)) &&
                                 (criteria.MessageType == null || criteria.MessageType == searchResult.MessageType) &&
                                 (criteria.SenderId == null || criteria.SenderId == searchResult.SenderGln) &&
                                 (criteria.ReceiverId == null || criteria.ReceiverId == searchResult.ReceiverGln) &&
