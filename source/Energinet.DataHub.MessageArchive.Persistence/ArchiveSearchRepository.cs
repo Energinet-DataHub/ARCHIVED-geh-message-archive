@@ -127,41 +127,47 @@ namespace Energinet.DataHub.MessageArchive.Persistence
         {
             if (criteria.MessageId != null && criteria.IncludeRelated == true && documents.Any())
             {
-                var document = documents.FirstOrDefault();
-                var httpDataType = document?.HttpData ?? "unknown";
-
-                if (httpDataType.Equals("request", StringComparison.OrdinalIgnoreCase))
+                var options = new ParallelOptions { MaxDegreeOfParallelism = 4 };
+                var relatedDocuments = new List<CosmosRequestResponseLog>();
+                await Parallel.ForEachAsync(documents, options, async (document, token) =>
                 {
-                    var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
-                    var transactionRecordIds = transactionRecords.Select(t => t.MRid).ToArray();
+                    var httpDataType = document?.HttpData ?? "unknown";
 
-                    var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
-                    var relatedQuery = from relatedMessageResult in asLinqIn
-                                       where relatedMessageResult.HttpData == "response" &&
-                                             transactionRecordIds != null &&
-                                             relatedMessageResult.TransactionRecords != null &&
-                                             relatedMessageResult.TransactionRecords.Any(x => transactionRecordIds.Contains(x.OriginalTransactionIdReferenceId))
-                                       select relatedMessageResult;
+                    if (httpDataType.Equals("request", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
+                        var transactionRecordIds = transactionRecords.Select(t => t.MRid).ToArray();
 
-                    var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
-                    documents.AddRange(relatedCosmosDocuments);
-                }
-                else if (httpDataType.Equals("response", StringComparison.OrdinalIgnoreCase))
-                {
-                    var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
-                    var originalReferenceIds = transactionRecords.Select(t => t.OriginalTransactionIdReferenceId).ToArray();
+                        var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+                        var relatedQuery = from relatedMessageResult in asLinqIn
+                                           where relatedMessageResult.HttpData == "response" &&
+                                                 transactionRecordIds != null &&
+                                                 relatedMessageResult.TransactionRecords != null &&
+                                                 relatedMessageResult.TransactionRecords.Any(x => transactionRecordIds.Contains(x.OriginalTransactionIdReferenceId))
+                                           select relatedMessageResult;
 
-                    var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
-                    var relatedQuery = from relatedMessageResult in asLinqIn
-                                       where relatedMessageResult.HttpData == "request" &&
-                                             originalReferenceIds != null &&
-                                             relatedMessageResult.TransactionRecords != null &&
-                                             relatedMessageResult.TransactionRecords.Any(x => originalReferenceIds.Contains(x.MRid))
-                                       select relatedMessageResult;
+                        var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
+                        relatedDocuments.AddRange(relatedCosmosDocuments);
+                    }
+                    else if (httpDataType.Equals("response", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var transactionRecords = document?.TransactionRecords ?? Array.Empty<TransactionRecord>();
+                        var originalReferenceIds = transactionRecords.Select(t => t.OriginalTransactionIdReferenceId).ToArray();
 
-                    var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
-                    documents.AddRange(relatedCosmosDocuments);
-                }
+                        var asLinqIn = _archiveContainer.Container.GetItemLinqQueryable<CosmosRequestResponseLog>();
+                        var relatedQuery = from relatedMessageResult in asLinqIn
+                                           where relatedMessageResult.HttpData == "request" &&
+                                                 originalReferenceIds != null &&
+                                                 relatedMessageResult.TransactionRecords != null &&
+                                                 relatedMessageResult.TransactionRecords.Any(x => originalReferenceIds.Contains(x.MRid))
+                                           select relatedMessageResult;
+
+                        var relatedCosmosDocuments = await ExecuteQueryAsync(relatedQuery).ConfigureAwait(false);
+                        relatedDocuments.AddRange(relatedCosmosDocuments);
+                    }
+                }).ConfigureAwait(false);
+
+                documents.AddRange(relatedDocuments);
             }
         }
     }
