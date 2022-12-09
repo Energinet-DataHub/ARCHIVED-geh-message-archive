@@ -59,6 +59,9 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
             Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_CONNECTION_STRING", StorageAccountConnectionString);
             Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_CONTAINER_NAME", MessageArchiveContainerName);
             Environment.SetEnvironmentVariable("STORAGE_MESSAGE_ARCHIVE_PROCESSED_CONTAINER_NAME", MessageArchiveProcessedContainerName);
+            Environment.SetEnvironmentVariable("EXTERNAL_OPEN_ID_URL", ExternalOpenIdUrl);
+            Environment.SetEnvironmentVariable("INTERNAL_OPEN_ID_URL", InternalOpenIdUrl);
+            Environment.SetEnvironmentVariable("BACKEND_SERVICE_APP_ID", BackendServiceAppId);
         }
 
         internal static string CosmosConnectionString { get; } = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
@@ -70,6 +73,12 @@ namespace Energinet.DataHub.MessageArchive.IntegrationTests
         internal static string MessageArchiveContainerName { get; } = "marketoplog";
 
         internal static string MessageArchiveProcessedContainerName { get; } = "marketoplogs-archive";
+
+        internal static string ExternalOpenIdUrl { get; } = "https://dev002DataHubB2C.b2clogin.com/dev002DataHubB2C.onmicrosoft.com/B2C_1_sign_in_experiments/v2.0/.well-known/openid-configuration";
+
+        internal static string InternalOpenIdUrl { get; } = "http://localhost:6000/.well-known/openid-configuration";
+
+        internal static string BackendServiceAppId { get; } = "88e5d356-0c71-49e9-b260-d0629f3c0445";
 
         internal static bool DisableAzurite { get; }
     }
