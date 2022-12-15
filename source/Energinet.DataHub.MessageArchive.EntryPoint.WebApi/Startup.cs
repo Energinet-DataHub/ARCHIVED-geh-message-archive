@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Text.Json.Serialization;
 using Energinet.DataHub.Core.App.WebApp.Authentication;
 using Energinet.DataHub.Core.App.WebApp.Authorization;
 using Energinet.DataHub.Core.App.WebApp.Diagnostics.HealthChecks;
-using Energinet.DataHub.Core.App.WebApp.Middleware;
 using Energinet.DataHub.Core.App.WebApp.SimpleInjector;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -125,13 +123,6 @@ namespace Energinet.DataHub.MessageArchive.EntryPoint.WebApi
 
         protected override void Configure(Container container)
         {
-            var openIdUrl = Configuration["FRONTEND_OPEN_ID_URL"] ?? throw new InvalidOperationException(
-                "Frontend OpenID URL not found.");
-
-            var audience = Configuration["FRONTEND_SERVICE_APP_ID"] ?? throw new InvalidOperationException(
-                "Frontend service app id not found.");
-
-            Container.AddJwtTokenSecurity(openIdUrl, audience);
         }
     }
 }
