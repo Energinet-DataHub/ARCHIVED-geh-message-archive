@@ -27,7 +27,7 @@ limitations under the License.
     <ItemGroup>
       <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="6.1.1" />
       <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="6.1.0" />
-      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="7.2.3" />
+      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="7.2.9" />
       <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
       <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" />
       <PackageReference Include="SimpleInjector" Version="5.4.1" />
